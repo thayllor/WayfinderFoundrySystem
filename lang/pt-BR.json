@@ -1,0 +1,18 @@
+{
+  "WAYFINDER.SheetLabels.Actor": "Ficha de Ator",
+  "WAYFINDER.SheetLabels.Item": "Ficha de Item",
+  
+  "WAYFINDER.Ability.Str.long": "Força",
+  "WAYFINDER.Ability.Dex.long": "Destreza",
+  "WAYFINDER.Ability.Con.long": "Constituição",
+  "WAYFINDER.Ability.Int.long": "Inteligência",
+  "WAYFINDER.Ability.Wis.long": "Sabedoria",
+  "WAYFINDER.Ability.Cha.long": "Carisma",
+
+  "WAYFINDER.Ability.Str.abbr": "FOR",
+  "WAYFINDER.Ability.Dex.abbr": "DES",
+  "WAYFINDER.Ability.Con.abbr": "CON",
+  "WAYFINDER.Ability.Int.abbr": "INT",
+  "WAYFINDER.Ability.Wis.abbr": "SAB",
+  "WAYFINDER.Ability.Cha.abbr": "CAR"
+}

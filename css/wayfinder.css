@@ -1,0 +1,337 @@
+/* ----------------------------------------- */
+/* Wayfinder System Styles                  */
+/* ----------------------------------------- */
+
+/* Import Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Global Styles */
+.wayfinder {
+  font-family: "Roboto", sans-serif;
+}
+
+.wayfinder .window-content {
+  height: 100%;
+  padding: 5px;
+  overflow-y: scroll;
+}
+
+.wayfinder .rollable:hover {
+  color: #000;
+  text-shadow: 0 0 10px red;
+  cursor: pointer;
+}
+
+.wayfinder .grid,
+.wayfinder .grid-2col {
+  display: grid;
+  grid-column: span 2 / span 2;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.wayfinder .grid-3col {
+  grid-column: span 3 / span 3;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.wayfinder .grid-4col {
+  grid-column: span 4 / span 4;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.wayfinder .grid-5col {
+  grid-column: span 5 / span 5;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.wayfinder .grid-6col {
+  grid-column: span 6 / span 6;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.wayfinder .flex-group-center,
+.wayfinder .flex-group-left,
+.wayfinder .flex-group-right {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.wayfinder .flex-group-left {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.wayfinder .flex-group-right {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.wayfinder .flexshrink {
+  flex: 0;
+}
+
+.wayfinder .flex-between {
+  justify-content: space-between;
+}
+
+.wayfinder .flexlarge {
+  flex: 2;
+}
+
+.wayfinder .align-left {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.wayfinder .align-right {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.wayfinder .align-center {
+  justify-content: center;
+  text-align: center;
+}
+
+/* ----------------------------------------- */
+/* Sheet Header                              */
+/* ----------------------------------------- */
+
+.wayfinder .sheet-header {
+  flex: 0 auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.wayfinder .sheet-header .profile-img {
+  flex: 0 0 100px;
+  height: 100px;
+  margin-right: 10px;
+}
+
+.wayfinder .sheet-header .header-fields {
+  flex: 1;
+}
+
+.wayfinder .sheet-header h1.charname {
+  height: 50px;
+  padding: 0;
+  margin: 5px 0;
+  border-bottom: 0;
+}
+
+.wayfinder .sheet-header h1.charname input {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+/* ----------------------------------------- */
+/* Sheet Tabs                                */
+/* ----------------------------------------- */
+
+.wayfinder .tabs {
+  height: 40px;
+  border-top: 1px solid #AAA;
+  border-bottom: 1px solid #AAA;
+}
+
+.wayfinder .tabs .item {
+  line-height: 40px;
+  font-weight: bold;
+}
+
+.wayfinder .tabs .item.active {
+  text-decoration: underline;
+  text-shadow: none;
+}
+
+.wayfinder .sheet-body,
+.wayfinder .sheet-body .tab,
+.wayfinder .sheet-body .tab .editor {
+  height: 100%;
+}
+
+/* ----------------------------------------- */
+/* Resource Bars                             */
+/* ----------------------------------------- */
+
+.wayfinder .resource {
+  width: 50%;
+  height: 40px;
+  margin-top: 10px;
+  float: left;
+  text-align: center;
+}
+
+.wayfinder .resource input {
+  width: 100px;
+  height: 28px;
+}
+
+/* ----------------------------------------- */
+/* Attributes                                */
+/* ----------------------------------------- */
+
+.wayfinder .attributes {
+  flex: 0 0 100%;
+  padding: 10px;
+}
+
+.wayfinder .attributes .attribute {
+  height: 70px;
+  text-align: center;
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.wayfinder .attributes .attribute .attribute-name {
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.wayfinder .attributes .attribute .attribute-value {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.wayfinder .attributes .attribute .attribute-label {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* ----------------------------------------- */
+/* Items Lists                               */
+/* ----------------------------------------- */
+
+.wayfinder .items-header {
+  height: 28px;
+  margin: 2px 0;
+  padding: 0;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.05);
+  border: 2px groove #eeede0;
+  font-weight: bold;
+}
+
+.wayfinder .items-header > * {
+  font-size: 14px;
+  text-align: center;
+}
+
+.wayfinder .items-header .item-name {
+  font-weight: bold;
+  padding-left: 5px;
+  text-align: left;
+  display: flex;
+}
+
+.wayfinder .items-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  color: #444;
+}
+
+.wayfinder .items-list .item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wayfinder .items-list .item-name {
+  flex: 2;
+  margin: 0;
+  overflow: hidden;
+  font-size: 13px;
+  text-align: left;
+  align-items: center;
+  display: flex;
+}
+
+.wayfinder .items-list .item-name h3,
+.wayfinder .items-list .item-name h4 {
+  margin: 0;
+  white-space: nowrap;
+  overflow-x: hidden;
+}
+
+.wayfinder .items-list .item-controls {
+  display: flex;
+  flex: 0 0 100px;
+  justify-content: flex-end;
+}
+
+.wayfinder .items-list .item-controls a {
+  font-size: 12px;
+  text-align: center;
+  margin: 0 6px;
+}
+
+.wayfinder .items-list .item {
+  height: 30px;
+  line-height: 24px;
+  padding: 3px 0;
+  border-bottom: 1px solid #c9c7b8;
+}
+
+.wayfinder .items-list .item:last-child {
+  border-bottom: none;
+}
+
+.wayfinder .items-list .item .item-name .item-image {
+  flex: 0 0 30px;
+  height: 30px;
+  background-size: 30px;
+  border: none;
+  margin-right: 5px;
+}
+
+.wayfinder .items-list .item img {
+  display: block;
+}
+
+.wayfinder .item-formula {
+  flex: 0 0 200px;
+  padding: 0 8px;
+}
+
+/* ----------------------------------------- */
+/* Effects                                   */
+/* ----------------------------------------- */
+
+.wayfinder .effects-header {
+  height: 28px;
+  margin: 2px 0;
+  padding: 0;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.05);
+  border: 2px groove #eeede0;
+  font-weight: bold;
+}
+
+.wayfinder .effects .item .effect-source,
+.wayfinder .effects .item .effect-duration,
+.wayfinder .effects .item .effect-controls {
+  text-align: center;
+  border-left: 1px solid #c9c7b8;
+  border-right: 1px solid #c9c7b8;
+  font-size: 12px;
+}
+
+.wayfinder .effects .item .effect-controls {
+  border: none;
+}
