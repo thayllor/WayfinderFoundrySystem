@@ -1,0 +1,38 @@
+<form class="{{cssClass}} flexcol" autocomplete="off">
+
+  {{! Sheet Header }}
+  <header class="sheet-header">
+    <div
+      class="profile-img trait-color-display"
+      style="background-color: {{system.color}};"
+      title="{{item.name}}"
+    ></div>
+    <div class="header-fields">
+      <h1 class="charname"><input
+          name="name"
+          type="text"
+          value="{{item.name}}"
+          placeholder="Nome do Traço"
+        /></h1>
+    </div>
+  </header>
+  {{! Sheet Body }}
+  <section class="sheet-body">
+    <div class="form-group trait-color-group">
+      <label for="system.color" class="trait-color-label">Cor</label>
+      <input
+        type="color"
+        name="system.color"
+        value="{{system.color}}"
+        class="trait-color-input"
+      />
+    </div>
+
+    {{textoEstilizado
+      name="system.description"
+      value=system.description
+      label="Descrição"
+      editable=editable
+    }}
+  </section>
+</form>

@@ -1,18 +1,23 @@
 {
   "WAYFINDER.SheetLabels.Actor": "Actor Sheet",
   "WAYFINDER.SheetLabels.Item": "Item Sheet",
-  
+
   "WAYFINDER.Ability.Str.long": "Strength",
   "WAYFINDER.Ability.Dex.long": "Dexterity",
-  "WAYFINDER.Ability.Con.long": "Constitution",
   "WAYFINDER.Ability.Int.long": "Intelligence",
   "WAYFINDER.Ability.Wis.long": "Wisdom",
-  "WAYFINDER.Ability.Cha.long": "Charisma",
+  "WAYFINDER.Ability.Pre.long": "Presence",
 
   "WAYFINDER.Ability.Str.abbr": "STR",
   "WAYFINDER.Ability.Dex.abbr": "DEX",
-  "WAYFINDER.Ability.Con.abbr": "CON",
   "WAYFINDER.Ability.Int.abbr": "INT",
   "WAYFINDER.Ability.Wis.abbr": "WIS",
-  "WAYFINDER.Ability.Cha.abbr": "CHA"
+  "WAYFINDER.Ability.Pre.abbr": "PRE",
+
+  "TYPES.Item.item": "Item",
+  "TYPES.Item.feature": "Feature",
+  "TYPES.Item.spell": "Spell",
+  "TYPES.Item.active-effect": "Active Effect",
+  "TYPES.Item.passive-effect": "Passive Effect",
+  "TYPES.Item.trait": "Trait"
 }

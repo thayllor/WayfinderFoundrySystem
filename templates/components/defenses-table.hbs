@@ -1,0 +1,182 @@
+{{! Attribute Defenses Table Component }}
+<div class="resources-section">
+  <h3>Attribute Defenses</h3>
+  <table class="defenses-table">
+    <thead>
+      <tr>
+        <th>Attribute</th>
+        <th>Proficiency</th>
+        <th>Bonus</th>
+        <th>Defense DC</th>
+        <th>Item</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{! STRENGTH }}
+      <tr>
+        <td>STRENGTH</td>
+        <td>
+          <select
+            class="proficiency-select"
+            name="system.attributes.strength.proficiency"
+          >
+            <option value="Untrained" selected>Untrained</option>
+            <option value="Trained">Trained</option>
+            <option value="Expert">Expert</option>
+            <option value="Master">Master</option>
+            <option value="Legendary">Legendary</option>
+          </select>
+        </td>
+        <td><input
+            type="number"
+            name="system.attributes.strength.bonus"
+            value="{{toInt system.attributes.strength.bonus}}"
+            placeholder="Bonus"
+          /></td>
+        <td><input
+            type="number"
+            name="system.attributes.strength.defenseDC"
+            value="{{toInt system.attributes.strength.defenseDC}}"
+            placeholder="DC"
+          /></td>
+        <td><input
+            type="number"
+            name="system.attributes.strength.item"
+            value="{{toInt system.attributes.strength.item}}"
+          /></td>
+      </tr>
+      {{! DEXTERITY }}
+      <tr>
+        <td>DEXTERITY</td>
+        <td>
+          <select
+            class="proficiency-select"
+            name="system.attributes.dexterity.proficiency"
+          >
+            <option value="Untrained" selected>Untrained</option>
+            <option value="Trained">Trained</option>
+            <option value="Expert">Expert</option>
+            <option value="Master">Master</option>
+            <option value="Legendary">Legendary</option>
+          </select>
+        </td>
+        <td><input
+            type="number"
+            name="system.attributes.dexterity.bonus"
+            value="{{toInt system.attributes.dexterity.bonus}}"
+            placeholder="Bonus"
+          /></td>
+        <td><input
+            type="number"
+            name="system.attributes.dexterity.defenseDC"
+            value="{{toInt system.attributes.dexterity.defenseDC}}"
+            placeholder="DC"
+          /></td>
+        <td><input
+            type="number"
+            name="system.attributes.dexterity.item"
+            value="{{toInt system.attributes.dexterity.item}}"
+          /></td>
+      </tr>
+      {{! INTELLIGENCE }}
+      <tr>
+        <td>INTELLIGENCE</td>
+        <td>
+          <select
+            class="proficiency-select"
+            name="system.attributes.intelligence.proficiency"
+          >
+            <option value="Untrained" selected>Untrained</option>
+            <option value="Trained">Trained</option>
+            <option value="Expert">Expert</option>
+            <option value="Master">Master</option>
+            <option value="Legendary">Legendary</option>
+          </select>
+        </td>
+        <td><input
+            type="number"
+            name="system.attributes.intelligence.bonus"
+            value="{{toInt system.attributes.intelligence.bonus}}"
+            placeholder="Bonus"
+          /></td>
+        <td><input
+            type="number"
+            name="system.attributes.intelligence.defenseDC"
+            value="{{toInt system.attributes.intelligence.defenseDC}}"
+            placeholder="DC"
+          /></td>
+        <td><input
+            type="number"
+            name="system.attributes.intelligence.item"
+            value="{{toInt system.attributes.intelligence.item}}"
+          /></td>
+      </tr>
+      {{! WISDOM }}
+      <tr>
+        <td>WISDOM</td>
+        <td>
+          <select
+            class="proficiency-select"
+            name="system.attributes.wisdom.proficiency"
+          >
+            <option value="Untrained" selected>Untrained</option>
+            <option value="Trained">Trained</option>
+            <option value="Expert">Expert</option>
+            <option value="Master">Master</option>
+            <option value="Legendary">Legendary</option>
+          </select>
+        </td>
+        <td><input
+            type="number"
+            name="system.attributes.wisdom.bonus"
+            value="{{toInt system.attributes.wisdom.bonus}}"
+            placeholder="Bonus"
+          /></td>
+        <td><input
+            type="number"
+            name="system.attributes.wisdom.defenseDC"
+            value="{{toInt system.attributes.wisdom.defenseDC}}"
+            placeholder="DC"
+          /></td>
+        <td><input
+            type="number"
+            name="system.attributes.wisdom.item"
+            value="{{toInt system.attributes.wisdom.item}}"
+          /></td>
+      </tr>
+      {{! PRESENCE }}
+      <tr>
+        <td>PRESENCE</td>
+        <td>
+          <select
+            class="proficiency-select"
+            name="system.attributes.presence.proficiency"
+          >
+            <option value="Untrained" selected>Untrained</option>
+            <option value="Trained">Trained</option>
+            <option value="Expert">Expert</option>
+            <option value="Master">Master</option>
+            <option value="Legendary">Legendary</option>
+          </select>
+        </td>
+        <td><input
+            type="number"
+            name="system.attributes.presence.bonus"
+            value="{{toInt system.attributes.presence.bonus}}"
+            placeholder="Bonus"
+          /></td>
+        <td><input
+            type="number"
+            name="system.attributes.presence.defenseDC"
+            value="{{toInt system.attributes.presence.defenseDC}}"
+            placeholder="DC"
+          /></td>
+        <td><input
+            type="number"
+            name="system.attributes.presence.item"
+            value="{{toInt system.attributes.presence.item}}"
+          /></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

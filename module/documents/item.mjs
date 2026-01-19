@@ -23,6 +23,8 @@ export class WayfinderItem extends Item {
     this._prepareItemData(itemData);
     this._prepareFeatureData(itemData);
     this._prepareSpellData(itemData);
+    this._prepareActiveEffectData(itemData);
+    this._preparePassiveEffectData(itemData);
   }
 
   /**
@@ -53,6 +55,31 @@ export class WayfinderItem extends Item {
 
     // Make modifications to data here
     const systemData = itemData.system;
+  }
+
+  /**
+   * Prepare Active Effect type specific data
+   */
+  _prepareActiveEffectData(itemData) {
+    if (itemData.type !== 'active-effect') return;
+
+    const systemData = itemData.system;
+    // Initialize defaults if needed
+    systemData.focusCost = systemData.focusCost || 0;
+    systemData.requiresRoll = systemData.requiresRoll || false;
+    systemData.isActive = systemData.isActive || false;
+  }
+
+  /**
+   * Prepare Passive Effect type specific data
+   */
+  _preparePassiveEffectData(itemData) {
+    if (itemData.type !== 'passive-effect') return;
+
+    const systemData = itemData.system;
+    // Initialize defaults if needed
+    systemData.isPermanent = systemData.isPermanent !== false;
+    systemData.isActive = systemData.isActive !== false;
   }
 
   /**

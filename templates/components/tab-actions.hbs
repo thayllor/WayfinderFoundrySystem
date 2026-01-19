@@ -1,0 +1,31 @@
+{{! Actions Tab Component }}
+<div class="tab" data-group="primary" data-tab="actions" style="display: none;">
+  <div class="actions-section">
+    <div class="action-subsection">
+      <h3>⭐ Ações Favoritas</h3>
+      <textarea
+        name="system.favoriteActives"
+        class="action-textarea"
+        placeholder="Insira nomes e custos de suas ações favoritas aqui..."
+      >{{system.favoriteActives}}</textarea>
+    </div>
+
+    <div class="action-subsection">
+      <h3>⭐ Ações Passivas</h3>
+      <textarea
+        name="system.favoritePassives"
+        class="action-textarea"
+        placeholder="Insira nomes de suas ações passivas favoritas aqui..."
+      >{{system.favoritePassives}}</textarea>
+    </div>
+
+    <div class="action-subsection">
+      <h3>⭐ Ataques Favoritos</h3>
+      <textarea
+        name="system.favoriteStrikes"
+        class="action-textarea"
+        placeholder="Insira descrições de seus ataques favoritos aqui..."
+      >{{system.favoriteStrikes}}</textarea>
+    </div>
+  </div>
+</div>

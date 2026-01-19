@@ -1,0 +1,13 @@
+{{!-- Resource Item Component --}}
+{{!-- @param label - Label do item --}}
+{{!-- @param centered - Centraliza o label (true/false) --}}
+{{!-- @param type - Tipo de input (number, text, select) --}}
+{{!-- @param name - Nome do input --}}
+{{!-- @param value - Valor do input --}}
+{{!-- @param placeholder - Placeholder --}}
+<div class="resource-item">
+  {{#if label}}
+    <label {{#if centered}}class="centered-label"{{/if}}>{{label}}</label>
+  {{/if}}
+  {{> @partial-block}}
+</div>

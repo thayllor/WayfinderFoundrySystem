@@ -1,0 +1,59 @@
+<form class="{{cssClasses}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <section class="header-fields">
+      <h1 class="charname">
+        <input name="name" type="text" value="{{item.name}}" placeholder="Nome do Efeito Passivo"/>
+      </h1>
+    </section>
+  </header>
+
+  {{!-- Sheet Tab Navigation --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="details">Detalhes</a>
+    <a class="item" data-tab="effects">Modificadores</a>
+  </nav>
+
+  {{!-- Sheet Body --}}
+  <section class="sheet-body">     {{#if traitsResolved.length}}
+     <div class="trait-chip-row">
+       <span class="trait-chip-label">Traits:</span>
+       {{#each traitsResolved as |trait|}}
+         <div class="trait-chip" style="background-color: {{trait.color}};" title="{{trait.name}}">
+           <span class="trait-chip-name">{{trait.name}}</span>
+         </div>
+       {{/each}}
+     </div>
+     {{/if}}
+    {{!-- DETAILS TAB --}}
+    <div class="tab active" data-group="primary" data-tab="details">
+      <div class="form-group">
+        <label>Nome</label>
+        <input type="text" name="name" value="{{item.name}}" class="effect-input"/>
+      </div>
+
+      {{textoEstilizado
+        name="system.effect"
+        value=system.effect
+        label="Efeito"
+        editable=editable
+      }}
+
+      <div class="form-group checkbox">
+        <label>Efeito Permanente?</label>
+        <input type="checkbox" name="system.isPermanent" {{#if system.isPermanent}}checked{{/if}}/>
+        <span style="font-size: 12px; color: #666;">Se não marcado, pode ser ativado/desativado</span>
+      </div>
+    </div>
+
+    {{!-- MODIFIERS TAB --}}
+    <div class="tab" data-group="primary" data-tab="effects">
+      <p style="padding: 10px; color: #666; font-size: 12px;">Aqui você pode adicionar modificadores permanentes que serão aplicados enquanto o efeito estiver ativo</p>
+
+      <div class="modifiers-section">
+        <h3>Modificadores Aplicados</h3>
+        <p style="color: #999; font-size: 12px;">Recurso a ser implementado - permite aplicar bônus/penalidades a atributos da ficha</p>
+      </div>
+    </div>
+  </section>
+</form>

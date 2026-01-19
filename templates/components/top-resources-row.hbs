@@ -1,0 +1,64 @@
+{{!-- Top Resources Row Component --}}
+<div class="top-resources-row">
+  {{#> systems/wayfinder/templates/components/resource-block title="Stamina" blockClass="stamina-block" contentClass="stamina-layout"}}
+    <div class="stamina-row">
+      <div class="resource-item">
+        <label>Current</label>
+        <input type="number" name="system.stamina.current" value="{{#if (isObject system.stamina.current)}}0{{else}}{{system.stamina.current}}{{/if}}" data-dtype="Number"/>
+      </div>
+      <div class="resource-item">
+        <label>Maximum</label>
+        <input type="number" name="system.stamina.maximum" value="{{#if (isObject system.stamina.maximum)}}0{{else}}{{system.stamina.maximum}}{{/if}}" data-dtype="Number"/>
+      </div>
+    </div>
+    <div class="resource-item">
+      <label class="centered-label">Temporary</label>
+      <input type="number" name="system.stamina.temporary" value="{{#if (isObject system.stamina.temporary)}}0{{else}}{{system.stamina.temporary}}{{/if}}" placeholder="0" data-dtype="Number"/>
+    </div>
+  {{/systems/wayfinder/templates/components/resource-block}}
+
+  {{#> systems/wayfinder/templates/components/resource-block title="Surges"}}
+    <div class="resource-item">
+      <label class="centered-label">Current</label>
+      <input type="number" name="system.surges.current" value="{{#if (isObject system.surges.current)}}0{{else}}{{system.surges.current}}{{/if}}" data-dtype="Number"/>
+    </div>
+    <div class="resource-item">
+      <label class="centered-label">Maximum</label>
+      <input type="number" name="system.surges.maximum" value="{{#if (isObject system.surges.maximum)}}0{{else}}{{system.surges.maximum}}{{/if}}" data-dtype="Number"/>
+    </div>
+  {{/components/resource-block}}
+
+  {{#> systems/wayfinder/templates/components/resource-block}}
+    <div class="resource-item">
+      <h3>Focus</h3>
+      <input type="number" name="system.focus.current" value="{{#if (isObject system.focus.current)}}0{{else}}{{system.focus.current}}{{/if}}" data-dtype="Number"/>
+    </div>
+    <div class="resource-item">
+      <h3>Hero Points</h3>
+      <input type="number" name="system.heroPoints.current" value="{{#if (isObject system.heroPoints.current)}}0{{else}}{{system.heroPoints.current}}{{/if}}" data-dtype="Number"/>
+    </div>
+  {{/components/resource-block}}
+
+  {{#> systems/wayfinder/templates/components/resource-block}}
+    <div class="resource-item">
+      <h3>Class DC</h3>
+      <input type="number" name="system.classDC" value="{{#if (isObject system.classDC)}}0{{else}}{{system.classDC}}{{/if}}" data-dtype="Number"/>
+    </div>
+    <div class="resource-item">
+      <h3>Speed</h3>
+      <input type="number" name="system.speed" value="{{#if (isObject system.speed)}}0{{else}}{{system.speed}}{{/if}}" placeholder="0" data-dtype="Number"/>
+    </div>
+  {{/components/resource-block}}
+
+
+  {{#> systems/wayfinder/templates/components/resource-block title="Size"}}
+    <select name="system.size">
+      <option value="Tiny" {{#if (eq system.size "Tiny")}}selected{{/if}}>Tiny</option>
+      <option value="Small" {{#if (eq system.size "Small")}}selected{{/if}}>Small</option>
+      <option value="Medium" {{#if (eq system.size "Medium")}}selected{{/if}}>Medium</option>
+      <option value="Large" {{#if (eq system.size "Large")}}selected{{/if}}>Large</option>
+      <option value="Huge" {{#if (eq system.size "Huge")}}selected{{/if}}>Huge</option>
+      <option value="Gargantuan" {{#if (eq system.size "Gargantuan")}}selected{{/if}}>Gargantuan</option>
+    </select>
+  {{/systems/wayfinder/templates/components/resource-block}}
+</div>

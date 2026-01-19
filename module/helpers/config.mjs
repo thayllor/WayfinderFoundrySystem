@@ -7,17 +7,26 @@ export const WAYFINDER = {};
 WAYFINDER.abilities = {
   "str": "WAYFINDER.Ability.Str.long",
   "dex": "WAYFINDER.Ability.Dex.long",
-  "con": "WAYFINDER.Ability.Con.long",
   "int": "WAYFINDER.Ability.Int.long",
   "wis": "WAYFINDER.Ability.Wis.long",
-  "cha": "WAYFINDER.Ability.Cha.long"
+  "pre": "WAYFINDER.Ability.Pre.long"
 };
 
 WAYFINDER.abilityAbbreviations = {
   "str": "WAYFINDER.Ability.Str.abbr",
   "dex": "WAYFINDER.Ability.Dex.abbr",
-  "con": "WAYFINDER.Ability.Con.abbr",
   "int": "WAYFINDER.Ability.Int.abbr",
   "wis": "WAYFINDER.Ability.Wis.abbr",
-  "cha": "WAYFINDER.Ability.Cha.abbr"
+  "pre": "WAYFINDER.Ability.Pre.abbr"
+};
+
+/**
+ * Item types
+ */
+WAYFINDER.itemTypes = {
+  "item": "TYPES.Item.item",
+  "spell": "TYPES.Item.spell",
+  "trait": "TYPES.Item.trait",
+  "active-effect": "TYPES.Item.active-effect",
+  "passive-effect": "TYPES.Item.passive-effect"
 };

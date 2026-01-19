@@ -1,0 +1,199 @@
+{{! TALENTS TAB CONTENT }}
+<h2 class="tab-title tab-title-talents">Talentos</h2>
+<div class="talents-section">
+  {{! Basic Talents }}
+  <div class="talent-type-category">
+    <div class="talent-type-header" data-talent-type="Basic">
+      <i class="fas fa-chevron-right talent-type-icon"></i>
+      <div class="talent-type-badge Basic">
+        <i class="fas fa-circle"></i>
+        <span>Basic Talents</span>
+      </div>
+      {{#if talents.Basic.length}}
+        <span class="talent-count">{{talents.Basic.length}}</span>
+      {{/if}}
+    </div>
+    <div class="talent-type-content" style="display: block;">
+      {{#if talents.Basic.length}}
+        {{#each talents.Basic as |talent|}}
+          <div class="talent-item" data-item-id="{{talent.id}}">
+            <div class="talent-item-header" data-talent-id="{{talent.id}}">
+              <i class="fas fa-chevron-right talent-item-icon"></i>
+              <span class="talent-item-name">{{talent.name}}</span>
+              <span class="talent-level-badge">Nv {{talent.system.level}}</span>
+              {{#if @root.editable}}
+                <button
+                  type="button"
+                  class="talent-edit-btn"
+                  data-item-id="{{talent._id}}"
+                  title="Editar talento"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button
+                  type="button"
+                  class="talent-delete-btn"
+                  data-item-id="{{talent._id}}"
+                  title="Remover talento"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              {{/if}}
+            </div>
+            <div class="talent-item-content" style="display: none;"></div>
+          </div>
+        {{/each}}
+      {{else}}
+        <p class="empty-message"><i class="fas fa-info-circle"></i>
+          Nenhum talento Basic.</p>
+      {{/if}}
+    </div>
+  </div>
+
+  {{! General Talents }}
+  <div class="talent-type-category">
+    <div class="talent-type-header" data-talent-type="General">
+      <i class="fas fa-chevron-right talent-type-icon"></i>
+      <div class="talent-type-badge General">
+        <i class="fas fa-star"></i>
+        <span>General Talents</span>
+      </div>
+      {{#if talents.General.length}}
+        <span class="talent-count">{{talents.General.length}}</span>
+      {{/if}}
+    </div>
+    <div class="talent-type-content" style="display: block;">
+      {{#if talents.General.length}}
+        {{#each talents.General as |talent|}}
+          <div class="talent-item" data-item-id="{{talent.id}}">
+            <div class="talent-item-header" data-talent-id="{{talent.id}}">
+              <i class="fas fa-chevron-right talent-item-icon"></i>
+              <span class="talent-item-name">{{talent.name}}</span>
+              <span class="talent-level-badge">Nv {{talent.system.level}}</span>
+              {{#if @root.editable}}
+                <button
+                  type="button"
+                  class="talent-edit-btn"
+                  data-item-id="{{talent.id}}"
+                  title="Editar talento"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button
+                  type="button"
+                  class="talent-delete-btn"
+                  data-item-id="{{talent.id}}"
+                  title="Remover talento"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              {{/if}}
+            </div>
+            <div class="talent-item-content" style="display: none;"></div>
+          </div>
+        {{/each}}
+      {{else}}
+        <p class="empty-message"><i class="fas fa-info-circle"></i>
+          Nenhum talento General.</p>
+      {{/if}}
+    </div>
+  </div>
+
+  {{! Ancestry Talents }}
+  <div class="talent-type-category">
+    <div class="talent-type-header" data-talent-type="Ancestry">
+      <i class="fas fa-chevron-right talent-type-icon"></i>
+      <div class="talent-type-badge Ancestry">
+        <i class="fas fa-dna"></i>
+        <span>Ancestry Talents</span>
+      </div>
+      {{#if talents.Ancestry.length}}
+        <span class="talent-count">{{talents.Ancestry.length}}</span>
+      {{/if}}
+    </div>
+    <div class="talent-type-content" style="display: block;">
+      {{#if talents.Ancestry.length}}
+        {{#each talents.Ancestry as |talent|}}
+          <div class="talent-item" data-item-id="{{talent.id}}">
+            <div class="talent-item-header" data-talent-id="{{talent.id}}">
+              <i class="fas fa-chevron-right talent-item-icon"></i>
+              <span class="talent-item-name">{{talent.name}}</span>
+              <span class="talent-level-badge">Nv {{talent.system.level}}</span>
+              {{#if @root.editable}}
+                <button
+                  type="button"
+                  class="talent-edit-btn"
+                  data-item-id="{{talent.id}}"
+                  title="Editar talento"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button
+                  type="button"
+                  class="talent-delete-btn"
+                  data-item-id="{{talent.id}}"
+                  title="Remover talento"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              {{/if}}
+            </div>
+            <div class="talent-item-content" style="display: none;"></div>
+          </div>
+        {{/each}}
+      {{else}}
+        <p class="empty-message"><i class="fas fa-info-circle"></i>
+          Nenhum talento Ancestry.</p>
+      {{/if}}
+    </div>
+  </div>
+
+  {{! Class Talents }}
+  <div class="talent-type-category">
+    <div class="talent-type-header" data-talent-type="Class">
+      <i class="fas fa-chevron-right talent-type-icon"></i>
+      <div class="talent-type-badge Class">
+        <i class="fas fa-shield-alt"></i>
+        <span>Class Talents</span>
+      </div>
+      {{#if talents.Class.length}}
+        <span class="talent-count">{{talents.Class.length}}</span>
+      {{/if}}
+    </div>
+    <div class="talent-type-content" style="display: block;">
+      {{#if talents.Class.length}}
+        {{#each talents.Class as |talent|}}
+          <div class="talent-item" data-item-id="{{talent.id}}">
+            <div class="talent-item-header" data-talent-id="{{talent.id}}">
+              <i class="fas fa-chevron-right talent-item-icon"></i>
+              <span class="talent-item-name">{{talent.name}}</span>
+              <span class="talent-level-badge">Nv {{talent.system.level}}</span>
+              {{#if @root.editable}}
+                <button
+                  type="button"
+                  class="talent-edit-btn"
+                  data-item-id="{{talent.id}}"
+                  title="Editar talento"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button
+                  type="button"
+                  class="talent-delete-btn"
+                  data-item-id="{{talent.id}}"
+                  title="Remover talento"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              {{/if}}
+            </div>
+            <div class="talent-item-content" style="display: none;"></div>
+          </div>
+        {{/each}}
+      {{else}}
+        <p class="empty-message"><i class="fas fa-info-circle"></i>
+          Nenhum talento Class.</p>
+      {{/if}}
+    </div>
+  </div>
+</div>

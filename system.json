@@ -5,21 +5,17 @@
   "version": "1.0.0",
   "compatibility": {
     "minimum": "11",
-    "verified": "12",
-    "maximum": "12"
+    "verified": "13",
+    "maximum": "13"
   },
   "authors": [
     {
-      "name": "Seu Nome",
-      "email": "email@example.com"
+      "name": "Thayllor",
+      "email": "thayllordossantos@gmail.com"
     }
   ],
-  "esmodules": [
-    "module/wayfinder.mjs"
-  ],
-  "styles": [
-    "css/wayfinder.css"
-  ],
+  "esmodules": ["module/wayfinder.mjs"],
+  "styles": ["css/wayfinder.css"],
   "languages": [
     {
       "lang": "en",
@@ -32,24 +28,24 @@
       "path": "lang/pt-BR.json"
     }
   ],
-  "documentTypes": {
-    "Actor": {
-      "character": {},
-      "npc": {}
-    },
-    "Item": {
-      "item": {},
-      "feature": {},
-      "spell": {}
-    }
+  "grid": {
+    "distance": 5,
+    "units": "ft"
   },
-  "gridDistance": 5,
-  "gridUnits": "ft",
   "primaryTokenAttribute": "health",
   "secondaryTokenAttribute": "power",
   "url": "https://github.com/thayllor/WayfinderFoundrySystem",
   "manifest": "https://github.com/thayllor/WayfinderFoundrySystem/releases/latest/download/system.json",
   "download": "https://github.com/thayllor/WayfinderFoundrySystem/archive/refs/heads/main.zip",
   "license": "LICENSE.txt",
-  "readme": "README.md"
+  "readme": "README.md",
+  "documentTypes": {
+    "Item": {
+      "item": {},
+      "spell": {},
+      "active-effect": {},
+      "passive-effect": {},
+      "trait": {}
+    }
+  }
 }

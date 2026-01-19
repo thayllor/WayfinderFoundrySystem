@@ -1,0 +1,46 @@
+{{! Attributes Pentagon Component }}
+<div class="attributes-pentagon">
+  <img
+    src="systems/wayfinder/images/marca_dagua_atributos.png"
+    alt="Marca d'Água Atributos"
+    class="pentagon-background-img"
+  />
+  <div class="pentagon-attributes-container">
+    {{#each system.attributes as |attribute key|}}
+      <div class="pentagon-attribute">
+        <div class="attribute-name">{{key}}</div>
+        <div class="attribute-pentagon-box">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <polygon
+              points="50,15 85,40 75,80 25,80 15,40"
+              fill="none"
+              stroke="#8b5a3c"
+              stroke-width="1.5"
+              opacity="0.6"
+            />
+          </svg>
+          <div class="attribute-value-triangle">
+            <div class="triangle-up">
+              <input
+                class="attribute-value"
+                type="number"
+                name="system.attributes.{{key}}.value"
+                value="{{attribute.value}}"
+                placeholder="V"
+              />
+            </div>
+            <div class="triangle-down">
+              <input
+                class="attribute-value"
+                type="number"
+                name="system.attributes.{{key}}.defenseDC"
+                value="{{attribute.defenseDC}}"
+                placeholder="D"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>

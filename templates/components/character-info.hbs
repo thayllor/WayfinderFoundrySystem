@@ -1,0 +1,35 @@
+{{! Character Info Row Component }}
+<div class="character-info-row">
+  <div class="info-field">
+    <label>Ancestry</label>
+    <input
+      type="text"
+      name="system.ancestry"
+      value="{{system.ancestry}}"
+      placeholder="Ancestry"
+    />
+  </div>
+  <div class="info-field">
+    <label>Class</label>
+    <input
+      type="text"
+      name="system.class"
+      value="{{system.class}}"
+      placeholder="Class"
+    />
+  </div>
+  <div class="info-field">
+    <label>Level</label>
+    <input
+      type="number"
+      name="system.level"
+      value="{{system.level}}"
+      min="1"
+      max="20"
+    />
+  </div>
+  <div class="info-field">
+    <label>EXP</label>
+    <input type="number" name="system.exp" value="{{system.exp}}" />
+  </div>
+</div>

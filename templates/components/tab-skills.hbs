@@ -1,0 +1,34 @@
+{{!-- Skills Tab Component --}}
+<div class="tab active" data-group="primary" data-tab="skills" style="display: block;">
+  <div class="skills-section">
+    <h3>Perícias</h3>
+    <table class="skills-table">
+      <thead>
+        <tr>
+          <th>Perícia</th>
+          <th>Atributo</th>
+          <th>Proficiência</th>
+          <th>Bônus</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each system.skills as |skill key|}}
+        <tr>
+          <td><strong>{{key}}</strong></td>
+          <td><input type="text" name="system.skills.{{key}}.attribute" value="{{skill.attribute}}" class="short-input" readonly/></td>
+          <td>
+            <select name="system.skills.{{key}}.proficiency" class="short-input">
+              <option value="untrained" {{#if (eq skill.proficiency 'untrained')}}selected{{/if}}>Untrained</option>
+              <option value="trained" {{#if (eq skill.proficiency 'trained')}}selected{{/if}}>Trained</option>
+              <option value="expert" {{#if (eq skill.proficiency 'expert')}}selected{{/if}}>Expert</option>
+              <option value="master" {{#if (eq skill.proficiency 'master')}}selected{{/if}}>Master</option>
+              <option value="legendary" {{#if (eq skill.proficiency 'legendary')}}selected{{/if}}>Legendary</option>
+            </select>
+          </td>
+          <td><input type="number" name="system.skills.{{key}}.bonus" value="{{skill.bonus}}" class="short-input"/></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>

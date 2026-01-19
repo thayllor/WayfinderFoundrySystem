@@ -1,0 +1,45 @@
+<div style="padding: 20px; color: black;">
+  <h2>{{actor.name}}</h2>
+  <p>Type: {{actor.type}}</p>
+  <p>Player: {{system.playerName}}</p>
+
+  <h3>Resources</h3>
+  <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+    <label>Stamina Current:
+      <input
+        type="number"
+        name="system.stamina.current"
+        value="{{system.stamina.current}}"
+      /></label>
+  </div>
+
+  <h3>Info Row</h3>
+  <div
+    style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;"
+  >
+    <input
+      type="text"
+      name="system.ancestry"
+      value="{{system.ancestry}}"
+      placeholder="Ancestry"
+    />
+    <input
+      type="text"
+      name="system.class"
+      value="{{system.class}}"
+      placeholder="Class"
+    />
+    <input
+      type="number"
+      name="system.level"
+      value="{{system.level}}"
+      placeholder="Level"
+    />
+    <input
+      type="number"
+      name="system.exp"
+      value="{{system.exp}}"
+      placeholder="EXP"
+    />
+  </div>
+</div>

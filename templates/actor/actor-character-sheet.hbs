@@ -1,77 +1,461 @@
-<form class="{{cssClass}} flexcol" autocomplete="off">
+<form class="wayfinder flexcol" autocomplete="off">
+  {{!-- CHARACTER INFO ROW --}}
+  <div class="character-info-row">
+    <div class="character-portrait">
+      <img class="character-portrait-img" src="{{actor.img}}" data-edit="img" title="Retrato do Personagem" height="150" width="150"/>
+    </div>
+    <div class="character-info-fields">
+      {{!-- First Row --}}
+      <div class="info-field">
+        <label>Nome do Personagem</label>
+        <input type="text" name="name" value="{{actor.name}}" placeholder="Nome"/>
+      </div>
+      <div class="info-field">
+        <label>Nome do Jogador</label>
+        <input type="text" name="system.playerName" value="{{system.playerName}}" placeholder="Jogador"/>
+      </div>
+      <div class="info-field">
+        <label>Pronome</label>
+        <input type="text" name="system.pronoun" value="{{system.pronoun}}" placeholder="ex: ele/dele"/>
+      </div>
+      <div class="info-field">
+        <label>Idade</label>
+        <input type="number" name="system.age" value="{{system.age}}" placeholder="Idade"/>
+      </div>
+      {{!-- Second Row --}}
+      <div class="info-field">
+        <label>Ascendência</label>
+        <input type="text" name="system.ancestry" value="{{system.ancestry}}" placeholder="Ascendência"/>
+      </div>
+      <div class="info-field">
+        <label>Classe</label>
+        <input type="text" name="system.class" value="{{system.class}}" placeholder="Classe"/>
+      </div>
+      <div class="info-field">
+        <label>Nível</label>
+        <input type="number" name="system.level" value="{{system.level}}" min="1" max="20" placeholder="Nível"/>
+      </div>
+      <div class="info-field">
+        <label>Experiência</label>
+        <input type="number" name="system.exp" value="{{system.exp}}" placeholder="Experiência"/>
+      </div>
+    </div>
+  </div>
 
-  {{!-- Sheet Header --}}
-  <header class="sheet-header">
-    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
-    <div class="header-fields">
-      <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
-      {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
-      use both the "grid" and "grid-Ncol" class where "N" can be any number from 1 to 12 and will create that number of columns.  --}}
-      <div class="resources grid grid-2col">
-        {{!-- "flex-group-center" is also defined in the _grid.scss file
-        and it will add a small amount of padding, a border, and will
-        center all of its child elements content and text. --}}
-        <div class="resource flex-group-center">
-          <label for="system.health.value" class="resource-label">Health</label>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="text" name="system.health.value" value="{{system.health.value}}" data-dtype="Number"/>
-            <span> / </span>
-            <input type="text" name="system.health.max" value="{{system.health.max}}" data-dtype="Number"/>
+  {{!-- TOP RESOURCES ROW --}}
+  <div class="top-resources-row">
+    <div class="resource-block stamina-block">
+      <h4>Stamina</h4>
+      <div class="resource-block-content stamina-layout">
+        <div class="stamina-row">
+          <div class="resource-item">
+            <label>Current</label>
+            <input type="number" name="system.stamina.current" value="{{#if (isObject system.stamina.current)}}0{{else}}{{system.stamina.current}}{{/if}}" data-dtype="Number"/>
+          </div>
+          <div class="resource-item">
+            <label>Maximum</label>
+            <input type="number" name="system.stamina.maximum" value="{{#if (isObject system.stamina.maximum)}}0{{else}}{{system.stamina.maximum}}{{/if}}" data-dtype="Number"/>
           </div>
         </div>
-        <div class="resource flex-group-center">
-          <label for="system.power.value" class="resource-label">Power</label>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="text" name="system.power.value" value="{{system.power.value}}" data-dtype="Number"/>
-            <span> / </span>
-            <input type="text" name="system.power.max" value="{{system.power.max}}" data-dtype="Number"/>
-          </div>
+        <div class="resource-item">
+          <label class="centered-label">Temporary</label>
+          <input type="number" name="system.stamina.temporary" value="{{#if (isObject system.stamina.temporary)}}0{{else}}{{system.stamina.temporary}}{{/if}}" placeholder="0" data-dtype="Number"/>
         </div>
       </div>
     </div>
-  </header>
+
+    <div class="resource-block">
+      <h4>Surges</h4>
+      <div class="resource-block-content">
+        <div class="resource-item">
+          <label class="centered-label">Current</label>
+          <input type="number" name="system.surges.current" value="{{#if (isObject system.surges.current)}}0{{else}}{{system.surges.current}}{{/if}}" data-dtype="Number"/>
+        </div>
+        <div class="resource-item">
+          <label class="centered-label">Maximum</label>
+          <input type="number" name="system.surges.maximum" value="{{#if (isObject system.surges.maximum)}}0{{else}}{{system.surges.maximum}}{{/if}}" data-dtype="Number"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="resource-block">
+      <div class="resource-block-content">
+        <div class="resource-item">
+          <h3>Focus</h3>
+          <input type="number" name="system.focus.current" value="{{#if (isObject system.focus.current)}}0{{else}}{{system.focus.current}}{{/if}}" data-dtype="Number"/>
+        </div>
+        <div class="resource-item">
+          <h3>Hero Points</h3>
+          <input type="number" name="system.heroPoints.current" value="{{#if (isObject system.heroPoints.current)}}0{{else}}{{system.heroPoints.current}}{{/if}}" data-dtype="Number"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="resource-block">
+      <div class="resource-block-content">
+        <div class="resource-item">
+          <h3>Class DC</h3>
+          <input type="number" name="system.classDC" value="{{#if (isObject system.classDC)}}0{{else}}{{system.classDC}}{{/if}}" data-dtype="Number"/>
+        </div>
+        <div class="resource-item">
+          <h3>Speed</h3>
+          <input type="number" name="system.speed" value="{{#if (isObject system.speed)}}0{{else}}{{system.speed}}{{/if}}" placeholder="0" data-dtype="Number"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="resource-block">
+      <h4>Size</h4>
+      <div class="resource-block-content">
+        <select name="system.size">
+          <option value="Tiny" {{#if (eq system.size "Tiny")}}selected{{/if}}>Tiny</option>
+          <option value="Small" {{#if (eq system.size "Small")}}selected{{/if}}>Small</option>
+          <option value="Medium" {{#if (eq system.size "Medium")}}selected{{/if}}>Medium</option>
+          <option value="Large" {{#if (eq system.size "Large")}}selected{{/if}}>Large</option>
+          <option value="Huge" {{#if (eq system.size "Huge")}}selected{{/if}}>Huge</option>
+          <option value="Gargantuan" {{#if (eq system.size "Gargantuan")}}selected{{/if}}>Gargantuan</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="attributes-resources-horizontal">
+    {{!-- ATTRIBUTES PENTAGON (esquerda) --}}
+    <div class="attributes-pentagon">
+      <img src="systems/wayfinder/images/marca_dagua_atributos.png" alt="Marca d'Água Atributos" class="pentagon-background-img"/>
+      <div class="pentagon-attributes-container">
+        {{#each system.attributes as |attribute key|}}
+        <div class="pentagon-attribute">
+          <div class="attribute-name">{{key}}</div>
+          <div class="attribute-pentagon-box">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="50,15 85,40 75,80 25,80 15,40"
+                       fill="none"
+                       stroke="#8b5a3c"
+                       stroke-width="1.5"
+                       opacity="0.6"/>
+            </svg>
+            <div class="attribute-value-triangle">
+              <div class="triangle-up">
+                <input class="attribute-value" type="number" name="system.attributes.{{key}}.value" value="{{attribute.value}}" placeholder="V"/>
+              </div>
+              <div class="triangle-down">
+                <input class="attribute-value" type="number" name="system.attributes.{{key}}.defenseDC" value="{{attribute.defenseDC}}" placeholder="D"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- RESOURCES (direita) --}}
+    <div class="resources-section">
+      <h3>Attribute Defenses</h3>
+      <table class="defenses-table">
+        <thead>
+          <tr>
+            <th>Attribute</th>
+            <th>Proficiency</th>
+            <th>Bonus</th>
+            <th>Defense DC</th>
+            <th>Item</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>STRENGTH</td>
+            <td>
+              <select class="proficiency-select" name="system.attributes.strength.proficiency">
+                <option value="Untrained" selected>Untrained</option>
+                <option value="Trained">Trained</option>
+                <option value="Expert">Expert</option>
+                <option value="Master">Master</option>
+                <option value="Legendary">Legendary</option>
+              </select>
+            </td>
+            <td><input type="number" name="system.attributes.strength.bonus" value="{{toInt system.attributes.strength.bonus}}" placeholder="Bonus"/></td>
+            <td><input type="number" name="system.attributes.strength.defenseDC" value="{{toInt system.attributes.strength.defenseDC}}" placeholder="DC"/></td>
+            <td><input type="number" name="system.attributes.strength.item" value="{{toInt system.attributes.strength.item}}"/></td>
+          </tr>
+          <tr>
+            <td>DEXTERITY</td>
+            <td>
+              <select class="proficiency-select" name="system.attributes.dexterity.proficiency">
+                <option value="Untrained" selected>Untrained</option>
+                <option value="Trained">Trained</option>
+                <option value="Expert">Expert</option>
+                <option value="Master">Master</option>
+                <option value="Legendary">Legendary</option>
+              </select>
+            </td>
+            <td><input type="number" name="system.attributes.dexterity.bonus" value="{{toInt system.attributes.dexterity.bonus}}" placeholder="Bonus"/></td>
+            <td><input type="number" name="system.attributes.dexterity.defenseDC" value="{{toInt system.attributes.dexterity.defenseDC}}" placeholder="DC"/></td>
+            <td><input type="number" name="system.attributes.dexterity.item" value="{{toInt system.attributes.dexterity.item}}"/></td>
+          </tr>
+          <tr>
+            <td>INTELLIGENCE</td>
+            <td>
+              <select class="proficiency-select" name="system.attributes.intelligence.proficiency">
+                <option value="Untrained" selected>Untrained</option>
+                <option value="Trained">Trained</option>
+                <option value="Expert">Expert</option>
+                <option value="Master">Master</option>
+                <option value="Legendary">Legendary</option>
+              </select>
+            </td>
+            <td><input type="number" name="system.attributes.intelligence.bonus" value="{{toInt system.attributes.intelligence.bonus}}" placeholder="Bonus"/></td>
+            <td><input type="number" name="system.attributes.intelligence.defenseDC" value="{{toInt system.attributes.intelligence.defenseDC}}" placeholder="DC"/></td>
+            <td><input type="number" name="system.attributes.intelligence.item" value="{{toInt system.attributes.intelligence.item}}"/></td>
+          </tr>
+          <tr>
+            <td>WISDOM</td>
+            <td>
+              <select class="proficiency-select" name="system.attributes.wisdom.proficiency">
+                <option value="Untrained" selected>Untrained</option>
+                <option value="Trained">Trained</option>
+                <option value="Expert">Expert</option>
+                <option value="Master">Master</option>
+                <option value="Legendary">Legendary</option>
+              </select>
+            </td>
+            <td><input type="number" name="system.attributes.wisdom.bonus" value="{{toInt system.attributes.wisdom.bonus}}" placeholder="Bonus"/></td>
+            <td><input type="number" name="system.attributes.wisdom.defenseDC" value="{{toInt system.attributes.wisdom.defenseDC}}" placeholder="DC"/></td>
+            <td><input type="number" name="system.attributes.wisdom.item" value="{{toInt system.attributes.wisdom.item}}"/></td>
+          </tr>
+          <tr>
+            <td>PRESENCE</td>
+            <td>
+              <select class="proficiency-select" name="system.attributes.presence.proficiency">
+                <option value="Untrained" selected>Untrained</option>
+                <option value="Trained">Trained</option>
+                <option value="Expert">Expert</option>
+                <option value="Master">Master</option>
+                <option value="Legendary">Legendary</option>
+              </select>
+            </td>
+            <td><input type="number" name="system.attributes.presence.bonus" value="{{toInt system.attributes.presence.bonus}}" placeholder="Bonus"/></td>
+            <td><input type="number" name="system.attributes.presence.defenseDC" value="{{toInt system.attributes.presence.defenseDC}}" placeholder="DC"/></td>
+            <td><input type="number" name="system.attributes.presence.item" value="{{toInt system.attributes.presence.item}}"/></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
   {{!-- Sheet Tab Navigation --}}
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="features">Features</a>
-    <a class="item" data-tab="description">Description</a>
-    <a class="item" data-tab="items">Items</a>
-    <a class="item" data-tab="spells">Spells</a>
+    <a class="item active" data-tab="skills" data-icon="d20">Perícias</a>
+    <a class="item" data-tab="actions" data-icon="actions">Ações</a>
+    <a class="item" data-tab="talents" data-icon="star">Talentos</a>
+    <a class="item" data-tab="resources" data-icon="items">Recursos</a>
   </nav>
 
   {{!-- Sheet Body --}}
   <section class="sheet-body">
-
-    {{!-- Attributes Tab --}}
-    <div class="tab features" data-group="primary" data-tab="features">
-      <section class="attributes grid grid-3col">
-        {{#each system.attributes as |attribute key|}}
-        <div class="attribute flexcol rollable" data-roll="d20+@attributes.{{key}}.mod" data-label="{{key}}">
-          <div class="attribute-name">{{key}}</div>
-          <input class="attribute-value" type="text" name="system.attributes.{{key}}.value" value="{{attribute.value}}" data-dtype="Number"/>
-          <div class="attribute-label">Mod: {{numberFormat attribute.mod decimals=0 sign=true}}</div>
+    {{!-- SKILLS TAB --}}
+    <div class="tab active" data-group="primary" data-tab="skills">
+      <h2 class="tab-title tab-title-skills">Perícias</h2>
+      <div class="skills-section">
+        <div class="skills-table-container">
+          <table class="skills-table skills-table-left">
+            <thead>
+              <tr>
+                <th>Perícia</th>
+                <th>Atributo</th>
+                <th>Proficiência</th>
+                <th>Bônus</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each system.skills as |skill key|}}
+                {{#if (lt @index ../skillsMidpoint)}} {{!-- First half --}}
+              <tr>
+                <td><strong>{{key}}</strong></td>
+                <td><input type="text" name="system.skills.{{key}}.attribute" value="{{skill.attribute}}" class="short-input" readonly/></td>
+                <td>
+                  <select name="system.skills.{{key}}.proficiency" class="short-input">
+                    <option value="untrained" {{#if (eq skill.proficiency 'untrained')}}selected{{/if}}>Untrained</option>
+                    <option value="trained" {{#if (eq skill.proficiency 'trained')}}selected{{/if}}>Trained</option>
+                    <option value="expert" {{#if (eq skill.proficiency 'expert')}}selected{{/if}}>Expert</option>
+                    <option value="master" {{#if (eq skill.proficiency 'master')}}selected{{/if}}>Master</option>
+                    <option value="legendary" {{#if (eq skill.proficiency 'legendary')}}selected{{/if}}>Legendary</option>
+                  </select>
+                </td>
+                <td><input type="number" name="system.skills.{{key}}.bonus" value="{{skill.bonus}}" class="short-input"/></td>
+              </tr>
+                {{/if}}
+              {{/each}}
+            </tbody>
+          </table>
+          <table class="skills-table skills-table-right">
+            <thead>
+              <tr>
+                <th>Perícia</th>
+                <th>Atributo</th>
+                <th>Proficiência</th>
+                <th>Bônus</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each system.skills as |skill key|}}
+                {{#if (gte @index ../skillsMidpoint)}} {{!-- Second column (second half) --}}
+              <tr>
+                <td><strong>{{key}}</strong></td>
+                <td><input type="text" name="system.skills.{{key}}.attribute" value="{{skill.attribute}}" class="short-input" readonly/></td>
+                <td>
+                  <select name="system.skills.{{key}}.proficiency" class="short-input">
+                    <option value="untrained" {{#if (eq skill.proficiency 'untrained')}}selected{{/if}}>Untrained</option>
+                    <option value="trained" {{#if (eq skill.proficiency 'trained')}}selected{{/if}}>Trained</option>
+                    <option value="expert" {{#if (eq skill.proficiency 'expert')}}selected{{/if}}>Expert</option>
+                    <option value="master" {{#if (eq skill.proficiency 'master')}}selected{{/if}}>Master</option>
+                    <option value="legendary" {{#if (eq skill.proficiency 'legendary')}}selected{{/if}}>Legendary</option>
+                  </select>
+                </td>
+                <td><input type="number" name="system.skills.{{key}}.bonus" value="{{skill.bonus}}" class="short-input"/></td>
+              </tr>
+                {{/if}}
+              {{/each}}
+            </tbody>
+          </table>
         </div>
-        {{/each}}
-      </section>
-
-      {{!-- Features --}}
-      {{> "systems/wayfinder/templates/actor/parts/actor-features.hbs"}}
+      </div>
     </div>
 
-    {{!-- Biography Tab --}}
-    <div class="tab biography" data-group="primary" data-tab="description">
-      {{editor system.biography target="system.biography" button=true owner=owner editable=editable}}
+    {{!-- ACTIONS TAB (Efeitos) --}}
+    <div class="tab" data-group="primary" data-tab="actions">
+      <h2 class="tab-title tab-title-actions">Efeitos</h2>
+
+      <div class="effects-container">
+        {{!-- ACTIVE EFFECTS TABLE --}}
+        <div class="effects-section">
+          <h3 class="effects-subtitle">Efeitos Ativos</h3>
+          <div class="effects-table-wrapper">
+            {{#if (gt activeEffects.length 0)}}
+              <table class="effects-table">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Alcance</th>
+                    <th>Alvo</th>
+                    <th>Duração</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each activeEffects as |effect index|}}
+                  <tr class="effect-row" data-effect-id="{{effect._id}}">
+                    <td class="effect-name">{{effect.name}}</td>
+                    <td class="effect-range">{{effect.system.range}}</td>
+                    <td class="effect-target">{{effect.system.target}}</td>
+                    <td class="effect-duration">{{effect.system.duration}}</td>
+                    <td class="effect-actions">
+                      <button class="effect-activate" data-effect-id="{{effect._id}}" data-effect-type="active" title="Ativar efeito">⚡</button>
+                      <button class="effect-view" data-effect-id="{{effect._id}}" title="Ver detalhes">👁️</button>
+                      <button class="effect-delete" data-effect-id="{{effect._id}}" title="Remover">✕</button>
+                    </td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            {{else}}
+              <p class="effects-empty">Nenhum efeito ativo adicionado. Arraste efeitos aqui!</p>
+            {{/if}}
+          </div>
+        </div>
+
+        {{!-- PASSIVE EFFECTS TABLE --}}
+        <div class="effects-section">
+          <h3 class="effects-subtitle">Efeitos Passivos</h3>
+          <div class="effects-table-wrapper">
+            {{#if (gt passiveEffects.length 0)}}
+              <table class="effects-table">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Efeito</th>
+                    <th>Permanente</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each passiveEffects as |effect index|}}
+                  <tr class="effect-row" data-effect-id="{{effect._id}}">
+                    <td class="effect-name">{{effect.name}}</td>
+                    <td class="effect-description">{{effect.system.effect}}</td>
+                    <td class="effect-permanent">{{#if effect.system.isPermanent}}Sim{{else}}Não{{/if}}</td>
+                    <td class="effect-actions">
+                      <button class="effect-toggle" data-effect-id="{{effect._id}}" data-effect-type="passive" title="Ativar/Desativar">🔄</button>
+                      <button class="effect-view" data-effect-id="{{effect._id}}" title="Ver detalhes">👁️</button>
+                      <button class="effect-delete" data-effect-id="{{effect._id}}" title="Remover">✕</button>
+                    </td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            {{else}}
+              <p class="effects-empty">Nenhum efeito passivo adicionado. Arraste efeitos aqui!</p>
+            {{/if}}
+          </div>
+        </div>
+      </div>
     </div>
 
-    {{!-- Owned Items Tab --}}
-    <div class="tab items" data-group="primary" data-tab="items">
-      {{> "systems/wayfinder/templates/actor/parts/actor-items.hbs"}}
+    {{!-- TALENTS TAB --}}
+    <div class="tab" data-group="primary" data-tab="talents">
+      {{> "systems/wayfinder/templates/actor/parts/actor-talents.hbs"}}
     </div>
 
-    {{!-- Owned Spells Tab --}}
-    <div class="tab spells" data-group="primary" data-tab="spells">
-      {{> "systems/wayfinder/templates/actor/parts/actor-spells.hbs"}}
-    </div>
+    {{!-- RESOURCES TAB --}}
+    <div class="tab" data-group="primary" data-tab="resources">
+      <h2 class="tab-title tab-title-resources">Recursos</h2>
+      <div class="resources-grid grid grid-2col">
+        <div class="resource flex-group-center">
+          <h4>Stamina</h4>
+          <div class="resource-content flexrow flex-center flex-between">
+            <input type="number" name="system.stamina.current" value="{{system.stamina.current}}"/>
+            <span> / </span>
+            <input type="number" name="system.stamina.maximum" value="{{system.stamina.maximum}}"/>
+          </div>
+        </div>
 
+        <div class="resource flex-group-center">
+          <h4>Hero Points</h4>
+          <div class="resource-content flexrow flex-center flex-between">
+            <input type="number" name="system.heroPoints.current" value="{{system.heroPoints.current}}"/>
+          </div>
+        </div>
+
+        <div class="resource flex-group-center">
+          <h4>Focus</h4>
+          <div class="resource-content flexrow flex-center flex-between">
+            <input type="number" name="system.focus.current" value="{{system.focus.current}}"/>
+          </div>
+        </div>
+
+        <div class="resource flex-group-center">
+          <h4>Resonance</h4>
+          <div class="resource-content flexrow flex-center flex-between">
+            <input type="number" name="system.resonance.current" value="{{system.resonance.current}}"/>
+            <span> / </span>
+            <input type="number" name="system.resonance.maximum" value="{{system.resonance.maximum}}"/>
+          </div>
+        </div>
+
+        <div class="resource flex-group-center">
+          <h4>Surges</h4>
+          <div class="resource-content flexrow flex-center flex-between">
+            <input type="number" name="system.surges.current" value="{{system.surges.current}}"/>
+            <span> / </span>
+            <input type="number" name="system.surges.maximum" value="{{system.surges.maximum}}"/>
+          </div>
+        </div>
+
+        <div class="resource flex-group-center">
+          <h4>EXP</h4>
+          <input type="number" name="system.exp" value="{{system.exp}}"/>
+        </div>
+      </div>
+    </div>
   </section>
 </form>

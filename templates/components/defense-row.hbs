@@ -1,0 +1,35 @@
+{{! Defense Row Component }}
+{{! @param attribute - Nome do atributo (STRENGTH, DEXTERITY, etc) }}
+{{! @param attributeKey - Chave para o system (strength, dexterity, etc) }}
+<tr>
+  <td>{{attribute}}</td>
+  <td>
+    <select
+      class="proficiency-select"
+      name="system.attributes.{{attributeKey}}.proficiency"
+    >
+      <option value="Untrained" selected>Untrained</option>
+      <option value="Trained">Trained</option>
+      <option value="Expert">Expert</option>
+      <option value="Master">Master</option>
+      <option value="Legendary">Legendary</option>
+    </select>
+  </td>
+  <td><input
+      type="number"
+      name="system.attributes.{{attributeKey}}.bonus"
+      value="0"
+      placeholder="Bonus"
+    /></td>
+  <td><input
+      type="number"
+      name="system.attributes.{{attributeKey}}.defenseDC"
+      value="{{lookup (lookup system 'attributes') attributeKey 'defenseDC'}}"
+      placeholder="DC"
+    /></td>
+  <td><input
+      type="number"
+      name="system.attributes.{{attributeKey}}.item"
+      value="{{lookup (lookup system 'attributes') attributeKey 'item'}}"
+    /></td>
+</tr>

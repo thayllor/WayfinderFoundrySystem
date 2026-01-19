@@ -1,0 +1,82 @@
+{{! Resources Tab Component }}
+<div
+  class="tab"
+  data-group="primary"
+  data-tab="resources"
+  style="display: none;"
+>
+  <div class="resources-grid grid grid-2col">
+    <div class="resource flex-group-center">
+      <h4>Stamina</h4>
+      <div class="resource-content flexrow flex-center flex-between">
+        <input
+          type="number"
+          name="system.stamina.current"
+          value="{{system.stamina.current}}"
+        />
+        <span> / </span>
+        <input
+          type="number"
+          name="system.stamina.maximum"
+          value="{{system.stamina.maximum}}"
+        />
+      </div>
+    </div>
+
+    <div class="resource flex-group-center">
+      <h4>Hero Points</h4>
+      <div class="resource-content flexrow flex-center flex-between">
+        <input
+          type="number"
+          name="system.heroPoints.current"
+          value="{{system.heroPoints.current}}"
+        />
+      </div>
+    </div>
+
+    <div class="resource flex-group-center">
+      <h4>Focus</h4>
+      <div class="resource-content flexrow flex-center flex-between">
+        <input
+          type="number"
+          name="system.focus.current"
+          value="{{system.focus.current}}"
+        />
+      </div>
+    </div>
+
+    <div class="resource flex-group-center">
+      <h4>Resonance</h4>
+      <div class="resource-content flexrow flex-center flex-between">
+        <input
+          type="number"
+          name="system.resonance.current"
+          value="{{system.resonance.current}}"
+        />
+        <span> / </span>
+        <input
+          type="number"
+          name="system.resonance.maximum"
+          value="{{system.resonance.maximum}}"
+        />
+      </div>
+    </div>
+
+    <div class="resource flex-group-center">
+      <h4>Surges</h4>
+      <div class="resource-content flexrow flex-center flex-between">
+        <input
+          type="number"
+          name="system.surges.current"
+          value="{{system.surges.current}}"
+        />
+        <span> / </span>
+        <input
+          type="number"
+          name="system.surges.maximum"
+          value="{{system.surges.maximum}}"
+        />
+      </div>
+    </div>
+  </div>
+</div>

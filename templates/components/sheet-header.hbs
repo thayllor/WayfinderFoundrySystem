@@ -1,0 +1,28 @@
+{{! Sheet Header Component }}
+<header class="sheet-header">
+  <img
+    class="profile-img"
+    src="{{actor.img}}"
+    data-edit="img"
+    title="{{actor.name}}"
+    height="100"
+    width="100"
+  />
+  <div class="header-fields">
+    <div class="name-section">
+      <h1 class="charname"><input
+          name="name"
+          type="text"
+          value="{{actor.name}}"
+          placeholder="Character Name"
+        /></h1>
+      <input
+        name="system.playerName"
+        type="text"
+        value="{{system.playerName}}"
+        placeholder="Player Name"
+        class="player-name"
+      />
+    </div>
+  </div>
+</header>

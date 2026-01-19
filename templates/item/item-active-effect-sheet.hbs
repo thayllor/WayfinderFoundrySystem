@@ -1,0 +1,151 @@
+<form class="{{cssClasses}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <section class="header-fields">
+
+      <h1 class="charname">
+        <input name="name" type="text" value="{{item.name}}" placeholder="Nome do Efeito Ativo"/>
+      </h1>
+    </section>
+  </header>
+
+  {{!-- Sheet Tab Navigation --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="details">Detalhes</a>
+    <a class="item" data-tab="effects">Modificadores</a>
+  </nav>
+
+  {{!-- Sheet Body --}}
+  <section class="sheet-body">     {{#if traitsResolved.length}}
+     <div class="trait-chip-row">
+       <span class="trait-chip-label">Traits:</span>
+       {{#each traitsResolved as |trait|}}
+         <div class="trait-chip" style="background-color: {{trait.color}};" title="{{trait.name}}">
+           <span class="trait-chip-name">{{trait.name}}</span>
+         </div>
+       {{/each}}
+     </div>
+     {{/if}}
+    {{!-- DETAILS TAB --}}
+    <div class="tab active" data-group="primary" data-tab="details">
+      <div class="form-group">
+        <label>Nome</label>
+        <input type="text" name="name" value="{{item.name}}" class="effect-input"/>
+      </div>
+
+      <div class="description-card">
+        <div class="description-card-header">
+          <div class="description-card-title"><i class="fas fa-file-alt"></i> Descrição</div>
+          <div class="description-card-hint">Use formatação rica para narrar o efeito.</div>
+        </div>
+        {{textoEstilizado
+          name="system.description"
+          value=system.description
+          label=""
+          editable=editable
+        }}
+      </div>
+
+      <div class="form-group checkbox">
+        <label>É Magia?</label>
+        <input type="checkbox" name="system.isMagic" class="magic-toggle" {{#if system.isMagic}}checked{{/if}}/>
+      </div>
+
+      {{#if system.isMagic}}
+      <div class="magic-section">
+        <div class="form-group magic-circle-group">
+          <label>Círculo da Magia</label>
+          <select name="system.magicCircle" class="magic-circle-select">
+            <option value="">Selecione...</option>
+            <option value="cantrip" {{#if (eq system.magicCircle "cantrip")}}selected{{/if}}>Cantrips</option>
+            <option value="1" {{#if (eq system.magicCircle "1")}}selected{{/if}}>1º Círculo</option>
+            <option value="2" {{#if (eq system.magicCircle "2")}}selected{{/if}}>2º Círculo</option>
+            <option value="3" {{#if (eq system.magicCircle "3")}}selected{{/if}}>3º Círculo</option>
+            <option value="4" {{#if (eq system.magicCircle "4")}}selected{{/if}}>4º Círculo</option>
+            <option value="5" {{#if (eq system.magicCircle "5")}}selected{{/if}}>5º Círculo</option>
+            <option value="6" {{#if (eq system.magicCircle "6")}}selected{{/if}}>6º Círculo</option>
+            <option value="7" {{#if (eq system.magicCircle "7")}}selected{{/if}}>7º Círculo</option>
+            <option value="8" {{#if (eq system.magicCircle "8")}}selected{{/if}}>8º Círculo</option>
+            <option value="9" {{#if (eq system.magicCircle "9")}}selected{{/if}}>9º Círculo</option>
+            <option value="10" {{#if (eq system.magicCircle "10")}}selected{{/if}}>10º Círculo</option>
+          </select>
+        </div>
+
+        <div class="heightened-section">
+          <h4 class="heightened-title">Heightened</h4>
+          <table class="heightened-table">
+            <thead>
+              <tr>
+                <th>Nível</th>
+                <th>Efeitos</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each system.heightened as |entry idx|}}
+              <tr class="heightened-row" data-idx="{{idx}}">
+                <td><input type="text" name="system.heightened.{{idx}}.level" value="{{entry.level}}" placeholder="Ex: +1, +2, 3" class="heightened-level"/></td>
+                <td><div contenteditable="true" class="heightened-effects-editor" data-field="system.heightened.{{idx}}.effects">{{{entry.effects}}}</div><textarea name="system.heightened.{{idx}}.effects" class="heightened-effects-hidden" style="display: none;">{{entry.effects}}</textarea></td>
+                <td><button type="button" class="remove-heightened-btn" data-idx="{{idx}}">×</button></td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+          <button type="button" class="add-heightened-btn" data-action="add-heightened">+ Adicionar Heightened</button>
+        </div>
+      </div>
+      {{/if}}
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Alcance</label>
+          <input type="text" name="system.range" value="{{system.range}}" placeholder="Ex: Toque, 6m, 30m" class="effect-input"/>
+        </div>
+        <div class="form-group">
+          <label>Alvo</label>
+          <input type="text" name="system.target" value="{{system.target}}" placeholder="Ex: Uma criatura, Auto" class="effect-input"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Duração</label>
+          <input type="text" name="system.duration" value="{{system.duration}}" placeholder="Ex: 1 rodada, 10 minutos" class="effect-input"/>
+        </div>
+        <div class="form-group">
+          <label>Custo em Foco</label>
+          <input type="number" name="system.focusCost" value="{{system.focusCost}}" min="0" class="effect-input"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group checkbox">
+          <label>Requer Roll?</label>
+          <input type="checkbox" name="system.requiresRoll" {{#if system.requiresRoll}}checked{{/if}}/>
+        </div>
+      </div>
+
+      {{#if system.requiresRoll}}
+      <div class="form-group">
+        <label>Fórmula do Roll</label>
+        <input type="text" name="system.rollFormula" value="{{system.rollFormula}}" placeholder="Ex: 1d20 + @attributes.dexterity.modifier" class="effect-input"/>
+      </div>
+      {{/if}}
+
+      <div class="form-group">
+        <label>Efeito ao Chat</label>
+        <textarea name="system.chatEffect" class="effect-textarea" placeholder="Descrição do que acontece quando ativado">{{system.chatEffect}}</textarea>
+      </div>
+    </div>
+
+    {{!-- MODIFIERS TAB --}}
+    <div class="tab" data-group="primary" data-tab="effects">
+      <p style="padding: 10px; color: #666; font-size: 12px;">Aqui você pode adicionar modificadores que serão aplicados quando o efeito estiver ativo</p>
+
+      <div class="modifiers-section">
+        <h3>Modificadores Aplicados</h3>
+        <p style="color: #999; font-size: 12px;">Recurso a ser implementado - permite aplicar bônus/penalidades a atributos da ficha</p>
+      </div>
+    </div>
+  </section>
+</form>

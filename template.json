@@ -20,27 +20,161 @@
       "templates": ["base"],
       "attributes": {
         "strength": {
-          "value": 10
+          "value": 10,
+          "defenseDC": 10,
+          "item": 0
         },
         "dexterity": {
-          "value": 10
-        },
-        "constitution": {
-          "value": 10
+          "value": 10,
+          "defenseDC": 10,
+          "item": 0
         },
         "intelligence": {
-          "value": 10
+          "value": 10,
+          "defenseDC": 10,
+          "item": 0
         },
         "wisdom": {
-          "value": 10
+          "value": 10,
+          "defenseDC": 10,
+          "item": 0
         },
-        "charisma": {
-          "value": 10
+        "presence": {
+          "value": 10,
+          "defenseDC": 10,
+          "item": 0
         }
       },
       "level": {
         "value": 1
-      }
+      },
+      "playerName": "",
+      "ancestry": "",
+      "class": "",
+      "classDC": 10,
+      "skills": {
+        "arcana": {
+          "attribute": "INT",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "acrobatics": {
+          "attribute": "DEX",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "athletics": {
+          "attribute": "STR",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "crafting": {
+          "attribute": "INT",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "deception": {
+          "attribute": "PRE",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "diplomacy": {
+          "attribute": "PRE",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "intimidation": {
+          "attribute": "PRE",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "medicine": {
+          "attribute": "WIS",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "nature": {
+          "attribute": "WIS",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "occultism": {
+          "attribute": "INT",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "performance": {
+          "attribute": "PRE",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "religion": {
+          "attribute": "WIS",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "society": {
+          "attribute": "INT",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "stealth": {
+          "attribute": "DEX",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "survival": {
+          "attribute": "WIS",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "tactics": {
+          "attribute": "INT",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "thievery": {
+          "attribute": "DEX",
+          "proficiency": "untrained",
+          "bonus": 0
+        },
+        "lore": { "attribute": "INT", "proficiency": "untrained", "bonus": 0 }
+      },
+      "shield": {
+        "hardness": 0,
+        "structure": 0,
+        "bonus": 0
+      },
+      "perception": {
+        "bonus": 0,
+        "senses": ""
+      },
+      "stamina": {
+        "current": 0,
+        "maximum": 0,
+        "temporary": 0
+      },
+      "focus": {
+        "current": 0,
+        "maximum": 0
+      },
+      "heroPoints": {
+        "current": 0,
+        "maximum": 0
+      },
+      "resonance": {
+        "current": 0,
+        "maximum": 0
+      },
+      "surges": {
+        "current": 0,
+        "maximum": 0
+      },
+      "speed": 0,
+      "exp": "0/100",
+      "favoriteActives": "",
+      "favoritePassives": "",
+      "favoriteStrikes": ""
     },
     "npc": {
       "templates": ["base"],
@@ -48,24 +182,61 @@
     }
   },
   "Item": {
-    "types": ["item", "feature", "spell"],
+    "types": [
+      "item",
+      "spell",
+      "active-effect",
+      "passive-effect",
+      "trait",
+      "talent"
+    ],
     "templates": {
       "base": {
         "description": ""
+      },
+      "hasTraits": {
+        "traits": []
       }
     },
     "item": {
-      "templates": ["base"],
-      "quantity": 1,
+      "templates": ["base", "hasTraits"],
+      "quantity": 0,
       "weight": 0,
       "price": 0
     },
-    "feature": {
-      "templates": ["base"]
-    },
     "spell": {
-      "templates": ["base"],
+      "templates": ["base", "hasTraits"],
       "spellLevel": 0
+    },
+    "active-effect": {
+      "templates": ["base", "hasTraits"],
+      "range": "",
+      "target": "",
+      "duration": "",
+      "focusCost": 0,
+      "requiresRoll": false,
+      "rollFormula": "",
+      "chatEffect": "",
+      "isActive": false,
+      "durationRemaining": "",
+      "isMagic": false,
+      "magicCircle": "",
+      "heightened": []
+    },
+    "passive-effect": {
+      "templates": ["base", "hasTraits"],
+      "effect": "",
+      "isPermanent": true,
+      "isActive": true
+    },
+    "trait": {
+      "templates": ["base", "hasTraits"]
+    },
+    "talent": {
+      "templates": ["base", "hasTraits"],
+      "level": 1,
+      "talentType": "General",
+      "effects": []
     }
   }
 }
