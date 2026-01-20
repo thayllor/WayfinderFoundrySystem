@@ -143,79 +143,13 @@
     <a class="item active" data-tab="skills" data-icon="d20">Perícias</a>
     <a class="item" data-tab="actions" data-icon="actions">Ações</a>
     <a class="item" data-tab="talents" data-icon="star">Talentos</a>
-    <a class="item" data-tab="resources" data-icon="items">Recursos</a>
+    <a class="item" data-tab="resources" data-icon="items">Inventário</a>
   </nav>
 
   {{!-- Sheet Body --}}
   <section class="sheet-body">
     {{!-- SKILLS TAB --}}
-    <div class="tab active" data-group="primary" data-tab="skills">
-      <h2 class="tab-title tab-title-skills">Perícias</h2>
-      <div class="skills-section">
-        <div class="skills-table-container">
-          <table class="skills-table skills-table-left">
-            <thead>
-              <tr>
-                <th>Perícia</th>
-                <th>Atributo</th>
-                <th>Proficiência</th>
-                <th>Bônus</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each system.skills as |skill key|}}
-                {{#if (lt @index ../skillsMidpoint)}} {{!-- First half --}}
-              <tr>
-                <td><strong>{{key}}</strong></td>
-                <td><input type="text" name="system.skills.{{key}}.attribute" value="{{skill.attribute}}" class="short-input" readonly/></td>
-                <td>
-                  <select name="system.skills.{{key}}.proficiency" class="short-input">
-                    <option value="untrained" {{#if (eq skill.proficiency 'untrained')}}selected{{/if}}>Untrained</option>
-                    <option value="trained" {{#if (eq skill.proficiency 'trained')}}selected{{/if}}>Trained</option>
-                    <option value="expert" {{#if (eq skill.proficiency 'expert')}}selected{{/if}}>Expert</option>
-                    <option value="master" {{#if (eq skill.proficiency 'master')}}selected{{/if}}>Master</option>
-                    <option value="legendary" {{#if (eq skill.proficiency 'legendary')}}selected{{/if}}>Legendary</option>
-                  </select>
-                </td>
-                <td><input type="number" name="system.skills.{{key}}.bonus" value="{{skill.bonus}}" class="short-input"/></td>
-              </tr>
-                {{/if}}
-              {{/each}}
-            </tbody>
-          </table>
-          <table class="skills-table skills-table-right">
-            <thead>
-              <tr>
-                <th>Perícia</th>
-                <th>Atributo</th>
-                <th>Proficiência</th>
-                <th>Bônus</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each system.skills as |skill key|}}
-                {{#if (gte @index ../skillsMidpoint)}} {{!-- Second column (second half) --}}
-              <tr>
-                <td><strong>{{key}}</strong></td>
-                <td><input type="text" name="system.skills.{{key}}.attribute" value="{{skill.attribute}}" class="short-input" readonly/></td>
-                <td>
-                  <select name="system.skills.{{key}}.proficiency" class="short-input">
-                    <option value="untrained" {{#if (eq skill.proficiency 'untrained')}}selected{{/if}}>Untrained</option>
-                    <option value="trained" {{#if (eq skill.proficiency 'trained')}}selected{{/if}}>Trained</option>
-                    <option value="expert" {{#if (eq skill.proficiency 'expert')}}selected{{/if}}>Expert</option>
-                    <option value="master" {{#if (eq skill.proficiency 'master')}}selected{{/if}}>Master</option>
-                    <option value="legendary" {{#if (eq skill.proficiency 'legendary')}}selected{{/if}}>Legendary</option>
-                  </select>
-                </td>
-                <td><input type="number" name="system.skills.{{key}}.bonus" value="{{skill.bonus}}" class="short-input"/></td>
-              </tr>
-                {{/if}}
-              {{/each}}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    {{> "systems/wayfinder/templates/components/Tab-Skills.hbs"}}
 
     {{!-- ACTIONS TAB (Efeitos) --}}
     <div class="tab" data-group="primary" data-tab="actions">
@@ -225,34 +159,13 @@
         {{!-- ACTIVE EFFECTS TABLE --}}
         <div class="effects-section">
           <h3 class="effects-subtitle">Efeitos Ativos</h3>
-          <div class="effects-table-wrapper">
-            {{#if (gt activeEffects.length 0)}}
-              <table class="effects-table">
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>Alcance</th>
-                    <th>Alvo</th>
-                    <th>Duração</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {{#each activeEffects as |effect index|}}
-                  <tr class="effect-row" data-effect-id="{{effect._id}}">
-                    <td class="effect-name">{{effect.name}}</td>
-                    <td class="effect-range">{{effect.system.range}}</td>
-                    <td class="effect-target">{{effect.system.target}}</td>
-                    <td class="effect-duration">{{effect.system.duration}}</td>
-                    <td class="effect-actions">
-                      <button class="effect-activate" data-effect-id="{{effect._id}}" data-effect-type="active" title="Ativar efeito">⚡</button>
-                      <button class="effect-view" data-effect-id="{{effect._id}}" title="Ver detalhes">👁️</button>
-                      <button class="effect-delete" data-effect-id="{{effect._id}}" title="Remover">✕</button>
-                    </td>
-                  </tr>
-                  {{/each}}
-                </tbody>
-              </table>
+            <div class="effects-list-wrapper">
+             {{#if (gt activeEffects.length 0)}}
+              <div class="effects-collapsible-list">
+                {{#each activeEffects as |effect index|}}
+                  {{{collapsibleEffect effect=effect idx=index}}}
+                {{/each}}
+              </div>
             {{else}}
               <p class="effects-empty">Nenhum efeito ativo adicionado. Arraste efeitos aqui!</p>
             {{/if}}
@@ -262,32 +175,13 @@
         {{!-- PASSIVE EFFECTS TABLE --}}
         <div class="effects-section">
           <h3 class="effects-subtitle">Efeitos Passivos</h3>
-          <div class="effects-table-wrapper">
+          <div class="effects-list-wrapper">
             {{#if (gt passiveEffects.length 0)}}
-              <table class="effects-table">
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>Efeito</th>
-                    <th>Permanente</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {{#each passiveEffects as |effect index|}}
-                  <tr class="effect-row" data-effect-id="{{effect._id}}">
-                    <td class="effect-name">{{effect.name}}</td>
-                    <td class="effect-description">{{effect.system.effect}}</td>
-                    <td class="effect-permanent">{{#if effect.system.isPermanent}}Sim{{else}}Não{{/if}}</td>
-                    <td class="effect-actions">
-                      <button class="effect-toggle" data-effect-id="{{effect._id}}" data-effect-type="passive" title="Ativar/Desativar">🔄</button>
-                      <button class="effect-view" data-effect-id="{{effect._id}}" title="Ver detalhes">👁️</button>
-                      <button class="effect-delete" data-effect-id="{{effect._id}}" title="Remover">✕</button>
-                    </td>
-                  </tr>
-                  {{/each}}
-                </tbody>
-              </table>
+              <div class="effects-collapsible-list">
+                {{#each passiveEffects as |effect index|}}
+                  {{{collapsibleEffect effect=effect idx=index}}}
+                {{/each}}
+              </div>
             {{else}}
               <p class="effects-empty">Nenhum efeito passivo adicionado. Arraste efeitos aqui!</p>
             {{/if}}
@@ -303,7 +197,7 @@
 
     {{!-- RESOURCES TAB --}}
     <div class="tab" data-group="primary" data-tab="resources">
-      <h2 class="tab-title tab-title-resources">Recursos</h2>
+      <h2 class="tab-title tab-title-resources">Inventário</h2>
       <div class="resources-grid grid grid-2col">
         <div class="resource flex-group-center">
           <h4>Stamina</h4>

@@ -1,34 +1,93 @@
 {{!-- Skills Tab Component --}}
-<div class="tab active" data-group="primary" data-tab="skills" style="display: block;">
+<div class="tab" data-group="primary" data-tab="skills">
   <div class="skills-section">
-    <h3>Perícias</h3>
-    <table class="skills-table">
-      <thead>
-        <tr>
-          <th>Perícia</th>
-          <th>Atributo</th>
-          <th>Proficiência</th>
-          <th>Bônus</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#each system.skills as |skill key|}}
-        <tr>
-          <td><strong>{{key}}</strong></td>
-          <td><input type="text" name="system.skills.{{key}}.attribute" value="{{skill.attribute}}" class="short-input" readonly/></td>
-          <td>
-            <select name="system.skills.{{key}}.proficiency" class="short-input">
-              <option value="untrained" {{#if (eq skill.proficiency 'untrained')}}selected{{/if}}>Untrained</option>
-              <option value="trained" {{#if (eq skill.proficiency 'trained')}}selected{{/if}}>Trained</option>
-              <option value="expert" {{#if (eq skill.proficiency 'expert')}}selected{{/if}}>Expert</option>
-              <option value="master" {{#if (eq skill.proficiency 'master')}}selected{{/if}}>Master</option>
-              <option value="legendary" {{#if (eq skill.proficiency 'legendary')}}selected{{/if}}>Legendary</option>
-            </select>
-          </td>
-          <td><input type="number" name="system.skills.{{key}}.bonus" value="{{skill.bonus}}" class="short-input"/></td>
-        </tr>
-        {{/each}}
-      </tbody>
-    </table>
+  <h2 class="tab-title tab-title-skills">Perícias</h2>
+    <div class="skills-table-container">
+      <table class="skills-table skills-table-left">
+        <thead>
+          <tr>
+            <th>Perícia</th>
+            <th>Atributo</th>
+            <th>Proficiência</th>
+            <th>Status</th>
+            <th>Circun</th>
+            <th>Item</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each skillsLeft as |entry|}}
+          <tr>
+            <td><strong class="skill-name">{{entry.key}}</strong></td>
+            <td>
+              <select name="system.skills.{{entry.key}}.attribute" class="short-input">
+                <option value="STR" {{#if (eq entry.skill.attribute 'STR')}}selected{{/if}}>STR</option>
+                <option value="DEX" {{#if (eq entry.skill.attribute 'DEX')}}selected{{/if}}>DEX</option>
+                <option value="INT" {{#if (eq entry.skill.attribute 'INT')}}selected{{/if}}>INT</option>
+                <option value="WIS" {{#if (eq entry.skill.attribute 'WIS')}}selected{{/if}}>WIS</option>
+                <option value="PRE" {{#if (eq entry.skill.attribute 'PRE')}}selected{{/if}}>PRE</option>
+              </select>
+            </td>
+            <td>
+              <select name="system.skills.{{entry.key}}.proficiency" class="short-input">
+                <option value="untrained" {{#if (eq entry.skill.proficiency 'untrained')}}selected{{/if}}>Untrained</option>
+                <option value="trained" {{#if (eq entry.skill.proficiency 'trained')}}selected{{/if}}>Trained</option>
+                <option value="expert" {{#if (eq entry.skill.proficiency 'expert')}}selected{{/if}}>Expert</option>
+                <option value="master" {{#if (eq entry.skill.proficiency 'master')}}selected{{/if}}>Master</option>
+                <option value="legendary" {{#if (eq entry.skill.proficiency 'legendary')}}selected{{/if}}>Legendary</option>
+              </select>
+            </td>
+            <td><input type="number" name="system.skills.{{entry.key}}.status" value="{{entry.skill.status}}" class="short-input"/></td>
+            <td><input type="number" name="system.skills.{{entry.key}}.circun" value="{{entry.skill.circun}}" class="short-input"/></td>
+            <td><input type="number" name="system.skills.{{entry.key}}.item" value="{{entry.skill.item}}" class="short-input"/></td>
+            <td><div class="attribute-total" data-skill-key="{{entry.key}}" data-formula="{{entry.skill.formula}}">{{entry.skill.total}}</div></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <table class="skills-table skills-table-right">
+        <thead>
+          <tr>
+            <th>Perícia</th>
+            <th>Atributo</th>
+            <th>Proficiência</th>
+            <th>Status</th>
+            <th>Circun</th>
+            <th>Item</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each skillsRight as |entry|}}
+          <tr>
+            <td><strong class="skill-name">{{entry.key}}</strong></td>
+            <td>
+              <select name="system.skills.{{entry.key}}.attribute" class="short-input">
+                <option value="STR" {{#if (eq entry.skill.attribute 'STR')}}selected{{/if}}>STR</option>
+                <option value="DEX" {{#if (eq entry.skill.attribute 'DEX')}}selected{{/if}}>DEX</option>
+                <option value="INT" {{#if (eq entry.skill.attribute 'INT')}}selected{{/if}}>INT</option>
+                <option value="WIS" {{#if (eq entry.skill.attribute 'WIS')}}selected{{/if}}>WIS</option>
+                <option value="PRE" {{#if (eq entry.skill.attribute 'PRE')}}selected{{/if}}>PRE</option>
+              </select>
+            </td>
+            <td>
+              <select name="system.skills.{{entry.key}}.proficiency" class="short-input">
+                <option value="untrained" {{#if (eq entry.skill.proficiency 'untrained')}}selected{{/if}}>Untrained</option>
+                <option value="trained" {{#if (eq entry.skill.proficiency 'trained')}}selected{{/if}}>Trained</option>
+                <option value="expert" {{#if (eq entry.skill.proficiency 'expert')}}selected{{/if}}>Expert</option>
+                <option value="master" {{#if (eq entry.skill.proficiency 'master')}}selected{{/if}}>Master</option>
+                <option value="legendary" {{#if (eq entry.skill.proficiency 'legendary')}}selected{{/if}}>Legendary</option>
+              </select>
+            </td>
+            <td><input type="number" name="system.skills.{{entry.key}}.status" value="{{entry.skill.status}}" class="short-input"/></td>
+            <td><input type="number" name="system.skills.{{entry.key}}.circun" value="{{entry.skill.circun}}" class="short-input"/></td>
+            <td><input type="number" name="system.skills.{{entry.key}}.item" value="{{entry.skill.item}}" class="short-input"/></td>
+            <td><div class="attribute-total" data-skill-key="{{entry.key}}" data-formula="{{entry.skill.formula}}">{{entry.skill.total}}</div></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

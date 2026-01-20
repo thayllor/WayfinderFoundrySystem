@@ -177,11 +177,46 @@ export const preloadHandlebarsTemplates = async function() {
       html += '<div class="effect-section effect-traits">';
       html += '<div class="effect-section-header"><i class="fas fa-tags"></i> Traits</div>';
       html += '<div class="effect-traits-row">';
-      for (const trait of effect.traitsResolved) {
-        const color = trait.color || '#666666';
-        const name = trait.name || 'Trait';
-        html += `<span class="trait-chip trait-chip-small" style="background-color: ${color};" title="${name}">`;
-        html += `<span class="trait-chip-name">${name}</span>`;
+      // Helper to derive a soft color from a string when no explicit color provided
+      const _stringToHue = (str) => {
+        let h = 0;
+        for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) & 0xffffffff;
+        return Math.abs(h) % 360;
+      };
+      for (const traitEntry of effect.traitsResolved) {
+        let name = 'Trait';
+        let color = '#666666';
+        if (typeof traitEntry === 'string') {
+          // If the string is actually a UUID referencing a Trait item, resolve it
+          let resolved = null;
+          try {
+            if (traitEntry.includes('.') || traitEntry.startsWith('Item')) resolved = fromUuidSync(traitEntry);
+          } catch (err) {
+            resolved = null;
+          }
+          if (resolved) {
+            name = resolved.name || String(traitEntry);
+            color = resolved.system?.color || resolved.system?.hex || (resolved.system?.hue ? `hsl(${resolved.system.hue} 40% 45%)` : color);
+          } else {
+            name = traitEntry;
+            const hue = _stringToHue(name);
+            color = `hsl(${hue} 40% 45%)`;
+          }
+        } else if (traitEntry && typeof traitEntry === 'object') {
+          // Preserve provided name and color when available
+          name = traitEntry.name || traitEntry.label || traitEntry.id || 'Trait';
+          if (traitEntry.color) color = traitEntry.color;
+          else if (traitEntry.hex) color = traitEntry.hex;
+          else if (traitEntry.hue) color = `hsl(${traitEntry.hue} 40% 45%)`;
+          else {
+            const hue = _stringToHue(name);
+            color = `hsl(${hue} 40% 45%)`;
+          }
+        }
+        // Ensure proper escaping of title/content
+        const escName = String(name).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        html += `<span class="trait-chip trait-chip-small" style="background-color: ${color};" title="${escName}">`;
+        html += `<span class="trait-chip-name">${escName}</span>`;
         html += '</span>';
       }
       html += '</div>';
@@ -189,6 +224,16 @@ export const preloadHandlebarsTemplates = async function() {
     }
 
     // Spell header (pretty title) above metadata when magic
+    // Normalize heightened entries from multiple possible locations and shapes
+    const _entriesFrom = (src) => {
+      if (!src) return [];
+      if (Array.isArray(src)) return src;
+      if (typeof src === 'object') return Object.values(src);
+      return [];
+    };
+    let heightenedEntries = _entriesFrom(effect.heightened);
+    if (!heightenedEntries.length && effect.system) heightenedEntries = _entriesFrom(effect.system.heightened);
+
     if (effect.isMagic) {
       html += '<div class="spell-title"><i class="fas fa-scroll"></i><span>Magia</span></div>';
     }
@@ -254,20 +299,24 @@ export const preloadHandlebarsTemplates = async function() {
     }
 
     // Heightened table info (magic scaling)
-    // Show heightened table if entries exist (robust), even if isMagic wasn't toggled
-    if (Array.isArray(effect.heightened) && effect.heightened.length) {
+    // For magic effects we always render a Heightened section; if there are entries, render them, else show a placeholder
+    if (effect.isMagic) {
       html += '<div class="effect-section effect-heightened">';
       html += '<div class="effect-section-header"><i class="fas fa-level-up-alt"></i> Efeitos Aprimorados</div>';
-      html += '<div class="heightened-list">';
-      for (const entry of effect.heightened) {
-        const levelLabel = entry?.level || '';
-        const text = (entry?.effects ?? entry?.effect) || '';
-        html += '<div class="heightened-row">';
-        html += `<span class="heightened-badge"><span class="heightened-label">Aprimorado</span><span class="heightened-level-pill">${levelLabel}</span></span>`;
-        html += `<div class="heightened-text">${text}</div>`;
+      if (Array.isArray(heightenedEntries) && heightenedEntries.length) {
+        html += '<div class="heightened-list">';
+        for (const entry of heightenedEntries) {
+          const levelLabel = entry?.level || '';
+          const text = (entry?.effects ?? entry?.effect) || '';
+          html += '<div class="heightened-row">';
+          html += `<span class="heightened-badge"><span class="heightened-label">Aprimorado</span><span class="heightened-level-pill">${levelLabel}</span></span>`;
+          html += `<div class="heightened-text">${text}</div>`;
+          html += '</div>';
+        }
         html += '</div>';
+      } else {
+        html += '<div class="heightened-empty" style="padding:8px 0;color:#666;font-size:13px">Nenhum aprimoramento definido.</div>';
       }
-      html += '</div>';
       html += '</div>';
     }
 

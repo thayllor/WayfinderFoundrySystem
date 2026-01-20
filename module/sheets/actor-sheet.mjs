@@ -26,7 +26,7 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
   static DEFAULT_OPTIONS = {
     classes: ["wayfinder", "sheet", "actor"],
     position: {
-      width: 1042,
+      width: 1151,
       height: 751
     },
     window: {
@@ -106,35 +106,127 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     const skillsArray = Object.keys(context.system.skills || {});
     context.skillsMidpoint = Math.ceil(skillsArray.length / 2);
 
+    // Provide explicit left/right skill arrays for templates to avoid complex helpers
+    const skillEntries = Object.entries(context.system.skills || {});
+    const midpoint = context.skillsMidpoint;
+    context.skillsLeft = skillEntries.slice(0, midpoint).map(([k, s]) => ({ key: k, skill: s }));
+    context.skillsRight = skillEntries.slice(midpoint).map(([k, s]) => ({ key: k, skill: s }));
+
     // Prepare effects (active and passive)
     context.activeEffects = this.document.items
       .filter(item => item.type === 'active-effect')
-      .map(item => ({
-        _id: item._id,
-        name: item.name,
-        type: item.type,
-        system: {
+      .map(item => {
+        const e = {
+          _id: item._id,
+          uuid: item.uuid || item._id,
+          name: item.name,
+          type: item.type,
+          // Flatten commonly used properties for the collapsibleEffect helper
           range: String(item.system.range || ''),
           target: String(item.system.target || ''),
           duration: String(item.system.duration || ''),
           focusCost: item.system.focusCost || 0,
           requiresRoll: item.system.requiresRoll || false,
-          isActive: item.system.isActive || false
-        }
-      }));
+          isActive: item.system.isActive || false,
+          isMagic: !!item.system.isMagic,
+          magicCircle: item.system.magicCircle || null,
+          traitsResolved: item.system.traitsResolved || item.system.traits || [],
+          description: item.system.description || '',
+          effect: item.system.effect || '',
+          heightened: item.system.heightened || []
+        };
+        return e;
+      });
 
     context.passiveEffects = this.document.items
       .filter(item => item.type === 'passive-effect')
-      .map(item => ({
-        _id: item._id,
-        name: item.name,
-        type: item.type,
-        system: {
+      .map(item => {
+        const e = {
+          _id: item._id,
+          uuid: item.uuid || item._id,
+          name: item.name,
+          type: item.type,
           effect: String(item.system.effect || ''),
           isPermanent: item.system.isPermanent !== false,
-          isActive: item.system.isActive !== false
+          isActive: item.system.isActive !== false,
+          traitsResolved: item.system.traitsResolved || item.system.traits || [],
+          description: item.system.description || ''
+        };
+        return e;
+      });
+
+    // Also include effects that are referenced by Talent items (by UUID), so they appear
+    // in the global Effects tab even when stored as referenced documents inside talents.
+    try {
+      const talentItems = this.document.items.filter(i => i.type === 'talent');
+      console.log('Wayfinder | _prepareContext: found', context.activeEffects.length, 'direct active effects and', context.passiveEffects.length, 'direct passive effects on actor');
+      const seenEffectIds = new Set();
+      // Mark existing effects as seen
+      for (const e of context.activeEffects) if (e._id) seenEffectIds.add(e._id);
+      for (const e of context.passiveEffects) if (e._id) seenEffectIds.add(e._id);
+
+      for (const t of talentItems) {
+        const uuids = Array.isArray(t.system.effects) ? t.system.effects : [];
+        if (uuids.length) console.log(`Wayfinder | Talent ${t.name} references ${uuids.length} effect UUID(s)`);
+        for (const uuid of uuids) {
+          try {
+            const doc = fromUuidSync(uuid);
+            if (!doc) {
+              console.warn('Wayfinder | fromUuidSync returned null for', uuid);
+              continue;
+            }
+            const eid = doc._id || doc.id || uuid;
+            if (seenEffectIds.has(eid)) {
+              console.log('Wayfinder | skipping duplicate effect', eid);
+              continue;
+            }
+            seenEffectIds.add(eid);
+
+            if (doc.type === 'active-effect') {
+              console.log('Wayfinder | adding referenced active-effect', doc.name, eid);
+              context.activeEffects.push({
+                _id: doc._id,
+                uuid: uuid || doc._id,
+                name: doc.name,
+                type: doc.type,
+                range: String(doc.system.range || ''),
+                target: String(doc.system.target || ''),
+                duration: String(doc.system.duration || ''),
+                focusCost: doc.system.focusCost || 0,
+                requiresRoll: doc.system.requiresRoll || false,
+                isActive: doc.system.isActive || false,
+                isMagic: !!doc.system.isMagic,
+                magicCircle: doc.system.magicCircle || null,
+                traitsResolved: doc.system.traitsResolved || doc.system.traits || [],
+                description: doc.system.description || '',
+                effect: doc.system.effect || '',
+                heightened: doc.system.heightened || []
+              });
+            } else if (doc.type === 'passive-effect') {
+              console.log('Wayfinder | adding referenced passive-effect', doc.name, eid);
+              context.passiveEffects.push({
+                _id: doc._id,
+                uuid: uuid || doc._id,
+                name: doc.name,
+                type: doc.type,
+                effect: String(doc.system.effect || ''),
+                isPermanent: doc.system.isPermanent !== false,
+                isActive: doc.system.isActive !== false,
+                traitsResolved: doc.system.traitsResolved || doc.system.traits || [],
+                description: doc.system.description || ''
+              });
+            } else {
+              console.log('Wayfinder | referenced doc is not an effect:', doc.type, doc.name, uuid);
+            }
+          } catch (err) {
+            console.warn('Erro ao resolver efeito referenciado pelo talento:', uuid, err);
+          }
         }
-      }));
+      }
+      console.log('Wayfinder | after resolving talents, activeEffects:', context.activeEffects.length, 'passiveEffects:', context.passiveEffects.length);
+    } catch (err) {
+      console.warn('Erro ao incluir efeitos referenciados por talentos:', err);
+    }
 
     return context;
   }
@@ -285,6 +377,99 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
       if (v.circun === undefined || v.circun === null) v.circun = 0;
       if (v.item === undefined || v.item === null) v.item = 0;
       if (v.total === undefined || v.total === null) v.total = 0;
+    }
+
+    // Ensure skills have defaults and compute a displayed total similar to attribute defenses
+    const skills = context.system.skills || {};
+    const profMap = { untrained: 0, trained: 2, expert: 4, master: 6, legendary: 8 };
+    const rawLevel = context.system.level?.value ?? context.system.level ?? 0;
+    const level = Number(rawLevel) || 0;
+    for (let [k, s] of Object.entries(skills)) {
+      if (!s.proficiency) s.proficiency = 'untrained';
+      if (s.status === undefined || s.status === null) s.status = 0;
+      if (s.circun === undefined || s.circun === null) s.circun = 0;
+      if (s.item === undefined || s.item === null) s.item = 0;
+
+      // Resolve proficiency numeric value
+      const profType = (s.proficiency || 'untrained').toString().toLowerCase();
+      let profValue = 0;
+      if (profType === 'untrained') profValue = 0;
+      else profValue = (profMap[profType] ?? 0) + level;
+
+      // Resolve attribute value referenced by the skill
+      const ATTR_MAP = { STR: 'strength', DEX: 'dexterity', INT: 'intelligence', WIS: 'wisdom', PRE: 'presence' };
+      let attrValue = 0;
+      try {
+        const attrRef = (s.attribute || '').toString().toUpperCase();
+        const attrKey = ATTR_MAP[attrRef] || attrRef.toLowerCase();
+        const attrObj = context.system.attributes?.[attrKey];
+        attrValue = Number(attrObj?.value) || 0;
+      } catch (e) {
+        attrValue = 0;
+      }
+
+      const status = Number(s.status) || 0;
+      const circun = Number(s.circun) || 0;
+      const itemVal = Number(s.item) || 0;
+      s.total = attrValue + profValue + status + circun + itemVal;
+      // Store a textual formula for display/use by the UI
+      s.formula = `${attrValue} + ${profValue} + ${circun} + ${itemVal} + ${status}`;
+    }
+  }
+
+  /** @override */
+  activateListeners(html) {
+    if (super.activateListeners) super.activateListeners(html);
+
+    // Recalculate skill totals live when any input in the skills tables changes
+    this._skillInputHandler = this._skillInputHandler || this._onSkillInputChange.bind(this);
+    const tables = html.querySelectorAll('.skills-table');
+    for (const t of tables) t.addEventListener('change', this._skillInputHandler);
+  }
+
+  _onSkillInputChange(event) {
+    const input = event.target;
+    const row = input.closest('tr');
+    if (!row) return;
+
+    // Attempt to extract the skill key from the input name (system.skills.<key>....)
+    const name = input.name || '';
+    const parts = name.split('.');
+    const key = parts.length >= 3 ? parts[2] : null;
+    if (!key) return;
+
+    // Helpers
+    const ATTR_MAP = { STR: 'strength', DEX: 'dexterity', INT: 'intelligence', WIS: 'wisdom', PRE: 'presence' };
+    const profMap = { untrained: 0, trained: 2, expert: 4, master: 6, legendary: 8 };
+
+    // Read values from the row
+    const attrSelect = row.querySelector(`[name="system.skills.${key}.attribute"]`);
+    const profSelect = row.querySelector(`[name="system.skills.${key}.proficiency"]`);
+    const statusInput = row.querySelector(`[name="system.skills.${key}.status"]`);
+    const circunInput = row.querySelector(`[name="system.skills.${key}.circun"]`);
+    const itemInput = row.querySelector(`[name="system.skills.${key}.item"]`);
+
+    const attrAbbrev = attrSelect?.value || '';
+    const profType = (profSelect?.value || 'untrained').toString().toLowerCase();
+    const status = Number(statusInput?.value) || 0;
+    const circun = Number(circunInput?.value) || 0;
+    const itemVal = Number(itemInput?.value) || 0;
+
+    // Resolve numbers
+    const rawLevel = this.document.system.level?.value ?? this.document.system.level ?? 0;
+    const level = Number(rawLevel) || 0;
+    const profValue = (profType === 'untrained') ? 0 : ((profMap[profType] || 0) + level);
+
+    const attrKey = ATTR_MAP[attrAbbrev] || attrAbbrev.toLowerCase();
+    const attrValue = Number(this.document.system.attributes?.[attrKey]?.value) || 0;
+
+    const total = attrValue + profValue + status + circun + itemVal;
+
+    // Update DOM
+    const totalDiv = this.element.querySelector(`.attribute-total[data-skill-key="${key}"]`);
+    if (totalDiv) {
+      totalDiv.textContent = total;
+      totalDiv.dataset.formula = `${attrValue} + ${profValue} + ${circun} + ${itemVal} + ${status}`;
     }
   }
 
@@ -496,6 +681,38 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
         });
       });
     });
+
+    // Bind click handlers to effect collapsible headers so they toggle their content
+    const bindEffectToggles = () => {
+      try {
+        const headers = html.querySelectorAll('.effect-collapsible-header');
+        headers.forEach(header => {
+          // Remove previous handler if present
+          if (header._wfEffectHandler) header.removeEventListener('click', header._wfEffectHandler);
+          header._wfEffectHandler = (ev) => {
+            ev.preventDefault();
+            const h = ev.currentTarget;
+            const content = h.nextElementSibling;
+            if (!content) return;
+            const isOpen = content.style.display === 'block' || content.classList.contains('open');
+            if (isOpen) {
+              content.style.display = 'none';
+              content.classList.remove('open');
+              const icon = h.querySelector('.effect-collapsible-icon'); if (icon) icon.style.transform = '';
+            } else {
+              content.style.display = 'block';
+              content.classList.add('open');
+              const icon = h.querySelector('.effect-collapsible-icon'); if (icon) icon.style.transform = 'rotate(90deg)';
+            }
+          };
+          header.addEventListener('click', header._wfEffectHandler);
+        });
+      } catch (err) {
+        console.warn('Wayfinder | error binding effect toggles', err);
+      }
+    };
+    // Initial binding
+    bindEffectToggles();
 
     // Render the item sheet for viewing/editing prior to the editable check
     html.addEventListener('click', (ev) => {
@@ -727,6 +944,123 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
 
         } catch (err) {
           console.warn('Error opening attribute roll dialog', err);
+        }
+      });
+
+      // Click handler for skill name -> open same dialog and roll using skill components
+      html.addEventListener('click', async (ev) => {
+        const nameEl = ev.target.closest('.skill-name');
+        if (!nameEl) return;
+        ev.preventDefault();
+        try {
+          // Skill key is the text content of the element (matches entry.key)
+          const skillKey = String(nameEl.textContent || '').trim();
+          if (!skillKey) return;
+
+          // Locate the row and inputs
+          const row = nameEl.closest('tr');
+          if (!row) return;
+
+          const attrSelect = row.querySelector(`[name="system.skills.${skillKey}.attribute"]`);
+          const profSelect = row.querySelector(`[name="system.skills.${skillKey}.proficiency"]`);
+          const statusInput = row.querySelector(`[name="system.skills.${skillKey}.status"]`);
+          const circunInput = row.querySelector(`[name="system.skills.${skillKey}.circun"]`);
+          const itemInput = row.querySelector(`[name="system.skills.${skillKey}.item"]`);
+
+          const ATTR_MAP = { STR: 'strength', DEX: 'dexterity', INT: 'intelligence', WIS: 'wisdom', PRE: 'presence' };
+
+          const attrAbbrev = (attrSelect?.value || '').toString().toUpperCase();
+          const attrKey = ATTR_MAP[attrAbbrev] || attrAbbrev.toLowerCase();
+          const attrValue = Number(this.document.system.attributes?.[attrKey]?.value) || 0;
+
+          const profType = (profSelect?.value || 'untrained').toString().toLowerCase();
+          const profMap = { untrained: 0, trained: 2, expert: 4, master: 6, legendary: 8 };
+          const rawLevel = this.document?.system?.level?.value ?? this.document?.system?.level ?? 0;
+          const level = Number(rawLevel) || 0;
+          const profDefault = (profType === 'untrained') ? 0 : ((profMap[profType] || 0) + level);
+
+          const status = Number(statusInput?.value) || 0;
+          const circun = Number(circunInput?.value) || 0;
+          const itemVal = Number(itemInput?.value) || 0;
+
+          const displayName = skillKey;
+
+          const content = `
+            <form>
+              <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
+                <div style="flex:1">
+                  <label style="font-weight:700">Perícia</label>
+                  <div style="padding:6px 8px;background:rgba(0,0,0,0.03);border-radius:6px">${displayName} (${attrAbbrev} ${attrValue})</div>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+                <div>
+                  <label>Prof (num)</label>
+                  <input type="number" name="prof" value="${profDefault}" style="width:100%" />
+                </div>
+                <div>
+                  <label>Status</label>
+                  <input type="number" name="status" value="${status}" style="width:100%" />
+                </div>
+                <div>
+                  <label>Circun</label>
+                  <input type="number" name="circun" value="${circun}" style="width:100%" />
+                </div>
+                <div>
+                  <label>Item</label>
+                  <input type="number" name="item" value="${itemVal}" style="width:100%" />
+                </div>
+              </div>
+            </form>
+          `;
+
+          _makeDialog({
+            title: `Rolagem: ${displayName}`,
+            content: content,
+            buttons: {
+              roll: { label: 'Rolagem', callback: async (htmlDlg) => {
+                try {
+                  const dom = (htmlDlg && htmlDlg[0]) ? htmlDlg[0] : htmlDlg;
+                  const form = dom.querySelector('form');
+                  const fd = new FormData(form);
+                  const prof = Number(fd.get('prof')) || 0;
+                  const statusVal = Number(fd.get('status')) || 0;
+                  const circunVal = Number(fd.get('circun')) || 0;
+                  const itemVal2 = Number(fd.get('item')) || 0;
+
+                  const total = attrValue + prof + statusVal + circunVal + itemVal2;
+                  const formula = `2d10 + ${total}`;
+
+                  const roll = new Roll(formula, this.document.getRollData());
+                  await roll.evaluate();
+
+                  let diceResults = '';
+                  try { diceResults = (roll.dice && roll.dice[0] && Array.isArray(roll.dice[0].results)) ? roll.dice[0].results.map(r => r.result).join(', ') : ''; } catch (e) { diceResults = ''; }
+                  const finalTotal = roll.total ?? (roll._total ?? '');
+
+                  const flavor = `<div class="wf-roll-card" style="border-radius:12px;padding:14px;background:linear-gradient(180deg,var(--wayfinder-accent-light),#fff);color:var(--wayfinder-text);max-width:560px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 10px 24px rgba(0,0,0,0.12)">` +
+                    `<div style="display:flex;align-items:center;justify-content:space-between;gap:16px"><div style="flex:1;min-width:0"><div style="background:var(--wayfinder-primary);color:#fff;padding:12px 14px;border-radius:10px;font-weight:800;font-size:18px;text-transform:capitalize">${displayName}</div>` +
+                    `<div style="margin-top:10px;font-size:13px;display:flex;gap:12px;flex-wrap:wrap">` +
+                    `<div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">ATR</div><div style="font-weight:800;font-size:16px">${attrValue}</div></div>` +
+                    `<div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">Prof</div><div style="font-weight:800;font-size:16px">${prof}</div></div>` +
+                    `<div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">Status</div><div style="font-weight:800;font-size:16px">${statusVal}</div></div>` +
+                    `<div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">Circun</div><div style="font-weight:800;font-size:16px">${circunVal}</div></div>` +
+                    `<div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">Item</div><div style="font-weight:800;font-size:16px">${itemVal2}</div></div>` +
+                    `</div></div><div style="width:104px;height:104px;border-radius:50%;background:var(--wayfinder-primary-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px">${finalTotal}</div></div>` +
+                    `<div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.06);font-size:13px;display:flex;flex-direction:column;gap:8px"><div><strong>Fórmula:</strong> <code style="background:rgba(0,0,0,0.04);padding:3px 6px;border-radius:4px">${formula}</code></div><div><strong>Dados:</strong> <span style="font-weight:700">${diceResults}</span></div><div><strong>Resultado:</strong> <span style="font-weight:900">${finalTotal}</span></div></div></div>`;
+
+                  await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: this.document }), flavor: flavor, rollMode: game.settings.get('core', 'rollMode') });
+                } catch (err) {
+                  console.warn('Erro na callback de rolagem da perícia', err);
+                }
+              }},
+              cancel: { label: 'Cancelar' }
+            },
+            default: 'roll'
+          });
+
+        } catch (err) {
+          console.warn('Error opening skill roll dialog', err);
         }
       });
     } catch (err) {

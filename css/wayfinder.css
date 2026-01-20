@@ -328,6 +328,19 @@
   background-image: url("../images/icons/backpack.png");
 }
 
+/* Fallback star icon using a glyph when no image is provided */
+.tabs-external .item[data-icon="star"]::before {
+  content: "\2605"; /* black star glyph */
+  font-size: 34px;
+  color: var(--wayfinder-primary-dark);
+  display: block;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  background: transparent;
+}
+
 .tabs-external .item:nth-child(1) {
   background: linear-gradient(
     90deg,
@@ -507,7 +520,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1037px;
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
@@ -703,6 +715,251 @@
 .wayfinder .effects .item .effect-controls {
   border: none;
 }
+.wayfinder .effect-collapsible {
+  /* Make collapsible effect components visible and match Wayfinder palette */
+  margin: 12px 0; /* increase vertical spacing between each effect */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  overflow: visible;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(245, 230, 211, 0.95) 100%
+  );
+
+  /* Heightened list styling to mirror the item editor table appearance */
+}
+
+/* Inner sections inside the collapsible content (details) should have visible borders */
+.wayfinder .effect-collapsible .effect-collapsible-content {
+  display: none;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.98);
+  color: var(--wayfinder-text);
+  border: 1px solid var(--wayfinder-border);
+  border-radius: 6px;
+}
+
+.wayfinder .effect-collapsible .effect-section {
+  padding: 8px 10px;
+  margin: 8px 0;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+  background: rgba(250, 250, 250, 0.95);
+}
+
+.wayfinder .effect-collapsible .effect-section.effect-heightened {
+  padding: 10px 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  background: rgba(250, 250, 250, 0.95);
+  border-radius: 6px;
+}
+
+.wayfinder .heightened-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+.wayfinder .heightened-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(245, 230, 211, 0.98)
+  );
+  border-radius: 6px;
+}
+.wayfinder .heightened-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: var(--wayfinder-primary-dark);
+  color: var(--wayfinder-accent-light);
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+.wayfinder .heightened-level-pill {
+  display: inline-block;
+  padding: 2px 6px;
+  margin-left: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--wayfinder-accent-light);
+  border-radius: 4px;
+  font-size: 12px;
+}
+.wayfinder .heightened-text {
+  flex: 1;
+  color: var(--wayfinder-text);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.wayfinder .heightened-empty {
+  padding: 8px 10px;
+  color: #666;
+  font-size: 13px;
+}
+.wayfinder .effect-collapsible-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  background: linear-gradient(
+    90deg,
+    var(--wayfinder-accent-light),
+    var(--wayfinder-accent-dark)
+  );
+  color: var(--wayfinder-primary-dark);
+}
+.wayfinder .effect-collapsible-header.active-header {
+  background: linear-gradient(
+    90deg,
+    var(--wayfinder-primary),
+    var(--wayfinder-primary-dark)
+  );
+  color: var(--wayfinder-accent-light);
+}
+.wayfinder .effect-collapsible-icon {
+  transition: transform 0.18s ease;
+  color: var(--wayfinder-primary-dark);
+  margin-right: 6px;
+}
+.wayfinder .effect-collapsible-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: inherit;
+  flex: 1;
+}
+.wayfinder .effect-collapsible .effect-collapsible-content {
+  display: none;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.98);
+  color: var(--wayfinder-text);
+}
+.wayfinder .effect-section-header {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--wayfinder-primary-dark);
+  margin-bottom: 6px;
+}
+.wayfinder .effect-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  margin-right: 6px;
+  background: rgba(168, 117, 26, 0.06);
+  border: 1px solid rgba(138, 90, 0, 0.08);
+  border-radius: 6px;
+  color: var(--wayfinder-primary-dark);
+  font-size: 12px;
+}
+.wayfinder .effect-traits-row .trait-chip-small {
+  padding: 3px 6px;
+  font-size: 11px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.wayfinder .effects-empty {
+  color: var(--wayfinder-primary-dark);
+  background: rgba(
+    168,
+    117,
+    26,
+    0.06
+  ); /* subtle warm background matching palette */
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px dashed rgba(138, 90, 0, 0.12);
+  font-weight: 700;
+}
+
+/* Ensure empty item placeholders are readable and follow palette */
+.wayfinder .items-list .item.empty,
+.wayfinder .items-list .item:empty {
+  color: var(--wayfinder-primary-dark);
+  background: rgba(168, 117, 26, 0.04);
+  border-left: 4px solid rgba(168, 117, 26, 0.12);
+  padding-left: 8px;
+}
+
+/* Generic empty message used across lists */
+.wayfinder .empty-message,
+.wayfinder p.empty-message {
+  color: var(--wayfinder-primary-dark);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(245, 230, 211, 0.95)
+  );
+  padding: 10px 12px;
+  border: 1px dashed rgba(138, 90, 0, 0.12);
+  border-left: 6px solid rgba(168, 117, 26, 0.16);
+  border-radius: 6px;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* slightly dim helper text inside empty message but keep legible */
+.wayfinder .empty-message small {
+  color: rgba(42, 26, 10, 0.8);
+  font-weight: 600;
+}
+
+/* Staircase layout for effects: each subsequent effect is indented further (scoped to the collapsible list) */
+.wayfinder .effects-collapsible-list {
+  /* positioning context */
+}
+.wayfinder .effects-collapsible-list .effect-collapsible {
+  margin-left: 0;
+}
+.wayfinder .effects-collapsible-list .effect-collapsible:nth-child(2) {
+  margin-left: 12px;
+}
+.wayfinder .effects-collapsible-list .effect-collapsible:nth-child(3) {
+  margin-left: 24px;
+}
+.wayfinder .effects-collapsible-list .effect-collapsible:nth-child(4) {
+  margin-left: 36px;
+}
+.wayfinder .effects-collapsible-list .effect-collapsible:nth-child(5) {
+  margin-left: 48px;
+}
+.wayfinder .effects-collapsible-list .effect-collapsible:nth-child(6) {
+  margin-left: 60px;
+}
+.wayfinder .effects-collapsible-list .effect-collapsible:nth-child(7) {
+  margin-left: 72px;
+}
+.wayfinder .effects-collapsible-list .effect-collapsible:nth-child(8) {
+  margin-left: 84px;
+}
+
+/* Make info icons readable against the palette */
+.wayfinder .effects-collapsible-list .fa-info-circle,
+.wayfinder .effect-collapsible-header .fa-info-circle {
+  color: var(--wayfinder-primary-dark) !important;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.6);
+  opacity: 1 !important;
+}
+
+/* Slightly increase icon size for readability */
+.wayfinder .effects-collapsible-list .fa-info-circle {
+  font-size: 14px;
+}
+
+/* Keep the header full-width while content appears indented */
+.wayfinder .effects .effect-collapsible .effect-collapsible-header {
+  margin-left: 0; /* headers aligned to container */
+}
 /* Pentagon Attributes */
 .wayfinder .attributes-resources-wrapper {
   display: flex;
@@ -873,6 +1130,27 @@
 
 .wayfinder .attributes-pentagon svg {
   display: none;
+}
+
+/* Skills two-column layout and skill name sizing */
+.wayfinder .skills-table-container {
+  display: flex;
+  gap: 18px;
+}
+.wayfinder .skills-table {
+  width: auto !important;
+  max-width: min-content !important;
+}
+.wayfinder .skills-table th,
+.wayfinder .skills-table td {
+  padding: 6px 8px;
+  border: 1px solid var(--wayfinder-border);
+  vertical-align: middle;
+}
+.wayfinder .skill-name {
+  font-size: 16px;
+  text-transform: capitalize;
+  display: inline-block;
 }
 
 /* Roll card font sizing: increase all fonts inside the wf-roll-card flavor HTML */
@@ -1443,8 +1721,8 @@
 
 /* Skills Table Container - 2 Tables Side by Side */
 .wayfinder .skills-table-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  justify-content: space-evenly;
   margin: 5px;
   gap: 20px;
   padding: 15px;
@@ -1458,12 +1736,29 @@
 }
 
 .wayfinder .skills-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 2px solid var(--wayfinder-primary);
+  width: 80%;
+  border-collapse: collapse !important;
+  border: 2px solid var(--wayfinder-primary) !important;
   border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(168, 117, 26, 0.15);
+}
+
+/* Force visible borders with high specificity and !important to override other rules */
+.app.sheet.actor.wayfinder .skills-table,
+.app.sheet.actor.wayfinder .skills-table th,
+.app.sheet.actor.wayfinder .skills-table td,
+.wayfinder .skills-table,
+.wayfinder .skills-table th,
+.wayfinder .skills-table td {
+  border: 1px solid var(--wayfinder-border) !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure row separators show */
+.app.sheet.actor.wayfinder .skills-table tbody tr,
+.wayfinder .skills-table tbody tr {
+  border-bottom: 1px solid var(--wayfinder-border) !important;
 }
 
 .wayfinder .skills-table thead {
@@ -1479,7 +1774,7 @@
 .wayfinder .skills-table th {
   padding: 12px;
   text-align: left;
-  font-size: 12px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-right: 1px solid rgba(255, 255, 255, 0.2);
@@ -1506,6 +1801,32 @@
   padding: 10px 12px;
   font-size: 13px;
   vertical-align: middle;
+}
+
+/* Reduce font size for all cells starting from the 2nd column to improve density */
+
+/* Design for the total cell shown in skills tables */
+.wayfinder .skills-table .attribute-total {
+  display: inline-block;
+  padding: 6px 10px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 12px;
+  color: #fff;
+  background: linear-gradient(
+    90deg,
+    var(--wayfinder-primary) 0%,
+    var(--wayfinder-primary-dark) 100%
+  );
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Small formula caption pulled from the data-formula attribute */
+.wayfinder .skills-table .attribute-total::after {
+  content: none !important;
+  display: none !important;
 }
 
 .wayfinder .resource-block select {
@@ -1597,6 +1918,18 @@
     var(--wayfinder-accent-light) 0%,
     transparent 100%
   );
+}
+
+/* Talents section width and title color adjustments */
+.wayfinder .talents-section {
+  width: 80%;
+  margin: 0 auto 12px auto;
+  box-sizing: border-box;
+}
+
+.wayfinder .tab-title-talents {
+  color: var(--wayfinder-primary-dark);
+  font-weight: 900;
 }
 
 /* ----------------------------------------- */
@@ -3539,7 +3872,7 @@
 
   .talents-section {
     padding: 20px;
-    width: 100%;
+    width: 80%;
     box-sizing: border-box;
     flex: 1;
     display: flex;
@@ -4235,6 +4568,59 @@
 }
 
 .talent-item-content .effect-trait-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Apply the same heightened/trail styles globally so Effects tab matches Talents */
+.wayfinder .effect-heightened .heightened-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.wayfinder .heightened-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.wayfinder .heightened-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary) 0%,
+    var(--wayfinder-accent-dark) 100%
+  );
+  color: white;
+  font-weight: 700;
+  font-size: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+.wayfinder .heightened-desc,
+.wayfinder .heightened-text {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #4b5563;
+}
+.wayfinder .effect-traits-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.wayfinder .effect-trait-chip,
+.wayfinder .trait-chip {
   display: inline-flex;
   align-items: center;
   padding: 3px 10px;
