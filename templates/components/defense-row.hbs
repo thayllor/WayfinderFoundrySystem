@@ -8,17 +8,17 @@
       class="proficiency-select"
       name="system.attributes.{{attributeKey}}.proficiency"
     >
-      <option value="Untrained" selected>Untrained</option>
-      <option value="Trained">Trained</option>
-      <option value="Expert">Expert</option>
-      <option value="Master">Master</option>
-      <option value="Legendary">Legendary</option>
+      <option value="untrained" {{#if (eq (lookup (lookup (lookup system 'attributes') attributeKey) 'proficiency') 'untrained')}}selected{{/if}}>Untrained</option>
+      <option value="trained" {{#if (eq (lookup (lookup (lookup system 'attributes') attributeKey) 'proficiency') 'trained')}}selected{{/if}}>Trained</option>
+      <option value="expert" {{#if (eq (lookup (lookup (lookup system 'attributes') attributeKey) 'proficiency') 'expert')}}selected{{/if}}>Expert</option>
+      <option value="master" {{#if (eq (lookup (lookup (lookup system 'attributes') attributeKey) 'proficiency') 'master')}}selected{{/if}}>Master</option>
+      <option value="legendary" {{#if (eq (lookup (lookup (lookup system 'attributes') attributeKey) 'proficiency') 'legendary')}}selected{{/if}}>Legendary</option>
     </select>
   </td>
   <td><input
       type="number"
       name="system.attributes.{{attributeKey}}.bonus"
-      value="0"
+      value="{{lookup (lookup (lookup system 'attributes') attributeKey) 'bonus'}}"
       placeholder="Bonus"
     /></td>
   <td><input

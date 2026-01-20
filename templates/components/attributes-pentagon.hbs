@@ -7,8 +7,13 @@
   />
   <div class="pentagon-attributes-container">
     {{#each system.attributes as |attribute key|}}
-      <div class="pentagon-attribute">
-        <div class="attribute-name">{{key}}</div>
+      <div class="pentagon-attribute" data-attribute-key="{{key}}">
+        <div class="attribute-name" data-attribute-key="{{key}}">
+          <div
+            class="attribute-roll-badge"
+            title="Roll 2d10 + atributo"
+          >{{key}}</div>
+        </div>
         <div class="attribute-pentagon-box">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <polygon
@@ -25,18 +30,16 @@
                 class="attribute-value"
                 type="number"
                 name="system.attributes.{{key}}.value"
-                value="{{attribute.value}}"
-                placeholder="V"
+                value="{{default attribute.value 0}}"
               />
             </div>
             <div class="triangle-down">
-              <input
+              <span
                 class="attribute-value"
-                type="number"
-                name="system.attributes.{{key}}.defenseDC"
-                value="{{attribute.defenseDC}}"
-                placeholder="D"
-              />
+                style="color: var(--wayfinder-main-color); background: var(--wayfinder-bg-color);"
+              >
+                {{default (calculateDefenseDC key system.attributes) 10}}
+              </span>
             </div>
           </div>
         </div>

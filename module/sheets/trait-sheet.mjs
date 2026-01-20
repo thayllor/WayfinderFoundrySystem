@@ -334,7 +334,8 @@ export class WayfinderTraitSheet extends HandlebarsApplicationMixin(DocumentShee
       </div>
     `;
 
-    const dialog = new Dialog({
+    const DialogClass = (typeof ApplicationV2 !== 'undefined' && ApplicationV2?.Dialog) ? ApplicationV2.Dialog : Dialog;
+    const dialog = new DialogClass({
       title: title,
       content: colorHtml,
       buttons: {
@@ -342,7 +343,8 @@ export class WayfinderTraitSheet extends HandlebarsApplicationMixin(DocumentShee
           icon: '<i class="fas fa-check"></i>',
           label: 'Aplicar',
           callback: (html) => {
-            const input = html.querySelector('#color-input');
+            const dom = (html && html[0]) ? html[0] : html;
+            const input = dom.querySelector('#color-input');
             if (input && callback) {
               callback(input.value);
             }

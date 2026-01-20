@@ -48,7 +48,6 @@
 
 .wayfinder.flexcol {
   width: 100%;
-  max-width: 1080px;
   overflow: visible;
   box-sizing: border-box;
   align-items: center;
@@ -280,7 +279,7 @@
   height: 70px;
   border: 3px solid var(--wayfinder-border);
   border-radius: 8px;
-  color: #ffffff;
+  color: var(--wayfinder-primary-dark);
   text-align: center;
   padding: 0 10px;
   cursor: pointer;
@@ -330,15 +329,27 @@
 }
 
 .tabs-external .item:nth-child(1) {
-  background: linear-gradient(90deg, #8b5a3c 0%, #a0704d 100%);
+  background: linear-gradient(
+    90deg,
+    var(--wayfinder-primary-dark) 0%,
+    var(--wayfinder-primary) 100%
+  );
 }
 
 .tabs-external .item:nth-child(2) {
-  background: linear-gradient(90deg, #6b7f5c 0%, #859573 100%);
+  background: linear-gradient(
+    90deg,
+    var(--wayfinder-accent-dark) 0%,
+    var(--wayfinder-accent-light) 100%
+  );
 }
 
 .tabs-external .item:nth-child(3) {
-  background: linear-gradient(90deg, #5b6f8b 0%, #7589a3 100%);
+  background: linear-gradient(
+    90deg,
+    var(--wayfinder-border) 0%,
+    var(--wayfinder-primary-dark) 100%
+  );
 }
 
 .tabs-external .item:hover {
@@ -353,7 +364,7 @@
   transform: translateX(-15px) scale(1.1);
   opacity: 1;
   border-width: 4px;
-  border-color: var(--wayfinder-accent-light);
+  border-color: var(--wayfinder-primary);
   box-shadow:
     8px 8px 16px rgba(168, 117, 26, 0.5),
     inset 0 0 0 3px var(--wayfinder-accent-light);
@@ -373,8 +384,8 @@
   left: 85px;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.9);
-  color: #fff;
+  background: var(--wayfinder-primary-dark);
+  color: var(--wayfinder-accent-light);
   padding: 6px 12px;
   border-radius: 4px;
   white-space: nowrap;
@@ -392,7 +403,7 @@
   height: 70px;
   border: 3px solid var(--wayfinder-border);
   border-radius: 8px;
-  color: #ffffff;
+  color: var(--wayfinder-primary-dark);
   text-align: center;
   padding: 0 10px;
   cursor: pointer;
@@ -410,15 +421,27 @@
 
 /* Cores diferentes para cada aba */
 .wayfinder .sheet-tabs .item:nth-child(1) {
-  background: linear-gradient(90deg, #8b5a3c 0%, #a0704d 100%);
+  background: linear-gradient(
+    90deg,
+    var(--wayfinder-primary-dark) 0%,
+    var(--wayfinder-primary) 100%
+  );
 }
 
 .wayfinder .sheet-tabs .item:nth-child(2) {
-  background: linear-gradient(90deg, #6b7f5c 0%, #859573 100%);
+  background: linear-gradient(
+    90deg,
+    var(--wayfinder-accent-dark) 0%,
+    var(--wayfinder-accent-light) 100%
+  );
 }
 
 .wayfinder .sheet-tabs .item:nth-child(3) {
-  background: linear-gradient(90deg, #5b6f8b 0%, #7589a3 100%);
+  background: linear-gradient(
+    90deg,
+    var(--wayfinder-border) 0%,
+    var(--wayfinder-primary-dark) 100%
+  );
 }
 
 .wayfinder .sheet-tabs .item:hover {
@@ -431,7 +454,7 @@
 .wayfinder .sheet-tabs .item.active {
   transform: scale(1.1);
   border-width: 4px;
-  border-color: var(--wayfinder-accent-light);
+  border-color: var(--wayfinder-primary);
   box-shadow:
     8px 8px 16px rgba(168, 117, 26, 0.5),
     inset 0 0 0 3px var(--wayfinder-accent-light);
@@ -463,6 +486,9 @@
 .wayfinder .sheet-body {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  max-height: max-content;
+  margin-bottom: 20px;
   width: 100%;
 }
 
@@ -481,6 +507,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-width: 1037px;
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
@@ -691,6 +718,7 @@
   flex-direction: row;
   gap: 2px;
   align-items: center;
+  justify-content: space-evenly;
   width: 100%;
 }
 
@@ -789,6 +817,7 @@
   text-align: center;
   border-radius: 3px;
   box-sizing: border-box;
+  color: var(--wayfinder-primary-dark);
 }
 
 .wayfinder .defenses-table input:focus {
@@ -846,6 +875,13 @@
   display: none;
 }
 
+/* Roll card font sizing: increase all fonts inside the wf-roll-card flavor HTML */
+.wayfinder .wf-roll-card,
+.wayfinder .wf-roll-card * {
+  font-size: 16px !important;
+  line-height: 1.3 !important;
+}
+
 .wayfinder .pentagon-background-img {
   position: absolute;
   width: 120%;
@@ -857,6 +893,7 @@
   object-fit: contain;
   border: none;
   opacity: 0.7;
+  pointer-events: none;
 }
 
 .wayfinder .pentagon-attributes-container {
@@ -887,6 +924,37 @@
   top: 2.5%;
   left: 50%;
   transform: translate(-50%, -8%);
+}
+
+/* Global chat message font sizing -- increase readability for all chat messages */
+#chat-log .chat-message,
+.chat-message {
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+}
+
+/* Ensure flavor text, message content and dice outputs also scale */
+.chat-message .message-content,
+.chat-message .flavor,
+.chat-message .dice,
+.chat-message .message-sender,
+.chat-message .message-timestamp {
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+}
+
+/* Make numeric totals and important values more prominent */
+.chat-message .dice-total,
+.chat-message .result-total,
+.chat-message .dice .dice-total {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+}
+
+/* Keep custom wf-roll-card sizing respected inside chat */
+.wf-roll-card,
+.wf-roll-card * {
+  font-size: 16px !important;
 }
 
 .wayfinder .pentagon-attribute:nth-of-type(3) {
@@ -943,15 +1011,15 @@
 
 /* Triângulos dentro do pentagrama */
 .wayfinder .attribute-value-triangle {
-  position: absolute;
-  z-index: 2;
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 15px;
+  justify-content: space-evenly;
+  gap: 4px;
+  z-index: 2;
 }
 
 .wayfinder .triangle-up,
@@ -996,7 +1064,8 @@
   font-size: 24px;
   font-weight: bold;
   color: #ffffff;
-  z-index: 4;
+  z-index: 10;
+  position: relative;
   padding: 5px 0;
   margin: 0;
   line-height: 1.2;
@@ -1014,10 +1083,51 @@
   font-size: 12px;
   border: none;
   background: transparent;
-  color: var(--wayfinder-background);
-  font-weight: bold;
+  align-items: flex-start;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
-/* Resources & Info Section - Block Style */
+
+/* Attribute total display in defenses table */
+.wayfinder .defenses-table .attribute-total {
+  display: inline-block;
+  min-width: 48px;
+  padding: 4px 8px;
+  text-align: center;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--wayfinder-primary-dark);
+  border-radius: 6px;
+}
+
+/* Attribute roll badge (round) placed before attribute label */
+.wayfinder .attributes-pentagon .attribute-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  justify-content: space-evenly;
+}
+.wayfinder .attributes-pentagon .attribute-roll-badge {
+  border-radius: 50%;
+  background: var(--wayfinder-accent-dark);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--wayfinder-text);
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 4px;
+}
+/* Keep attribute-label as fallback if used elsewhere */
+.wayfinder .attributes-pentagon .attribute-label {
+  font-weight: 700;
+  color: var(--wayfinder-text);
+}
+
 .wayfinder .top-resources-row {
   width: 1037px;
   display: grid;
@@ -1458,33 +1568,33 @@
 
 /* Skills tab title */
 .wayfinder .tab-title-skills {
-  color: var(--wayfinder-primary);
+  color: var(--wayfinder-primary-dark);
   border-bottom-color: var(--wayfinder-primary);
   background: linear-gradient(
     135deg,
-    rgba(168, 117, 26, 0.08) 0%,
+    var(--wayfinder-accent-light) 0%,
     transparent 100%
   );
 }
 
 /* Actions tab title */
 .wayfinder .tab-title-actions {
-  color: #2d5016;
-  border-bottom-color: #2d5016;
+  color: var(--wayfinder-primary);
+  border-bottom-color: var(--wayfinder-primary-dark);
   background: linear-gradient(
     135deg,
-    rgba(45, 80, 22, 0.08) 0%,
+    var(--wayfinder-accent-dark) 0%,
     transparent 100%
   );
 }
 
 /* Resources tab title */
 .wayfinder .tab-title-resources {
-  color: #1e4d6b;
-  border-bottom-color: #1e4d6b;
+  color: var(--wayfinder-border);
+  border-bottom-color: var(--wayfinder-border);
   background: linear-gradient(
     135deg,
-    rgba(30, 77, 107, 0.08) 0%,
+    var(--wayfinder-accent-light) 0%,
     transparent 100%
   );
 }
@@ -1751,25 +1861,41 @@
 }
 
 .wayfinder.sheet.item .talent-type-badge.Basic {
-  background: linear-gradient(135deg, var(--wayfinder-primary-dark) 0%, var(--wayfinder-border) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary-dark) 0%,
+    var(--wayfinder-border) 100%
+  );
   color: white;
   border-color: var(--wayfinder-border);
 }
 
 .wayfinder.sheet.item .talent-type-badge.General {
-  background: linear-gradient(135deg, var(--wayfinder-primary) 0%, var(--wayfinder-accent-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary) 0%,
+    var(--wayfinder-accent-dark) 100%
+  );
   color: white;
   border-color: var(--wayfinder-accent-dark);
 }
 
 .wayfinder.sheet.item .talent-type-badge.Ancestry {
-  background: linear-gradient(135deg, var(--wayfinder-accent-light) 0%, var(--wayfinder-primary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-accent-light) 0%,
+    var(--wayfinder-primary) 100%
+  );
   color: var(--wayfinder-primary-dark);
   border-color: var(--wayfinder-primary);
 }
 
 .wayfinder.sheet.item .talent-type-badge.Class {
-  background: linear-gradient(135deg, var(--wayfinder-primary-dark) 0%, var(--wayfinder-accent-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary-dark) 0%,
+    var(--wayfinder-accent-dark) 100%
+  );
   color: white;
   border-color: var(--wayfinder-accent-dark);
 }
@@ -1799,7 +1925,11 @@
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--wayfinder-primary) 0%, var(--wayfinder-accent-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary) 0%,
+    var(--wayfinder-accent-dark) 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1869,8 +1999,10 @@
 .wayfinder.sheet.item .profile-img {
   width: 80px;
   height: 80px;
+  flex-shrink: 0;
   border: 2px solid var(--wayfinder-primary);
   border-radius: 4px;
+  object-fit: cover;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -1882,9 +2014,13 @@
 
 .wayfinder.sheet.item .header-fields {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .wayfinder.sheet.item .charname input {
+  font-family: "Cinzel", serif;
   font-size: 24px;
   font-weight: bold;
   color: var(--wayfinder-primary);
@@ -1970,7 +2106,7 @@
   border: 1px solid rgba(168, 117, 26, 0.25);
   border-radius: 8px;
   padding: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   margin-bottom: 12px;
 }
 
@@ -2208,21 +2344,21 @@
   box-shadow: 0 4px 10px rgba(168, 117, 26, 0.3);
 }
 
-.wayfinder.sheet.item .trait-description-header .trait-editor-toggle-btn:active {
+.wayfinder.sheet.item
+  .trait-description-header
+  .trait-editor-toggle-btn:active {
   transform: translateY(0);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.wayfinder.sheet.item .trait-description-header .trait-editor-toggle-btn:disabled {
+.wayfinder.sheet.item
+  .trait-description-header
+  .trait-editor-toggle-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-  font-weight: 600;
-  color: var(--wayfinder-primary-dark);
-  margin-bottom: 8px;
-  display: block;
-}
+/* Removed stray properties and closing brace */
 
 /* Editor Styles */
 .wayfinder.sheet.item .editor-wrapper {
@@ -2394,1027 +2530,1080 @@
   font-weight: 600;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
+/* Removed stray properties and closing brace */
 
 .wayfinder.sheet.item .trait-editor-toolbar .editor-fmt-btn:hover {
   background: rgba(255, 255, 255, 0.35);
   border-color: rgba(255, 255, 255, 0.6);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.wayfinder.sheet.item .trait-editor-toolbar .editor-fmt-btn:active {
-  transform: translateY(0);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.wayfinder.sheet.item .trait-editor-toolbar .editor-separator {
-  width: 2px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.25);
-  margin: 0 4px;
-  border-radius: 1px;
-}
-
-.wayfinder.sheet.item .trait-editor-toolbar .trait-editor-close-btn {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  padding: 7px 14px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  margin-left: auto;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.wayfinder.sheet.item .trait-editor-toolbar .trait-editor-close-btn:hover {
-  background: rgba(52, 211, 153, 0.4);
-  border-color: rgba(255, 255, 255, 0.6);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.wayfinder.sheet.item .trait-editor-toolbar .trait-editor-close-btn:active {
-  transform: translateY(0);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Editor Stats and Preview Toggle */
-.wayfinder.sheet.item .trait-editor-toolbar .editor-stats {
-  display: flex;
-  gap: 12px;
-  margin-left: 8px;
-  padding-left: 8px;
-  border-left: 2px solid rgba(255, 255, 255, 0.25);
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 600;
-}
-
-.wayfinder.sheet.item .trait-editor-toolbar .editor-word-count,
-.wayfinder.sheet.item .trait-editor-toolbar .editor-char-count {
-  white-space: nowrap;
-}
-
-.wayfinder.sheet.item .trait-editor-toolbar .editor-preview-toggle {
-  margin-left: 8px;
-}
-
-.wayfinder.sheet.item .trait-editor-toolbar .editor-preview-toggle.active {
-  background: rgba(52, 211, 153, 0.4);
-  border-color: rgba(52, 211, 153, 0.6);
-}
-
-/* Container para editor e preview */
-.wayfinder.sheet.item .trait-editor-container {
-  position: relative;
-}
-
-.wayfinder.sheet.item .trait-editor-content {
-  min-height: 200px;
-  max-height: 450px;
-  padding: 16px;
-  border: 2px solid var(--wayfinder-border);
-  border-radius: 4px;
-  background: white;
-  font-family: "Crimson Text", serif;
-  font-size: 15px;
-  line-height: 1.8;
-  color: var(--wayfinder-text);
-  outline: none;
-  overflow-y: auto;
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.wayfinder.sheet.item .trait-editor-preview {
-  min-height: 200px;
-  max-height: 450px;
-  padding: 16px;
-  border: 2px solid var(--wayfinder-accent-light);
-  border-radius: 4px;
-  background: linear-gradient(135deg, #fffef5 0%, #faf9f6 100%);
-  font-family: "Crimson Text", serif;
-  font-size: 15px;
-  line-height: 1.8;
-  color: var(--wayfinder-text);
-  overflow-y: auto;
-}
-
-.wayfinder.sheet.item .trait-editor-preview h2 {
-  color: var(--wayfinder-primary-dark);
-  margin-top: 12px;
-  margin-bottom: 8px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.wayfinder.sheet.item .trait-editor-preview h3 {
-  color: var(--wayfinder-primary);
-  margin-top: 10px;
-  margin-bottom: 6px;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.wayfinder.sheet.item .trait-editor-preview blockquote {
-  border-left: 4px solid var(--wayfinder-primary);
-  padding-left: 12px;
-  margin-left: 0;
-  font-style: italic;
-  color: #666;
-}
-
-.wayfinder.sheet.item .trait-editor-preview a {
-  color: var(--wayfinder-primary);
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.wayfinder.sheet.item .trait-editor-preview table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 8px 0;
-}
-
-.wayfinder.sheet.item .trait-editor-preview table td,
-.wayfinder.sheet.item .trait-editor-preview table th {
-  border: 1px solid var(--wayfinder-border);
-  padding: 8px;
-}
-
-.wayfinder.sheet.item .trait-editor-preview img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 4px;
-  margin: 8px 0;
-}
-
-.wayfinder.sheet.item .trait-editor-preview ul,
-.wayfinder.sheet.item .trait-editor-preview ol {
-  margin-left: 20px;
-  margin-top: 6px;
-  margin-bottom: 6px;
-}
-
-.wayfinder.sheet.item .trait-editor-preview li {
-  margin-bottom: 4px;
-}
-
-.wayfinder.sheet.item .trait-editor-content:empty::before {
-  content: attr(data-placeholder);
-  color: #999;
-}
-
-.wayfinder.sheet.item .trait-editor-content[contenteditable="true"] {
-  border: 2px solid var(--wayfinder-primary);
-  background: #fffef5;
-  background: linear-gradient(135deg, #fffef5 0%, #faf9f6 100%);
-  cursor: text;
-  box-shadow: inset 0 0 0 1px var(--wayfinder-accent-light);
-}
-
-.wayfinder.sheet.item .trait-editor-content[contenteditable="true"]:focus {
-  box-shadow:
-    inset 0 0 0 1px var(--wayfinder-accent-light),
-    0 0 10px rgba(168, 117, 26, 0.1);
-}
-
-.wayfinder.sheet.item .trait-editor-toggle-btn {
-  background: linear-gradient(
-    135deg,
-    var(--wayfinder-primary) 0%,
-    var(--wayfinder-accent-light) 100%
-  );
-  color: white;
-  border: 1px solid var(--wayfinder-border);
-  padding: 12px 18px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  align-self: flex-start;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 6px rgba(168, 117, 26, 0.2);
-}
-
-.wayfinder.sheet.item .trait-editor-toggle-btn:hover:not(:disabled) {
-  opacity: 0.95;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(168, 117, 26, 0.3);
-}
-
-.wayfinder.sheet.item .trait-editor-toggle-btn:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.wayfinder.sheet.item .trait-editor-toggle-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-.wayfinder.sheet.item .trait-editor-toggle-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-/* Magic Section Styles */
-.wayfinder.sheet.item .magic-section {
-  background: linear-gradient(135deg, rgba(168, 117, 26, 0.08) 0%, rgba(242, 201, 125, 0.05) 100%);
-  border: 2px solid var(--wayfinder-primary);
-  border-radius: 8px;
-  padding: 15px;
-  margin: 15px 0;
-}
-
-.wayfinder.sheet.item .magic-section h4 {
-  color: var(--wayfinder-primary-dark);
-  font-weight: 700;
-  margin: 0 0 15px 0;
-  font-size: 16px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  padding: 10px 0;
-  border-bottom: 3px solid var(--wayfinder-primary);
-  display: inline-block;
-}
-
-.wayfinder.sheet.item .magic-circle-group {
-  display: flex;
-  align-items: flex-end;
-  gap: 10px;
-}
-
-.wayfinder.sheet.item .magic-circle-group label {
-  margin-bottom: 0;
-  flex: 0 0 auto;
-}
-
-.wayfinder.sheet.item .magic-circle-select {
-  min-width: 220px;
-  padding: 6px 10px;
-  height: auto;
-  line-height: 1.4;
-  border: 2px solid var(--wayfinder-border);
-  border-radius: 4px;
-  background: white;
-  color: var(--wayfinder-text);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  vertical-align: middle;
-}
-
-.wayfinder.sheet.item .magic-circle-select option {
-  padding: 3px 5px;
-  font-size: 13px;
-  color: var(--wayfinder-text);
-  line-height: 1.5;
-}
-
-.wayfinder.sheet.item .magic-circle-select:hover {
-  border-color: var(--wayfinder-primary);
-  box-shadow: 0 0 8px rgba(168, 117, 26, 0.2);
-}
-
-.wayfinder.sheet.item .magic-circle-select:focus {
-  outline: none;
-  border-color: var(--wayfinder-primary);
-  box-shadow: 0 0 0 3px rgba(168, 117, 26, 0.15);
-}
-
-.wayfinder.sheet.item .heightened-section {
-  margin-top: 15px;
-}
-
-.wayfinder.sheet.item .heightened-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 10px 0;
-  background: white;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.wayfinder.sheet.item .heightened-table thead {
-  background: linear-gradient(90deg, var(--wayfinder-primary) 0%, var(--wayfinder-accent-dark) 100%);
-  color: white;
-}
-
-.wayfinder.sheet.item .heightened-table th {
-  padding: 12px 10px;
-  text-align: left;
-  font-weight: 700;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid var(--wayfinder-border);
-}
-
-.wayfinder.sheet.item .heightened-table tbody tr {
-  border-bottom: 1px solid rgba(168, 117, 26, 0.15);
-  transition: background-color 0.2s ease;
-}
-
-.wayfinder.sheet.item .heightened-table tbody tr:hover {
-  background-color: rgba(242, 201, 125, 0.1);
-}
-
-.wayfinder.sheet.item .heightened-table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.wayfinder.sheet.item .heightened-table td {
-  padding: 12px 10px;
-  vertical-align: top;
-}
-
-.wayfinder.sheet.item .heightened-table td:nth-child(1) {
-  width: 100px;
-}
-
-.wayfinder.sheet.item .heightened-table td:nth-child(3) {
-  width: 50px;
-  text-align: center;
-}
-
-.wayfinder.sheet.item .heightened-level {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid var(--wayfinder-border);
-  border-radius: 4px;
-  font-size: 12px;
-  background: white;
-  color: var(--wayfinder-text);
-  transition: all 0.2s ease;
-}
-
-.wayfinder.sheet.item .heightened-level:focus {
-  outline: none;
-  border-color: var(--wayfinder-primary);
-  box-shadow: 0 0 0 3px rgba(168, 117, 26, 0.1);
-}
-
-.wayfinder.sheet.item .heightened-effects-editor {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid var(--wayfinder-border);
-  border-radius: 4px;
-  font-size: 12px;
-  background: white;
-  color: var(--wayfinder-text);
-  min-height: 50px;
-  font-family: "Roboto", sans-serif;
-  transition: all 0.2s ease;
-  overflow-y: auto;
-  overflow-x: auto;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-}
-
-.wayfinder.sheet.item .heightened-effects-editor:focus {
-  outline: none;
-  border-color: var(--wayfinder-primary);
-  box-shadow: 0 0 0 3px rgba(168, 117, 26, 0.1);
-}
-
-.wayfinder.sheet.item .heightened-effects-hidden {
-  display: none !important;
-}
-
-.wayfinder.sheet.item .remove-heightened-btn {
-  background: linear-gradient(135deg, #c41e3a 0%, #8a1629 100%);
-  color: white;
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: bold;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.wayfinder.sheet.item .remove-heightened-btn:hover {
-  background: linear-gradient(135deg, #8a1629 0%, #5a0f1c 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(196, 30, 58, 0.3);
-}
-
-.wayfinder.sheet.item .remove-heightened-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(196, 30, 58, 0.2);
-}
-
-.wayfinder.sheet.item .add-heightened-btn {
-  background: linear-gradient(135deg, var(--wayfinder-primary) 0%, var(--wayfinder-accent-dark) 100%);
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 12px;
-  transition: all 0.25s ease;
-  margin-top: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.wayfinder.sheet.item .add-heightened-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(168, 117, 26, 0.3);
-}
-
-/* ========== TALENT SHEET STYLES ========== */
-
-.wayfinder.sheet.item .talent-description-section {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-}
-
-.wayfinder.sheet.item .talent-description-section .description-card {
-  width: 100%;
-  max-width: 960px;
-}
-
-.wayfinder.sheet.item .talent-effects-section {
-  margin: 20px 0;
-  padding: 15px;
-  background: linear-gradient(135deg, rgba(168, 117, 26, 0.05) 0%, rgba(242, 201, 125, 0.03) 100%);
-  border: 2px solid var(--wayfinder-border);
-  border-radius: 8px;
-}
-
-.wayfinder.sheet.item .effects-title {
-  color: var(--wayfinder-primary-dark);
-  font-weight: 700;
-  margin: 0 0 15px 0;
-  font-size: 16px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  padding: 10px 0;
-  border-bottom: 3px solid var(--wayfinder-primary);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.wayfinder.sheet.item .effects-list {
-  margin: 15px 0;
-}
-
-.wayfinder.sheet.item .effect-item {
-  position: relative;
-  margin-bottom: 10px;
-}
-
-/* Collapsible Effect Styles */
-.wayfinder.sheet.item .effect-collapsible {
-  background: white;
-  border: 1px solid rgba(168, 117, 26, 0.2);
-  border-radius: 6px;
-  overflow: hidden;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-  margin-bottom: 12px;
-}
-
-.wayfinder.sheet.item .effect-collapsible:hover {
-  border-color: var(--wayfinder-primary);
-  box-shadow: 0 4px 8px rgba(168, 117, 26, 0.2);
-}
-
-.wayfinder.sheet.item .effect-collapsible-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 15px;
-  background: linear-gradient(135deg, var(--wayfinder-primary) 0%, var(--wayfinder-accent-dark) 100%);
-  color: white;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.25s ease;
-  font-weight: 600;
-}
-
-.wayfinder.sheet.item .effect-collapsible-header.active-header {
-  background: linear-gradient(135deg, #d4af37 0%, #b8942a 100%);
-  color: #2b2b2b;
-}
-
-.wayfinder.sheet.item .effect-collapsible-header.passive-header {
-  background: linear-gradient(135deg, #7eb3d4 0%, #5a8fb5 100%);
-  color: white;
-}
-
-.wayfinder.sheet.item .effect-collapsible-header:hover {
-  filter: brightness(1.1);
-}
-
-.wayfinder.sheet.item .effect-collapsible-icon {
-  transition: transform 0.25s ease;
-  font-size: 12px;
-}
-
-.wayfinder.sheet.item .effect-collapsible.open .effect-collapsible-icon {
-  transform: rotate(90deg);
-}
-
-.wayfinder.sheet.item .effect-collapsible-title {
-  flex: 1;
-  font-size: 15px;
-}
-
-.wayfinder.sheet.item .effect-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  line-height: 1;
-}
-
-.wayfinder.sheet.item .magic-badge {
-  background: rgba(138, 43, 226, 0.15);
-  color: #6a1b9a;
-  border: 1px solid rgba(138, 43, 226, 0.3);
-}
-
-.wayfinder.sheet.item .focus-badge {
-  background: rgba(212, 175, 55, 0.25);
-  color: #7a5f1c;
-  border: 1px solid rgba(212, 175, 55, 0.5);
-  font-weight: 700;
-}
-
-.wayfinder.sheet.item .effect-collapsible-content {
-  padding: 10px 12px;
-  border-top: 1px solid rgba(168, 117, 26, 0.1);
-}
-
-.wayfinder.sheet.item .effect-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.wayfinder.sheet.item .effect-section {
-  padding: 12px;
-  border-bottom: 1px solid rgba(168, 117, 26, 0.08);
-}
-
-.wayfinder.sheet.item .effect-section:last-child {
-  border-bottom: none;
-}
-
-.wayfinder.sheet.item .effect-section-header {
-  margin-bottom: 10px;
-  color: var(--wayfinder-primary);
-  font-size: 13px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.wayfinder.sheet.item .effect-section-header i {
-  font-size: 12px;
-}
-
-.wayfinder.sheet.item .effect-text {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--wayfinder-text);
-  padding: 10px 12px;
-  background: #fffdf8;
-  border: 1px solid rgba(168, 117, 26, 0.12);
-  border-radius: 6px;
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  word-break: break-word;
-  overflow-x: visible;
-}
-
-.wayfinder.sheet.item .effect-meta-block {
-  padding: 12px 15px;
-  background: linear-gradient(135deg, rgba(168, 117, 26, 0.06) 0%, rgba(168, 117, 26, 0.02) 100%);
-  border: 1px solid rgba(168, 117, 26, 0.15);
-  border-radius: 8px;
-}
-
-.wayfinder.sheet.item .effect-meta-flex {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.wayfinder.sheet.item .effect-meta-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 12px;
-  background: white;
-  border: 1px solid rgba(168, 117, 26, 0.25);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--wayfinder-text);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.wayfinder.sheet.item .effect-meta-chip i {
-  color: var(--wayfinder-primary);
-}
-
-/* Pretty spell title shown above metadata for magic effects */
-.wayfinder.sheet.item .spell-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, var(--wayfinder-primary) 0%, var(--wayfinder-accent-dark) 100%);
-  color: white;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin: 8px 0 6px 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.wayfinder.sheet.item .spell-title i {
-  font-size: 14px;
-}
-
-.wayfinder.sheet.item .effect-heightened .heightened-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.wayfinder.sheet.item .heightened-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.wayfinder.sheet.item .heightened-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, var(--wayfinder-primary) 0%, var(--wayfinder-accent-dark) 100%);
-  color: white;
-  font-weight: 700;
-  font-size: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  flex-shrink: 0;
-}
-
-.wayfinder.sheet.item .heightened-badge .heightened-label {
-  opacity: 0.9;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  font-weight: 800;
-}
-
-.wayfinder.sheet.item .heightened-badge .heightened-level-pill {
-  padding: 2px 8px;
-  border-radius: 10px;
-  background: rgba(0,0,0,0.15);
-  border: 1px solid rgba(255,255,255,0.3);
-  font-weight: 800;
-  letter-spacing: 0.6px;
-}
-
-.wayfinder.sheet.item .heightened-text {
-  flex: 1;
-  background: #fffdf8;
-  border: 1px solid rgba(168, 117, 26, 0.12);
-  border-radius: 6px;
-  padding: 8px 10px;
-  font-size: 13px;
-  line-height: 1.5;
-  word-break: break-word;
-}
-
-.wayfinder.sheet.item .effect-metadata-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-  padding: 15px;
-  background: linear-gradient(135deg, rgba(168, 117, 26, 0.05) 0%, rgba(168, 117, 26, 0.02) 100%);
-}
-
-.wayfinder.sheet.item .effect-meta-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background: white;
-  border-radius: 6px;
-  border: 1px solid rgba(168, 117, 26, 0.15);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  transition: all 0.2s ease;
-}
-
-.wayfinder.sheet.item .effect-meta-card:hover {
-  border-color: var(--wayfinder-primary);
-  box-shadow: 0 2px 4px rgba(168, 117, 26, 0.15);
-}
-
-.wayfinder.sheet.item .meta-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--wayfinder-primary) 0%, var(--wayfinder-accent-dark) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.wayfinder.sheet.item .meta-icon i {
-  color: white;
-  font-size: 14px;
-}
-
-.wayfinder.sheet.item .meta-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.wayfinder.sheet.item .meta-label {
-  font-size: 11px;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 2px;
-  font-weight: 600;
-}
-
-.wayfinder.sheet.item .meta-value {
-  color: var(--wayfinder-text);
-  font-size: 13px;
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.wayfinder.sheet.item .effect-description,
-.wayfinder.sheet.item .effect-effect {
-  border-left: none;
-  padding-left: 0;
-}
-
-/* Ensure item sheet descriptions fill available width */
-.wayfinder.sheet.item .effect-section.effect-description {
-  max-width: none;
-  white-space: normal;
-  overflow: visible;
-  text-overflow: clip;
-  width: 100%;
-}
-
-.wayfinder.sheet.item .effect-description h4,
-.wayfinder.sheet.item .effect-effect h4 {
-  display: none;
-}
-
-.wayfinder.sheet.item .effect-metadata {
-  background: none;
-  padding: 0;
-  border-radius: 0;
-  border-left: none;
-}
-
-.wayfinder.sheet.item .effect-meta-item {
-  display: none;
-}
-
-.wayfinder.sheet.item .effect-traits-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.wayfinder.sheet.item .trait-chip.trait-chip-small {
-  padding: 4px 8px;
-  border-radius: 10px;
-  font-size: 11px;
-  line-height: 1.1;
-}
-
-.wayfinder.sheet.item .effect-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.2);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.wayfinder.sheet.item .effect-toggle:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.wayfinder.sheet.item .effect-toggle input[type="checkbox"] {
-  margin: 0;
-  cursor: pointer;
-}
-
-.wayfinder.sheet.item .effect-toggle .toggle-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: white;
-  line-height: 1;
-}
-
-.wayfinder.sheet.item .effect-meta-item strong {
-  color: var(--wayfinder-primary-dark);
-  font-weight: 700;
-}
-
-.wayfinder.sheet.item .effect-item-actions {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  gap: 5px;
-  z-index: 2;
-}
-
-.wayfinder.sheet.item .remove-effect-btn {
-  background: #c41e3a;
-  color: white;
-  border: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  transition: all 0.2s ease;
-  opacity: 0;
-  pointer-events: auto;
-}
-
-.wayfinder.sheet.item .effect-item:hover .remove-effect-btn {
-  opacity: 1;
-}
-
-.wayfinder.sheet.item .remove-effect-btn:hover {
-  background: #8a1629;
-  transform: scale(1.1);
-}
-
-/* Drop Zones */
-.wayfinder.sheet.item .drop-zone {
-  border: 2px dashed var(--wayfinder-border);
-  border-radius: 8px;
-  padding: 30px 20px;
-  text-align: center;
-  background: rgba(242, 201, 125, 0.05);
-  cursor: pointer;
-  transition: all 0.25s ease;
-  margin: 15px 0;
-}
-
-.wayfinder.sheet.item .drop-zone:hover {
-  border-color: var(--wayfinder-primary);
-  background: rgba(242, 201, 125, 0.12);
-}
-
-.wayfinder.sheet.item .drop-zone.drag-over {
-  border-color: var(--wayfinder-primary);
-  background: rgba(168, 117, 26, 0.15);
-  box-shadow: 0 0 15px rgba(168, 117, 26, 0.3);
-}
-
-.wayfinder.sheet.item .drop-zone i {
-  font-size: 32px;
-  color: var(--wayfinder-primary);
-  margin-bottom: 10px;
-  display: block;
-  opacity: 0.7;
-}
-
-.wayfinder.sheet.item .drop-zone p {
-  color: var(--wayfinder-primary-dark);
-  font-weight: 600;
-  font-size: 13px;
-  margin: 0;
-}
-
-.wayfinder.sheet.item .empty-message {
-  text-align: center;
-  color: #999;
-  font-style: italic;
-  padding: 20px;
-  font-size: 13px;
-}
-
-.wayfinder.sheet.item .talent-drop-zones {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.wayfinder.sheet.item .talent-drop-zones .drop-zone {
-  flex: 1;
-}
-
-.wayfinder.sheet.item .add-heightened-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(168, 117, 26, 0.2);
-}
-
-/* =========================================== */
-/* Actor Sheet - Talents Tab                  */
-/* =========================================== */
-
-.talents-section {
-  padding: 20px;
-  width: 100%;
-  box-sizing: border-box;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.tab-title-talents {
-  font-family: 'Cinzel', serif;
-  color: var(--wayfinder-primary);
-  text-align: center;
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid var(--wayfinder-accent-dark);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Talent Type Category */
-.talent-type-category {
-  margin-bottom: 15px;
-  background: white;
-  border: 2px solid var(--wayfinder-accent-light);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.talent-type-header {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, rgba(242, 201, 125, 0.3) 0%, rgba(212, 162, 74, 0.3) 100%);
-  border-bottom: 1px solid var(--wayfinder-accent-light);
-  cursor: pointer;
-  transition: background 0.2s;
-  width: 100%;
-  box-sizing: border-box;
-  margin: 0;
-}
-}
+  /* Removed stray closing brace */
+
+  .wayfinder.sheet.item .trait-editor-toolbar .editor-fmt-btn:active {
+    transform: translateY(0);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .wayfinder.sheet.item .trait-editor-toolbar .editor-separator {
+    width: 2px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.25);
+    margin: 0 4px;
+    border-radius: 1px;
+  }
+
+  .wayfinder.sheet.item .trait-editor-toolbar .trait-editor-close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 7px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    margin-left: auto;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .wayfinder.sheet.item .trait-editor-toolbar .trait-editor-close-btn:hover {
+    background: rgba(52, 211, 153, 0.4);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .wayfinder.sheet.item .trait-editor-toolbar .trait-editor-close-btn:active {
+    transform: translateY(0);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Editor Stats and Preview Toggle */
+  .wayfinder.sheet.item .trait-editor-toolbar .editor-stats {
+    display: flex;
+    gap: 12px;
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: 2px solid rgba(255, 255, 255, 0.25);
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+  }
+
+  .wayfinder.sheet.item .trait-editor-toolbar .editor-word-count,
+  .wayfinder.sheet.item .trait-editor-toolbar .editor-char-count {
+    white-space: nowrap;
+  }
+
+  .wayfinder.sheet.item .trait-editor-toolbar .editor-preview-toggle {
+    margin-left: 8px;
+  }
+
+  .wayfinder.sheet.item .trait-editor-toolbar .editor-preview-toggle.active {
+    background: rgba(52, 211, 153, 0.4);
+    border-color: rgba(52, 211, 153, 0.6);
+  }
+
+  /* Container para editor e preview */
+  .wayfinder.sheet.item .trait-editor-container {
+    position: relative;
+  }
+
+  .wayfinder.sheet.item .trait-editor-content {
+    min-height: 200px;
+    max-height: 450px;
+    padding: 16px;
+    border: 2px solid var(--wayfinder-border);
+    border-radius: 4px;
+    background: white;
+    font-family: "Crimson Text", serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--wayfinder-text);
+    outline: none;
+    overflow-y: auto;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .wayfinder.sheet.item .trait-editor-preview {
+    min-height: 200px;
+    max-height: 450px;
+    padding: 16px;
+    border: 2px solid var(--wayfinder-accent-light);
+    border-radius: 4px;
+    background: linear-gradient(135deg, #fffef5 0%, #faf9f6 100%);
+    font-family: "Crimson Text", serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--wayfinder-text);
+    overflow-y: auto;
+  }
+
+  .wayfinder.sheet.item .trait-editor-preview h2 {
+    color: var(--wayfinder-primary-dark);
+    margin-top: 12px;
+    margin-bottom: 8px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .wayfinder.sheet.item .trait-editor-preview h3 {
+    color: var(--wayfinder-primary);
+    margin-top: 10px;
+    margin-bottom: 6px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .wayfinder.sheet.item .trait-editor-preview blockquote {
+    border-left: 4px solid var(--wayfinder-primary);
+    padding-left: 12px;
+    margin-left: 0;
+    font-style: italic;
+    color: #666;
+  }
+
+  .wayfinder.sheet.item .trait-editor-preview a {
+    color: var(--wayfinder-primary);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .wayfinder.sheet.item .trait-editor-preview table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 8px 0;
+  }
+
+  .wayfinder.sheet.item .trait-editor-preview table td,
+  .wayfinder.sheet.item .trait-editor-preview table th {
+    border: 1px solid var(--wayfinder-border);
+    padding: 8px;
+  }
+
+  .wayfinder.sheet.item .trait-editor-preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 8px 0;
+  }
+
+  .wayfinder.sheet.item .trait-editor-preview ul,
+  .wayfinder.sheet.item .trait-editor-preview ol {
+    margin-left: 20px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+  }
+
+  .wayfinder.sheet.item .trait-editor-preview li {
+    margin-bottom: 4px;
+  }
+
+  .wayfinder.sheet.item .trait-editor-content:empty::before {
+    content: attr(data-placeholder);
+    color: #999;
+  }
+
+  .wayfinder.sheet.item .trait-editor-content[contenteditable="true"] {
+    border: 2px solid var(--wayfinder-primary);
+    background: #fffef5;
+    background: linear-gradient(135deg, #fffef5 0%, #faf9f6 100%);
+    cursor: text;
+    box-shadow: inset 0 0 0 1px var(--wayfinder-accent-light);
+  }
+
+  .wayfinder.sheet.item .trait-editor-content[contenteditable="true"]:focus {
+    box-shadow:
+      inset 0 0 0 1px var(--wayfinder-accent-light),
+      0 0 10px rgba(168, 117, 26, 0.1);
+  }
+
+  .wayfinder.sheet.item .trait-editor-toggle-btn {
+    background: linear-gradient(
+      135deg,
+      var(--wayfinder-primary) 0%,
+      var(--wayfinder-accent-light) 100%
+    );
+    color: white;
+    border: 1px solid var(--wayfinder-border);
+    padding: 12px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 6px rgba(168, 117, 26, 0.2);
+  }
+
+  .wayfinder.sheet.item .trait-editor-toggle-btn:hover:not(:disabled) {
+    opacity: 0.95;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(168, 117, 26, 0.3);
+  }
+
+  .wayfinder.sheet.item .trait-editor-toggle-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .wayfinder.sheet.item .trait-editor-toggle-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .wayfinder.sheet.item .trait-editor-toggle-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  /* Magic Section Styles */
+  .wayfinder.sheet.item .magic-section {
+    background: linear-gradient(
+      135deg,
+      rgba(168, 117, 26, 0.08) 0%,
+      rgba(242, 201, 125, 0.05) 100%
+    );
+    border: 2px solid var(--wayfinder-primary);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+  }
+
+  .wayfinder.sheet.item .magic-section h4 {
+    color: var(--wayfinder-primary-dark);
+    font-weight: 700;
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 10px 0;
+    border-bottom: 3px solid var(--wayfinder-primary);
+    display: inline-block;
+  }
+
+  .wayfinder.sheet.item .magic-circle-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .wayfinder.sheet.item .magic-circle-group label {
+    margin-bottom: 0;
+    flex: 0 0 auto;
+  }
+
+  .wayfinder.sheet.item .magic-circle-select {
+    min-width: 220px;
+    padding: 6px 10px;
+    height: auto;
+    line-height: 1.4;
+    border: 2px solid var(--wayfinder-border);
+    border-radius: 4px;
+    background: white;
+    color: var(--wayfinder-text);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    vertical-align: middle;
+  }
+
+  .wayfinder.sheet.item .magic-circle-select option {
+    padding: 3px 5px;
+    font-size: 13px;
+    color: var(--wayfinder-text);
+    line-height: 1.5;
+  }
+
+  .wayfinder.sheet.item .magic-circle-select:hover {
+    border-color: var(--wayfinder-primary);
+    box-shadow: 0 0 8px rgba(168, 117, 26, 0.2);
+  }
+
+  .wayfinder.sheet.item .magic-circle-select:focus {
+    outline: none;
+    border-color: var(--wayfinder-primary);
+    box-shadow: 0 0 0 3px rgba(168, 117, 26, 0.15);
+  }
+
+  .wayfinder.sheet.item .heightened-section {
+    margin-top: 15px;
+  }
+
+  .wayfinder.sheet.item .heightened-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .wayfinder.sheet.item .heightened-table thead {
+    background: linear-gradient(
+      90deg,
+      var(--wayfinder-primary) 0%,
+      var(--wayfinder-accent-dark) 100%
+    );
+    color: white;
+  }
+
+  .wayfinder.sheet.item .heightened-table th {
+    padding: 12px 10px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--wayfinder-border);
+  }
+
+  .wayfinder.sheet.item .heightened-table tbody tr {
+    border-bottom: 1px solid rgba(168, 117, 26, 0.15);
+    transition: background-color 0.2s ease;
+  }
+
+  .wayfinder.sheet.item .heightened-table tbody tr:hover {
+    background-color: rgba(242, 201, 125, 0.1);
+  }
+
+  .wayfinder.sheet.item .heightened-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .wayfinder.sheet.item .heightened-table td {
+    padding: 12px 10px;
+    vertical-align: top;
+  }
+
+  .wayfinder.sheet.item .heightened-table td:nth-child(1) {
+    width: 100px;
+  }
+
+  .wayfinder.sheet.item .heightened-table td:nth-child(3) {
+    width: 50px;
+    text-align: center;
+  }
+
+  .wayfinder.sheet.item .heightened-level {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--wayfinder-border);
+    border-radius: 4px;
+    font-size: 12px;
+    background: white;
+    color: var(--wayfinder-text);
+    transition: all 0.2s ease;
+  }
+
+  .wayfinder.sheet.item .heightened-level:focus {
+    outline: none;
+    border-color: var(--wayfinder-primary);
+    box-shadow: 0 0 0 3px rgba(168, 117, 26, 0.1);
+  }
+
+  .wayfinder.sheet.item .heightened-effects-editor {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--wayfinder-border);
+    border-radius: 4px;
+    font-size: 12px;
+    background: white;
+    color: var(--wayfinder-text);
+    min-height: 50px;
+    font-family: "Roboto", sans-serif;
+    transition: all 0.2s ease;
+    overflow-y: auto;
+    overflow-x: auto;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+
+  .wayfinder.sheet.item .heightened-effects-editor:focus {
+    outline: none;
+    border-color: var(--wayfinder-primary);
+    box-shadow: 0 0 0 3px rgba(168, 117, 26, 0.1);
+  }
+
+  .wayfinder.sheet.item .heightened-effects-hidden {
+    display: none !important;
+  }
+
+  .wayfinder.sheet.item .remove-heightened-btn {
+    background: linear-gradient(135deg, #c41e3a 0%, #8a1629 100%);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .wayfinder.sheet.item .remove-heightened-btn:hover {
+    background: linear-gradient(135deg, #8a1629 0%, #5a0f1c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(196, 30, 58, 0.3);
+  }
+
+  .wayfinder.sheet.item .remove-heightened-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(196, 30, 58, 0.2);
+  }
+
+  .wayfinder.sheet.item .add-heightened-btn {
+    background: linear-gradient(
+      135deg,
+      var(--wayfinder-primary) 0%,
+      var(--wayfinder-accent-dark) 100%
+    );
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    transition: all 0.25s ease;
+    margin-top: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .wayfinder.sheet.item .add-heightened-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(168, 117, 26, 0.3);
+  }
+
+  /* ========== TALENT SHEET STYLES ========== */
+
+  .wayfinder.sheet.item .talent-description-section {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .wayfinder.sheet.item .talent-description-section .description-card {
+    width: 100%;
+    max-width: 960px;
+  }
+
+  .wayfinder.sheet.item .talent-effects-section {
+    margin: 20px 0;
+    padding: 15px;
+    background: linear-gradient(
+      135deg,
+      rgba(168, 117, 26, 0.05) 0%,
+      rgba(242, 201, 125, 0.03) 100%
+    );
+    border: 2px solid var(--wayfinder-border);
+    border-radius: 8px;
+  }
+
+  .wayfinder.sheet.item .effects-title {
+    color: var(--wayfinder-primary-dark);
+    font-weight: 700;
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 10px 0;
+    border-bottom: 3px solid var(--wayfinder-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .wayfinder.sheet.item .effects-list {
+    margin: 15px 0;
+  }
+
+  .wayfinder.sheet.item .effect-item {
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  /* Collapsible Effect Styles */
+  .wayfinder.sheet.item .effect-collapsible {
+    background: white;
+    border: 1px solid rgba(168, 117, 26, 0.2);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    margin-bottom: 12px;
+  }
+
+  .wayfinder.sheet.item .effect-collapsible:hover {
+    border-color: var(--wayfinder-primary);
+    box-shadow: 0 4px 8px rgba(168, 117, 26, 0.2);
+  }
+
+  .wayfinder.sheet.item .effect-collapsible-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background: linear-gradient(
+      135deg,
+      var(--wayfinder-primary) 0%,
+      var(--wayfinder-accent-dark) 100%
+    );
+    color: white;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.25s ease;
+    font-weight: 600;
+  }
+
+  .wayfinder.sheet.item .effect-collapsible-header.active-header {
+    background: linear-gradient(135deg, #d4af37 0%, #b8942a 100%);
+    color: #2b2b2b;
+  }
+
+  .wayfinder.sheet.item .effect-collapsible-header.passive-header {
+    background: linear-gradient(135deg, #7eb3d4 0%, #5a8fb5 100%);
+    color: white;
+  }
+
+  .wayfinder.sheet.item .effect-collapsible-header:hover {
+    filter: brightness(1.1);
+  }
+
+  .wayfinder.sheet.item .effect-collapsible-icon {
+    transition: transform 0.25s ease;
+    font-size: 12px;
+  }
+
+  .wayfinder.sheet.item .effect-collapsible.open .effect-collapsible-icon {
+    transform: rotate(90deg);
+  }
+
+  .wayfinder.sheet.item .effect-collapsible-title {
+    flex: 1;
+    font-size: 15px;
+  }
+
+  .wayfinder.sheet.item .effect-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    line-height: 1;
+  }
+
+  .wayfinder.sheet.item .magic-badge {
+    background: rgba(138, 43, 226, 0.15);
+    color: #6a1b9a;
+    border: 1px solid rgba(138, 43, 226, 0.3);
+  }
+
+  .wayfinder.sheet.item .focus-badge {
+    background: rgba(212, 175, 55, 0.25);
+    color: #7a5f1c;
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    font-weight: 700;
+  }
+
+  .wayfinder.sheet.item .effect-collapsible-content {
+    padding: 10px 12px;
+    border-top: 1px solid rgba(168, 117, 26, 0.1);
+  }
+
+  .wayfinder.sheet.item .effect-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .wayfinder.sheet.item .effect-section {
+    padding: 12px;
+    border-bottom: 1px solid rgba(168, 117, 26, 0.08);
+  }
+
+  .wayfinder.sheet.item .effect-section:last-child {
+    border-bottom: none;
+  }
+
+  .wayfinder.sheet.item .effect-section-header {
+    margin-bottom: 10px;
+    color: var(--wayfinder-primary);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .wayfinder.sheet.item .effect-section-header i {
+    font-size: 12px;
+  }
+
+  .wayfinder.sheet.item .effect-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--wayfinder-text);
+    padding: 10px 12px;
+    background: #fffdf8;
+    border: 1px solid rgba(168, 117, 26, 0.12);
+    border-radius: 6px;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    word-break: break-word;
+    overflow-x: visible;
+  }
+
+  .wayfinder.sheet.item .effect-meta-block {
+    padding: 12px 15px;
+    background: linear-gradient(
+      135deg,
+      rgba(168, 117, 26, 0.06) 0%,
+      rgba(168, 117, 26, 0.02) 100%
+    );
+    border: 1px solid rgba(168, 117, 26, 0.15);
+    border-radius: 8px;
+  }
+
+  .wayfinder.sheet.item .effect-meta-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .wayfinder.sheet.item .effect-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: white;
+    border: 1px solid rgba(168, 117, 26, 0.25);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--wayfinder-text);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .wayfinder.sheet.item .effect-meta-chip i {
+    color: var(--wayfinder-primary);
+  }
+
+  /* Pretty spell title shown above metadata for magic effects */
+  .wayfinder.sheet.item .spell-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: linear-gradient(
+      135deg,
+      var(--wayfinder-primary) 0%,
+      var(--wayfinder-accent-dark) 100%
+    );
+    color: white;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin: 8px 0 6px 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .wayfinder.sheet.item .spell-title i {
+    font-size: 14px;
+  }
+
+  .wayfinder.sheet.item .effect-heightened .heightened-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .wayfinder.sheet.item .heightened-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .wayfinder.sheet.item .heightened-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: linear-gradient(
+      135deg,
+      var(--wayfinder-primary) 0%,
+      var(--wayfinder-accent-dark) 100%
+    );
+    color: white;
+    font-weight: 700;
+    font-size: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+  }
+
+  .wayfinder.sheet.item .heightened-badge .heightened-label {
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 800;
+  }
+
+  .wayfinder.sheet.item .heightened-badge .heightened-level-pill {
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-weight: 800;
+    letter-spacing: 0.6px;
+  }
+
+  .wayfinder.sheet.item .heightened-text {
+    flex: 1;
+    background: #fffdf8;
+    border: 1px solid rgba(168, 117, 26, 0.12);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  .wayfinder.sheet.item .effect-metadata-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    padding: 15px;
+    background: linear-gradient(
+      135deg,
+      rgba(168, 117, 26, 0.05) 0%,
+      rgba(168, 117, 26, 0.02) 100%
+    );
+  }
+
+  .wayfinder.sheet.item .effect-meta-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid rgba(168, 117, 26, 0.15);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+  }
+
+  .wayfinder.sheet.item .effect-meta-card:hover {
+    border-color: var(--wayfinder-primary);
+    box-shadow: 0 2px 4px rgba(168, 117, 26, 0.15);
+  }
+
+  .wayfinder.sheet.item .meta-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(
+      135deg,
+      var(--wayfinder-primary) 0%,
+      var(--wayfinder-accent-dark) 100%
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .wayfinder.sheet.item .meta-icon i {
+    color: white;
+    font-size: 14px;
+  }
+
+  .wayfinder.sheet.item .meta-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .wayfinder.sheet.item .meta-label {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+    font-weight: 600;
+  }
+
+  .wayfinder.sheet.item .meta-value {
+    color: var(--wayfinder-text);
+    font-size: 13px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wayfinder.sheet.item .effect-description,
+  .wayfinder.sheet.item .effect-effect {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  /* Ensure item sheet descriptions fill available width */
+  .wayfinder.sheet.item .effect-section.effect-description {
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    width: 100%;
+  }
+
+  .wayfinder.sheet.item .effect-description h4,
+  .wayfinder.sheet.item .effect-effect h4 {
+    display: none;
+  }
+
+  .wayfinder.sheet.item .effect-metadata {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    border-left: none;
+  }
+
+  .wayfinder.sheet.item .effect-meta-item {
+    display: none;
+  }
+
+  .wayfinder.sheet.item .effect-traits-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .wayfinder.sheet.item .trait-chip.trait-chip-small {
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    line-height: 1.1;
+  }
+
+  .wayfinder.sheet.item .effect-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .wayfinder.sheet.item .effect-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .wayfinder.sheet.item .effect-toggle input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .wayfinder.sheet.item .effect-toggle .toggle-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    line-height: 1;
+  }
+
+  .wayfinder.sheet.item .effect-meta-item strong {
+    color: var(--wayfinder-primary-dark);
+    font-weight: 700;
+  }
+
+  .wayfinder.sheet.item .effect-item-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+    z-index: 2;
+  }
+
+  .wayfinder.sheet.item .remove-effect-btn {
+    background: #c41e3a;
+    color: white;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.2s ease;
+    opacity: 0;
+    pointer-events: auto;
+  }
+
+  .wayfinder.sheet.item .effect-item:hover .remove-effect-btn {
+    opacity: 1;
+  }
+
+  .wayfinder.sheet.item .remove-effect-btn:hover {
+    background: #8a1629;
+    transform: scale(1.1);
+  }
+
+  /* Drop Zones */
+  .wayfinder.sheet.item .drop-zone {
+    border: 2px dashed var(--wayfinder-border);
+    border-radius: 8px;
+    padding: 30px 20px;
+    text-align: center;
+    background: rgba(242, 201, 125, 0.05);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin: 15px 0;
+  }
+
+  .wayfinder.sheet.item .drop-zone:hover {
+    border-color: var(--wayfinder-primary);
+    background: rgba(242, 201, 125, 0.12);
+  }
+
+  .wayfinder.sheet.item .drop-zone.drag-over {
+    border-color: var(--wayfinder-primary);
+    background: rgba(168, 117, 26, 0.15);
+    box-shadow: 0 0 15px rgba(168, 117, 26, 0.3);
+  }
+
+  .wayfinder.sheet.item .drop-zone i {
+    font-size: 32px;
+    color: var(--wayfinder-primary);
+    margin-bottom: 10px;
+    display: block;
+    opacity: 0.7;
+  }
+
+  .wayfinder.sheet.item .drop-zone p {
+    color: var(--wayfinder-primary-dark);
+    font-weight: 600;
+    font-size: 13px;
+    margin: 0;
+  }
+
+  .wayfinder.sheet.item .empty-message {
+    text-align: center;
+    color: #000000;
+    font-style: italic;
+    padding: 20px;
+    font-size: 13px;
+  }
+
+  .wayfinder.sheet.item .talent-drop-zones {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .wayfinder.sheet.item .talent-drop-zones .drop-zone {
+    flex: 1;
+  }
+
+  .wayfinder.sheet.item .add-heightened-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(168, 117, 26, 0.2);
+  }
+
+  /* =========================================== */
+  /* Actor Sheet - Talents Tab                  */
+  /* =========================================== */
+
+  .talents-section {
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tab-title-talents {
+    font-family: "Cinzel", serif;
+    color: var(--wayfinder-primary-dark);
+    text-shadow:
+      1px 1px 4px var(--wayfinder-accent-dark),
+      0 1px 0 #fff;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--wayfinder-primary);
+    width: 100%;
+    box-sizing: border-box;
+    background: linear-gradient(
+      135deg,
+      var(--wayfinder-accent-light) 0%,
+      transparent 100%
+    );
+  }
+
+  /* Talent Type Category */
+  .talent-type-category {
+    margin-bottom: 15px;
+    background: white;
+    border: 2px solid var(--wayfinder-accent-light);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .talent-type-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: linear-gradient(
+      135deg,
+      rgba(242, 201, 125, 0.3) 0%,
+      rgba(212, 162, 74, 0.3) 100%
+    );
+    border-bottom: 1px solid var(--wayfinder-accent-light);
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+  }
+}
+/* Removed stray closing brace here */
 
 .talent-type-header:hover {
-  background: linear-gradient(135deg, rgba(242, 201, 125, 0.5) 0%, rgba(212, 162, 74, 0.5) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(242, 201, 125, 0.5) 0%,
+    rgba(212, 162, 74, 0.5) 100%
+  );
 }
 
 .talent-type-icon {
@@ -3439,24 +3628,40 @@
 }
 
 .talent-type-header .talent-type-badge.Basic {
-  background: linear-gradient(135deg, var(--wayfinder-primary-dark) 0%, var(--wayfinder-border) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary-dark) 0%,
+    var(--wayfinder-border) 100%
+  );
   box-shadow: 0 2px 4px rgba(42, 26, 10, 0.3);
 }
 
 .talent-type-header .talent-type-badge.General {
-  background: linear-gradient(135deg, var(--wayfinder-primary) 0%, var(--wayfinder-accent-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary) 0%,
+    var(--wayfinder-accent-dark) 100%
+  );
   box-shadow: 0 2px 4px rgba(168, 117, 26, 0.3);
 }
 
 .talent-type-header .talent-type-badge.Ancestry {
-  background: linear-gradient(135deg, var(--wayfinder-accent-light) 0%, var(--wayfinder-primary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-accent-light) 0%,
+    var(--wayfinder-primary) 100%
+  );
   box-shadow: 0 2px 4px rgba(242, 201, 125, 0.3);
   color: var(--wayfinder-primary-dark);
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .talent-type-header .talent-type-badge.Class {
-  background: linear-gradient(135deg, var(--wayfinder-accent-dark) 0%, var(--wayfinder-border) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-accent-dark) 0%,
+    var(--wayfinder-border) 100%
+  );
   box-shadow: 0 2px 4px rgba(212, 162, 74, 0.3);
 }
 
@@ -3670,7 +3875,11 @@
 .talent-item-content .talent-effects-section {
   margin: 20px 0;
   padding: 15px;
-  background: linear-gradient(135deg, rgba(168, 117, 26, 0.05) 0%, rgba(242, 201, 125, 0.03) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(168, 117, 26, 0.05) 0%,
+    rgba(242, 201, 125, 0.03) 100%
+  );
   border: 2px solid var(--wayfinder-border);
   border-radius: 8px;
 }
@@ -3704,11 +3913,11 @@
   border-radius: 6px;
   overflow: hidden;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .talent-item-content .effect-collapsible:hover {
-  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
 }
 
 .talent-item-content .effect-count {
@@ -3727,7 +3936,11 @@
   gap: 8px;
   margin-bottom: 20px;
   padding: 12px;
-  background: linear-gradient(135deg, rgba(168, 117, 26, 0.03) 0%, rgba(242, 201, 125, 0.02) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(168, 117, 26, 0.03) 0%,
+    rgba(242, 201, 125, 0.02) 100%
+  );
   border-radius: 8px;
   border: 1px solid rgba(168, 117, 26, 0.15);
 }
@@ -3748,13 +3961,13 @@
   font-size: 12px;
   font-weight: 600;
   color: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease;
 }
 
 .talent-item-content .trait-chip:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .talent-item-content .trait-chip-name {
@@ -3766,11 +3979,15 @@
   border: 2px solid var(--wayfinder-border);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .talent-item-content .description-card-header {
-  background: linear-gradient(135deg, var(--wayfinder-primary) 0%, var(--wayfinder-primary-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary) 0%,
+    var(--wayfinder-primary-dark) 100%
+  );
   padding: 12px 15px;
   display: flex;
   justify-content: space-between;
@@ -3800,7 +4017,11 @@
   align-items: center;
   gap: 10px;
   padding: 12px 15px;
-  background: linear-gradient(135deg, var(--wayfinder-primary) 0%, var(--wayfinder-accent-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary) 0%,
+    var(--wayfinder-accent-dark) 100%
+  );
   color: white;
   cursor: pointer;
   user-select: none;
@@ -3913,7 +4134,11 @@
 
 .talent-item-content .effect-meta-block {
   padding: 12px 15px;
-  background: linear-gradient(135deg, rgba(168, 117, 26, 0.06) 0%, rgba(168, 117, 26, 0.02) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(168, 117, 26, 0.06) 0%,
+    rgba(168, 117, 26, 0.02) 100%
+  );
   border: 1px solid rgba(168, 117, 26, 0.15);
   border-radius: 8px;
 }
@@ -3935,7 +4160,7 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--wayfinder-text);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .talent-item-content .effect-meta-chip i {
@@ -3948,13 +4173,17 @@
   gap: 8px;
   padding: 6px 12px;
   border-radius: 16px;
-  background: linear-gradient(135deg, var(--wayfinder-primary) 0%, var(--wayfinder-accent-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary) 0%,
+    var(--wayfinder-accent-dark) 100%
+  );
   color: white;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.8px;
   margin: 8px 0 6px 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .talent-item-content .spell-title i {
@@ -3979,11 +4208,15 @@
   gap: 8px;
   padding: 6px 12px;
   border-radius: 16px;
-  background: linear-gradient(135deg, var(--wayfinder-primary) 0%, var(--wayfinder-accent-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary) 0%,
+    var(--wayfinder-accent-dark) 100%
+  );
   color: white;
   font-weight: 700;
   font-size: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
 }
 
@@ -4009,5 +4242,5 @@
   font-size: 11px;
   font-weight: 600;
   color: white;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }

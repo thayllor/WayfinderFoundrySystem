@@ -6,6 +6,22 @@ const { ApplicationV2, HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.a
 
 export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
 
+  // ...existing code...
+
+  /**
+   * Override close to ensure form data is saved before closing the sheet
+   * @override
+   */
+  async close(options) {
+    // Clean up document listeners installed by the sheet
+    try {
+      if (this._boundAttributeUpdate) Hooks.off('updateActor', this._boundAttributeUpdate);
+    } catch (err) {
+      // ignore
+    }
+    return super.close(options);
+  }
+
   /** @override */
   static DEFAULT_OPTIONS = {
     classes: ["wayfinder", "sheet", "actor"],
@@ -29,6 +45,23 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     }
   };
 
+  static _onEditImage(event) {
+    const fp = new FilePicker({
+      type: "image",
+      current: this.document?.img,
+      callback: (path) => {
+        try {
+          this.document.update({ img: path });
+        } catch (err) {
+          console.warn('Failed to update actor image', err);
+        }
+      },
+      top: this.position?.top + 40,
+      left: this.position?.left + 10
+    });
+    return fp.browse();
+  }
+
   /** @override */
   static PARTS = {
     sheet: {
@@ -48,6 +81,9 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
   get title() {
     return this.document?.name || "Actor";
   }
+
+  /** Get the form element */
+  get form() { return this.element?.querySelector('form'); }
 
   /** @override */
   async _prepareContext(options) {
@@ -239,9 +275,16 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
    * @return {undefined}
    */
   _prepareCharacterData(context) {
-    // Handle ability scores
+    // Handle ability scores e define default 0 para todos os campos de atributo
     for (let [k, v] of Object.entries(context.system.attributes)) {
       v.label = k;
+      // Só define 0 se for undefined/null, não sobrescreve valor digitado
+      if (v.value === undefined || v.value === null) v.value = 0;
+      if (!v.proficiency) v.proficiency = "untrained";
+      if (v.status === undefined || v.status === null) v.status = 0;
+      if (v.circun === undefined || v.circun === null) v.circun = 0;
+      if (v.item === undefined || v.item === null) v.item = 0;
+      if (v.total === undefined || v.total === null) v.total = 0;
     }
   }
 
@@ -340,6 +383,7 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
   /** @override */
   _onRender(context, options) {
     super._onRender(context, options);
+    console.log('Stamina values after render:', this.document?.system?.stamina);
     const html = this.element;
 
     // Restore the previously active tab
@@ -347,6 +391,42 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
 
     // Move tabs outside the window to the left side
     this._moveTabsOutside(html);
+
+    // Update pentagon triangle-down displays with current totals
+    this._updatePentagonTotals = () => {
+      try {
+        const container = this.element?.querySelector('.attributes-pentagon');
+        if (!container) return;
+        const attributes = this.document?.system?.attributes || {};
+        container.querySelectorAll('.pentagon-attribute').forEach(el => {
+          const key = el.dataset.attributeKey;
+          if (!key) return;
+          const attr = attributes[key] || {};
+          const total = (typeof attr.total === 'number') ? attr.total : (attr.value || 0);
+          const span = el.querySelector('.triangle-down .attribute-value');
+          if (span) span.textContent = String(total);
+        });
+      } catch (err) {
+        console.warn('Error updating pentagon totals', err);
+      }
+    };
+
+    // Initial populate
+    this._updatePentagonTotals();
+
+    // Listen for actor document updates so the UI updates live (use global Hook)
+    if (this._boundAttributeUpdate) Hooks.off('updateActor', this._boundAttributeUpdate);
+    this._boundAttributeUpdate = (actor, diff) => {
+      try {
+        if (!actor || actor.id !== this.document?.id) return;
+        if (!diff || !diff.system) return;
+        // If attributes changed, refresh the pentagon display
+        if (diff.system.attributes) this._updatePentagonTotals();
+      } catch (err) {
+        console.warn('Error in boundAttributeUpdate hook', err);
+      }
+    };
+    Hooks.on('updateActor', this._boundAttributeUpdate);
 
     // Handle tab switching
     const tabButtons = html.querySelectorAll('.sheet-tabs .item');
@@ -429,32 +509,229 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
 
-    // Auto-save for number inputs with debouncing and format correction
-    let saveTimeout = null;
+    // Auto-save on change (match other sheets) - avoids blur/keydown loops
+    // Special-case resource fields (stamina, surges, focus, heroPoints, exp)
+    // to perform focused, dotted-key updates. This helps avoid races where
+    // a full-form patch overwrites a freshly-typed value.
+    html.addEventListener('change', async (ev) => {
+      const input = ev.target;
+      const name = input?.name;
+      if (!name) return this._submitForm(ev);
+
+      const isResourceField = (
+        name.startsWith('system.stamina.') ||
+        name.startsWith('system.surges.') ||
+        name.startsWith('system.focus.') ||
+        name.startsWith('system.heroPoints.') ||
+        name === 'system.exp' || name.startsWith('system.exp')
+      );
+
+      if (isResourceField) {
+        // General per-field debounce container
+        this._resourceDebounce = this._resourceDebounce || {};
+        const key = name;
+        if (this._resourceDebounce[key]) clearTimeout(this._resourceDebounce[key]);
+        this._resourceDebounce[key] = setTimeout(async () => {
+          const raw = input.value;
+          const value = raw === '' ? null : (isNaN(Number(raw)) ? raw : Number(raw));
+          try {
+            console.log('Direct resource update:', key, value);
+            await this.document.update({ [key]: value }, { render: false });
+            console.log('Direct resource update complete:', key);
+          } catch (err) {
+            console.error('Direct resource update error for', key, err);
+          }
+        }, 150);
+        return;
+      }
+
+      this._submitForm(ev);
+    });
+
+    // Temporary diagnostic logging for stamina inputs (does NOT save)
     html.addEventListener('input', (ev) => {
-      if (ev.target.type === 'number') {
-        // Remove comma in real-time while typing
-        const input = ev.target;
-        if (input.value.includes(',')) {
-          input.value = input.value.replace(/,/g, '');
-        }
+      const input = ev.target;
+      const name = input?.name;
+      if (name && name.startsWith('system.stamina')) {
+        console.log('Diagnostic input -', name, 'value:', input.value);
       }
     });
 
-    html.addEventListener('change', (ev) => {
-      if (ev.target.type === 'number') {
-        const input = ev.target;
-        // Final validation: if empty or invalid, set to 0
-        if (input.value === '' || input.value.includes(',')) {
-          input.value = '0';
-        }
-
-        clearTimeout(saveTimeout);
-        saveTimeout = setTimeout(() => {
-          this._submitForm(ev);
-        }, 300);
+    // Also log on blur (capture) so we see the final value before change handler runs
+    html.addEventListener('blur', (ev) => {
+      const input = ev.target;
+      const name = input?.name;
+      if (name && name.startsWith('system.stamina')) {
+        console.log('Diagnostic blur -', name, 'value:', input.value);
       }
-    });
+    }, true);
+
+    // Ensure clicking the portrait opens a FilePicker to choose an image
+    try {
+      const portrait = html.querySelector('[data-edit="img"]');
+      if (portrait) {
+        portrait.style.cursor = 'pointer';
+        portrait.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          try {
+            const fp = new FilePicker({
+              type: 'image',
+              current: this.document?.img,
+              callback: (path) => {
+                try { this.document.update({ img: path }); } catch (e) { console.warn('Failed to update actor image', e); }
+              },
+              top: this.position?.top + 40,
+              left: this.position?.left + 10
+            });
+            fp.browse();
+          } catch (err) {
+            console.warn('Error opening FilePicker', err);
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('Error binding portrait click', err);
+    }
+
+    // Click handler for attribute roll badges -> open dialog to collect components
+    try {
+      // Helper to construct a Dialog using V2 API when available
+      const _makeDialog = (opts) => {
+        const DialogClass = (typeof ApplicationV2 !== 'undefined' && ApplicationV2?.Dialog) ? ApplicationV2.Dialog : Dialog;
+        const dlg = new DialogClass(opts);
+        dlg.render(true);
+        return dlg;
+      };
+
+      html.addEventListener('click', async (ev) => {
+        const btn = ev.target.closest('.attribute-roll-badge');
+        if (!btn) return;
+        ev.preventDefault();
+        try {
+          const pent = btn.closest('.pentagon-attribute');
+          const key = pent?.dataset?.attributeKey;
+          if (!key) return;
+          const attributes = this.document?.system?.attributes || {};
+          const attr = attributes[key] || {};
+          const attrValue = Number(attr.value) || 0;
+          const displayName = String(key).charAt(0).toUpperCase() + String(key).slice(1);
+
+          // Compute a sensible default for Prof from the attribute proficiency or general dropdown
+          const profType = (attr.proficiency || this.document?.system?.generalProficiency || 'untrained').toString().toLowerCase();
+          const profMap = { untrained: 0, trained: 2, expert: 4, master: 6, legendary: 8 };
+          let profDefault = 0;
+          if (profType === 'untrained') {
+            profDefault = 0;
+          } else {
+            const rawLevel = this.document?.system?.level?.value ?? this.document?.system?.level ?? 0;
+            const level = Number(rawLevel) || 0;
+            const base = profMap[profType] ?? 0;
+            profDefault = base + level;
+          }
+
+          // Build dialog content: allow user to fill Prof, Status, Circun, Item (numbers)
+          const content = `
+            <form>
+              <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
+                <div style="flex:1">
+                  <label style="font-weight:700">Atributo</label>
+                  <div style="padding:6px 8px;background:rgba(0,0,0,0.03);border-radius:6px">${displayName} (${attrValue})</div>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+                <div>
+                  <label>Prof (num)</label>
+                  <input type="number" name="prof" value="${profDefault}" style="width:100%" />
+                </div>
+                <div>
+                  <label>Status</label>
+                  <input type="number" name="status" value="0" style="width:100%" />
+                </div>
+                <div>
+                  <label>Circun</label>
+                  <input type="number" name="circun" value="0" style="width:100%" />
+                </div>
+                <div>
+                  <label>Item</label>
+                  <input type="number" name="item" value="0" style="width:100%" />
+                </div>
+              </div>
+              <p style="margin-top:8px;font-size:12px;color:var(--wayfinder-text-muted)">Preencha os valores vindos da tabela de Defenses; deixe 0 se não tiver.</p>
+            </form>
+          `;
+
+          _makeDialog({
+            title: `Rolagem: ${displayName}`,
+            content: content,
+            buttons: {
+              roll: { label: 'Rolagem', callback: async (htmlDlg) => {
+                try {
+                  const dom = (htmlDlg && htmlDlg[0]) ? htmlDlg[0] : htmlDlg;
+                  const form = dom.querySelector('form');
+                  const fd = new FormData(form);
+                  const prof = Number(fd.get('prof')) || 0;
+                  const status = Number(fd.get('status')) || 0;
+                  const circun = Number(fd.get('circun')) || 0;
+                  const itemVal = Number(fd.get('item')) || 0;
+
+                  const total = attrValue + prof + status + circun + itemVal;
+                  const formula = `2d10 + ${total}`;
+
+                  const roll = new Roll(formula, this.document.getRollData());
+                  // Evaluate the roll asynchronously so terms that require async evaluation are supported
+                  await roll.evaluate();
+
+                  // dice results
+                  let diceResults = '';
+                  try {
+                    diceResults = (roll.dice && roll.dice[0] && Array.isArray(roll.dice[0].results)) ? roll.dice[0].results.map(r => r.result).join(', ') : '';
+                  } catch (e) { diceResults = ''; }
+                  const finalTotal = roll.total ?? (roll._total ?? '');
+
+                  const flavor = `
+                    <div class="wf-roll-card" style="border-radius:12px;padding:14px;background:linear-gradient(180deg,var(--wayfinder-accent-light),#fff);color:var(--wayfinder-text);font-family: 'Montserrat', 'Playfair Display', serif;max-width:560px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 10px 24px rgba(0,0,0,0.12)">
+                      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+                        <div style="flex:1;min-width:0">
+                          <div style="background:var(--wayfinder-primary);color:#fff;padding:12px 14px;border-radius:10px;font-weight:800;font-size:18px;letter-spacing:0.4px;text-transform:capitalize">${displayName}</div>
+                          <div style="margin-top:10px;font-size:13px;display:flex;gap:12px;flex-wrap:wrap">
+                            <div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">ATR</div><div style="font-weight:800;font-size:16px">${attrValue}</div></div>
+                            <div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">Prof</div><div style="font-weight:800;font-size:16px">${prof}</div></div>
+                            <div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">Status</div><div style="font-weight:800;font-size:16px">${status}</div></div>
+                            <div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">Circun</div><div style="font-weight:800;font-size:16px">${circun}</div></div>
+                            <div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">Item</div><div style="font-weight:800;font-size:16px">${itemVal}</div></div>
+                          </div>
+                        </div>
+                        <div style="width:104px;height:104px;border-radius:50%;background:var(--wayfinder-primary-dark);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px">${finalTotal}</div>
+                      </div>
+                      <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.06);font-size:13px;display:flex;flex-direction:column;gap:8px">
+                        <div><strong>Fórmula:</strong> <code style="background:rgba(0,0,0,0.04);padding:3px 6px;border-radius:4px">${formula}</code></div>
+                        <div><strong>Dados:</strong> <span style="font-weight:700">${diceResults}</span></div>
+                        <div><strong>Resultado:</strong> <span style="font-weight:900">${finalTotal}</span></div>
+                      </div>
+                    </div>
+                  `;
+
+                  await roll.toMessage({
+                    speaker: ChatMessage.getSpeaker({ actor: this.document }),
+                    flavor: flavor,
+                    rollMode: game.settings.get('core', 'rollMode')
+                  });
+                } catch (err) {
+                  console.warn('Erro na callback de rolagem do diálogo', err);
+                }
+              }},
+              cancel: { label: 'Cancelar' }
+            },
+            default: 'roll'
+          });
+
+        } catch (err) {
+          console.warn('Error opening attribute roll dialog', err);
+        }
+      });
+    } catch (err) {
+      console.warn('Error binding attribute roll handler', err);
+    }
 
     // Add Inventory Item
     html.addEventListener('click', (ev) => {
@@ -672,7 +949,8 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
         const itemId = btn.dataset.itemId;
         const item = this.document.items.get(itemId);
         if (item) {
-          Dialog.confirm({
+          const DialogClass = (typeof ApplicationV2 !== 'undefined' && ApplicationV2?.Dialog) ? ApplicationV2.Dialog : Dialog;
+          DialogClass.confirm({
             title: `Remover ${item.name}`,
             content: `<p>Tem certeza que deseja remover este talento?</p>`,
             yes: () => item.delete(),
@@ -834,14 +1112,103 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     return html;
   }
 
-  /**
-   * Submit form changes
-   * @private
-   */
-  async _submitForm(event) {
+  // Submit functionality removed for actor sheet per user request.
+  async _submitForm(event, { render = true } = {}) {
+    if (!this.form) return;
     const formData = new FormData(this.form);
     const updates = foundry.utils.expandObject(Object.fromEntries(formData));
-    await this.document.update(updates);
+
+    const fdEntries = Array.from(formData.entries());
+    const staminaEntries = fdEntries.filter(([k]) => k.startsWith('system.stamina'));
+    console.log('FormData entries count:', fdEntries.length);
+    console.log('Stamina entries in FormData:', staminaEntries);
+    console.log('Current document stamina before update:', this.document.system?.stamina);
+    try {
+      console.log('Updates before sanitize:', JSON.stringify(updates, null, 2));
+    } catch (e) {
+      console.log('Updates before sanitize (non-serializable) - keys:', Object.keys(updates || {}));
+    }
+
+    // Sanitize updates: convert numeric strings to Number and remove empty-string leaves
+    const sanitize = (obj) => {
+      if (obj && typeof obj === 'object') {
+        for (const k of Object.keys(obj)) {
+          const v = obj[k];
+          if (v === '') {
+            // Remove empty strings so we don't overwrite existing values with blanks
+            delete obj[k];
+            continue;
+          }
+          if (typeof v === 'string') {
+            // Normalize proficiency strings to lowercase for consistency
+            if (k === 'proficiency') {
+              obj[k] = v.toLowerCase();
+              continue;
+            }
+            // If string represents a number, convert it
+            const n = Number(v);
+            if (!Number.isNaN(n) && v.trim() !== '') obj[k] = n;
+          } else if (typeof v === 'object' && v !== null) {
+            sanitize(v);
+            // Remove empty objects (no keys)
+            if (Object.keys(v).length === 0) delete obj[k];
+          }
+        }
+      }
+    };
+
+    sanitize(updates);
+    try {
+      console.log('Sanitized updates to be applied:', JSON.stringify(updates, null, 2));
+    } catch (e) {
+      console.log('Sanitized updates to be applied (non-serializable) - keys:', Object.keys(updates || {}));
+    }
+
+    // Build a patch object. For stamina and other resource blocks, prefer dotted keys
+    const patch = {};
+    // Copy top-level keys except `system` (we'll handle system specially)
+    for (const k of Object.keys(updates || {})) {
+      if (k !== 'system') patch[k] = updates[k];
+    }
+
+    // Handle system updates: flatten stamina/surges/focus/heroPoints to dotted keys
+    if (updates.system) {
+      // Copy other system keys shallowly
+      for (const sk of Object.keys(updates.system)) {
+        if (!['stamina', 'surges', 'focus', 'heroPoints'].includes(sk)) {
+          patch['system'] = patch['system'] || {};
+          patch['system'][sk] = updates.system[sk];
+        }
+      }
+
+      if (updates.system.stamina) {
+        const s = updates.system.stamina;
+        if (s.current !== undefined) patch['system.stamina.current'] = s.current;
+        if (s.maximum !== undefined) patch['system.stamina.maximum'] = s.maximum;
+        if (s.temporary !== undefined) patch['system.stamina.temporary'] = s.temporary;
+      }
+      if (updates.system.surges) {
+        const s = updates.system.surges;
+        if (s.current !== undefined) patch['system.surges.current'] = s.current;
+        if (s.maximum !== undefined) patch['system.surges.maximum'] = s.maximum;
+      }
+      if (updates.system.focus) {
+        const f = updates.system.focus;
+        if (f.current !== undefined) patch['system.focus.current'] = f.current;
+      }
+      if (updates.system.heroPoints) {
+        const h = updates.system.heroPoints;
+        if (h.current !== undefined) patch['system.heroPoints.current'] = h.current;
+      }
+    }
+
+    try {
+      console.log('Final patch sent to document.update:', patch);
+      const res = await this.document.update(patch, { render });
+      console.log('document.update result:', res);
+    } catch (err) {
+      console.error('Erro ao atualizar actor:', err);
+    }
   }
 
   /**
@@ -985,7 +1352,7 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     if (effect.system.requiresRoll && effect.system.rollFormula) {
       try {
         const roll = new Roll(effect.system.rollFormula, this.document.getRollData());
-        await roll.evaluate({ async: true });
+        await roll.evaluate();
 
         const speaker = ChatMessage.getSpeaker({ actor: this.document });
         await roll.toMessage({

@@ -20,27 +20,27 @@
       "templates": ["base"],
       "attributes": {
         "strength": {
-          "value": 10,
+          "value": 0,
           "defenseDC": 10,
           "item": 0
         },
         "dexterity": {
-          "value": 10,
+          "value": 0,
           "defenseDC": 10,
           "item": 0
         },
         "intelligence": {
-          "value": 10,
+          "value": 0,
           "defenseDC": 10,
           "item": 0
         },
         "wisdom": {
-          "value": 10,
+          "value": 0,
           "defenseDC": 10,
           "item": 0
         },
         "presence": {
-          "value": 10,
+          "value": 0,
           "defenseDC": 10,
           "item": 0
         }

@@ -50,16 +50,16 @@
         <div class="stamina-row">
           <div class="resource-item">
             <label>Current</label>
-            <input type="number" name="system.stamina.current" value="{{#if (isObject system.stamina.current)}}0{{else}}{{system.stamina.current}}{{/if}}" data-dtype="Number"/>
+            <input type="number" name="system.stamina.current" value="{{system.stamina.current}}" data-dtype="Number"/>
           </div>
           <div class="resource-item">
             <label>Maximum</label>
-            <input type="number" name="system.stamina.maximum" value="{{#if (isObject system.stamina.maximum)}}0{{else}}{{system.stamina.maximum}}{{/if}}" data-dtype="Number"/>
+            <input type="number" name="system.stamina.maximum" value="{{system.stamina.maximum}}" data-dtype="Number"/>
           </div>
         </div>
         <div class="resource-item">
           <label class="centered-label">Temporary</label>
-          <input type="number" name="system.stamina.temporary" value="{{#if (isObject system.stamina.temporary)}}0{{else}}{{system.stamina.temporary}}{{/if}}" placeholder="0" data-dtype="Number"/>
+          <input type="number" name="system.stamina.temporary" value="{{system.stamina.temporary}}" placeholder="0" data-dtype="Number"/>
         </div>
       </div>
     </div>
@@ -115,132 +115,27 @@
           <option value="Huge" {{#if (eq system.size "Huge")}}selected{{/if}}>Huge</option>
           <option value="Gargantuan" {{#if (eq system.size "Gargantuan")}}selected{{/if}}>Gargantuan</option>
         </select>
+        <div class="resource-item">
+          <label>Percepção</label>
+          <select name="system.generalProficiency" class="short-input">
+            <option value="untrained" {{#if (eq system.generalProficiency 'untrained')}}selected{{/if}}>Untrained</option>
+            <option value="trained" {{#if (eq system.generalProficiency 'trained')}}selected{{/if}}>Trained</option>
+            <option value="expert" {{#if (eq system.generalProficiency 'expert')}}selected{{/if}}>Expert</option>
+            <option value="master" {{#if (eq system.generalProficiency 'master')}}selected{{/if}}>Master</option>
+            <option value="legendary" {{#if (eq system.generalProficiency 'legendary')}}selected{{/if}}>Legendary</option>
+          </select>
+        </div>
+
       </div>
     </div>
   </div>
 
   <div class="attributes-resources-horizontal">
     {{!-- ATTRIBUTES PENTAGON (esquerda) --}}
-    <div class="attributes-pentagon">
-      <img src="systems/wayfinder/images/marca_dagua_atributos.png" alt="Marca d'Água Atributos" class="pentagon-background-img"/>
-      <div class="pentagon-attributes-container">
-        {{#each system.attributes as |attribute key|}}
-        <div class="pentagon-attribute">
-          <div class="attribute-name">{{key}}</div>
-          <div class="attribute-pentagon-box">
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <polygon points="50,15 85,40 75,80 25,80 15,40"
-                       fill="none"
-                       stroke="#8b5a3c"
-                       stroke-width="1.5"
-                       opacity="0.6"/>
-            </svg>
-            <div class="attribute-value-triangle">
-              <div class="triangle-up">
-                <input class="attribute-value" type="number" name="system.attributes.{{key}}.value" value="{{attribute.value}}" placeholder="V"/>
-              </div>
-              <div class="triangle-down">
-                <input class="attribute-value" type="number" name="system.attributes.{{key}}.defenseDC" value="{{attribute.defenseDC}}" placeholder="D"/>
-              </div>
-            </div>
-          </div>
-        </div>
-        {{/each}}
-      </div>
-    </div>
+    {{> "systems/wayfinder/templates/components/attributes-pentagon.hbs"}}
 
     {{!-- RESOURCES (direita) --}}
-    <div class="resources-section">
-      <h3>Attribute Defenses</h3>
-      <table class="defenses-table">
-        <thead>
-          <tr>
-            <th>Attribute</th>
-            <th>Proficiency</th>
-            <th>Bonus</th>
-            <th>Defense DC</th>
-            <th>Item</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>STRENGTH</td>
-            <td>
-              <select class="proficiency-select" name="system.attributes.strength.proficiency">
-                <option value="Untrained" selected>Untrained</option>
-                <option value="Trained">Trained</option>
-                <option value="Expert">Expert</option>
-                <option value="Master">Master</option>
-                <option value="Legendary">Legendary</option>
-              </select>
-            </td>
-            <td><input type="number" name="system.attributes.strength.bonus" value="{{toInt system.attributes.strength.bonus}}" placeholder="Bonus"/></td>
-            <td><input type="number" name="system.attributes.strength.defenseDC" value="{{toInt system.attributes.strength.defenseDC}}" placeholder="DC"/></td>
-            <td><input type="number" name="system.attributes.strength.item" value="{{toInt system.attributes.strength.item}}"/></td>
-          </tr>
-          <tr>
-            <td>DEXTERITY</td>
-            <td>
-              <select class="proficiency-select" name="system.attributes.dexterity.proficiency">
-                <option value="Untrained" selected>Untrained</option>
-                <option value="Trained">Trained</option>
-                <option value="Expert">Expert</option>
-                <option value="Master">Master</option>
-                <option value="Legendary">Legendary</option>
-              </select>
-            </td>
-            <td><input type="number" name="system.attributes.dexterity.bonus" value="{{toInt system.attributes.dexterity.bonus}}" placeholder="Bonus"/></td>
-            <td><input type="number" name="system.attributes.dexterity.defenseDC" value="{{toInt system.attributes.dexterity.defenseDC}}" placeholder="DC"/></td>
-            <td><input type="number" name="system.attributes.dexterity.item" value="{{toInt system.attributes.dexterity.item}}"/></td>
-          </tr>
-          <tr>
-            <td>INTELLIGENCE</td>
-            <td>
-              <select class="proficiency-select" name="system.attributes.intelligence.proficiency">
-                <option value="Untrained" selected>Untrained</option>
-                <option value="Trained">Trained</option>
-                <option value="Expert">Expert</option>
-                <option value="Master">Master</option>
-                <option value="Legendary">Legendary</option>
-              </select>
-            </td>
-            <td><input type="number" name="system.attributes.intelligence.bonus" value="{{toInt system.attributes.intelligence.bonus}}" placeholder="Bonus"/></td>
-            <td><input type="number" name="system.attributes.intelligence.defenseDC" value="{{toInt system.attributes.intelligence.defenseDC}}" placeholder="DC"/></td>
-            <td><input type="number" name="system.attributes.intelligence.item" value="{{toInt system.attributes.intelligence.item}}"/></td>
-          </tr>
-          <tr>
-            <td>WISDOM</td>
-            <td>
-              <select class="proficiency-select" name="system.attributes.wisdom.proficiency">
-                <option value="Untrained" selected>Untrained</option>
-                <option value="Trained">Trained</option>
-                <option value="Expert">Expert</option>
-                <option value="Master">Master</option>
-                <option value="Legendary">Legendary</option>
-              </select>
-            </td>
-            <td><input type="number" name="system.attributes.wisdom.bonus" value="{{toInt system.attributes.wisdom.bonus}}" placeholder="Bonus"/></td>
-            <td><input type="number" name="system.attributes.wisdom.defenseDC" value="{{toInt system.attributes.wisdom.defenseDC}}" placeholder="DC"/></td>
-            <td><input type="number" name="system.attributes.wisdom.item" value="{{toInt system.attributes.wisdom.item}}"/></td>
-          </tr>
-          <tr>
-            <td>PRESENCE</td>
-            <td>
-              <select class="proficiency-select" name="system.attributes.presence.proficiency">
-                <option value="Untrained" selected>Untrained</option>
-                <option value="Trained">Trained</option>
-                <option value="Expert">Expert</option>
-                <option value="Master">Master</option>
-                <option value="Legendary">Legendary</option>
-              </select>
-            </td>
-            <td><input type="number" name="system.attributes.presence.bonus" value="{{toInt system.attributes.presence.bonus}}" placeholder="Bonus"/></td>
-            <td><input type="number" name="system.attributes.presence.defenseDC" value="{{toInt system.attributes.presence.defenseDC}}" placeholder="DC"/></td>
-            <td><input type="number" name="system.attributes.presence.item" value="{{toInt system.attributes.presence.item}}"/></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    {{> "systems/wayfinder/templates/components/defenses-table.hbs"}}
   </div>
 
   {{!-- Sheet Tab Navigation --}}

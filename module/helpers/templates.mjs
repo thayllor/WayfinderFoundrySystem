@@ -1,3 +1,17 @@
+// Helper to calculate Defense DC for an attribute
+Handlebars.registerHelper('calculateDefenseDC', function(attributeKey, attributes) {
+  // Defensive fallback: if attributes or attributeKey is missing, return 10
+  if (!attributes || !attributeKey || !attributes[attributeKey]) return 10;
+  // Use the calculated total if present, else fall back to attribute.value or 0
+    const attr = attributes[attributeKey];
+    if (typeof attr.total === 'number') return attr.total;
+    return 10;
+});
+// Add a 'default' helper for Handlebars
+Handlebars.registerHelper('default', function(value, defaultValue) {
+  if (value === null || value === undefined || value === "") return defaultValue;
+  return value;
+});
 /**
  * Define a set of template paths to pre-load
  * Pre-loaded templates are compiled and cached for fast access when rendering
@@ -276,7 +290,19 @@ export const preloadHandlebarsTemplates = async function() {
     "systems/wayfinder/templates/item/item-active-effect-sheet.hbs",
     "systems/wayfinder/templates/item/item-passive-effect-sheet.hbs",
     "systems/wayfinder/templates/item/item-trait-sheet.hbs",
-    "systems/wayfinder/templates/item/item-talent-sheet.hbs"
+    "systems/wayfinder/templates/item/item-talent-sheet.hbs",
+    "systems/wayfinder/templates/components/attributes-pentagon.hbs",
+    "systems/wayfinder/templates/components/defenses-table.hbs",
+    "systems/wayfinder/templates/components/Top-Resources-Row.hbs",
+    "systems/wayfinder/templates/components/Tab-Skills.hbs",
+    "systems/wayfinder/templates/components/Tab-Resources.hbs",
+    "systems/wayfinder/templates/components/Tab-Actions.hbs",
+    "systems/wayfinder/templates/components/Sheet-Header.hbs",
+    "systems/wayfinder/templates/components/Resource-Item.hbs",
+    "systems/wayfinder/templates/components/Resource-Block.hbs",
+    "systems/wayfinder/templates/components/defense-row.hbs",
+    "systems/wayfinder/templates/components/Character-Info.hbs",
+    "systems/wayfinder/templates/components/Attributes-Resources-Section.hbs"
   ]).then(() => {
     console.log('✓ Wayfinder | All templates loaded successfully');
   });

@@ -33,9 +33,39 @@ export class WayfinderActor extends Actor {
     // Make modifications to data here
     const systemData = actorData.system;
 
-    // Calculate attribute modifiers
+    // Calculate attribute modifiers and total defense for each attribute
     for (let [key, attribute] of Object.entries(systemData.attributes)) {
       attribute.mod = Math.floor((attribute.value - 10) / 2);
+
+      // Calculate proficiency value
+      let profValue = 0;
+      const profType = (attribute.proficiency || "untrained").toString();
+      const profMap = {
+        "untrained": 0,
+        "trained": 2,
+        "expert": 4,
+        "master": 6,
+        "legendary": 8
+      };
+      if (profType === "untrained") {
+        profValue = 0;
+      } else {
+        // If actorData.system.level exists, add it to proficiency value
+        // `level` may be a number or an object { value: number }
+        const rawLevel = systemData.level?.value ?? systemData.level ?? 0;
+        const level = Number(rawLevel) || 0;
+        const base = profMap[profType] ?? 0;
+        profValue = base + level;
+      }
+
+      // Calculate total
+      attribute.total =
+        (parseInt(attribute.value) || 0) +
+        (parseInt(attribute.item) || 0) +
+        (parseInt(attribute.status) || 0) +
+        (parseInt(attribute.circun) || 0) +
+        profValue +
+        10;
     }
   }
 

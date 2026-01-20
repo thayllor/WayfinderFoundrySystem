@@ -6,9 +6,10 @@
       <tr>
         <th>Attribute</th>
         <th>Proficiency</th>
-        <th>Bonus</th>
-        <th>Defense DC</th>
+        <th>Status</th>
+        <th>Circun</th>
         <th>Item</th>
+        <th>Total</th>
       </tr>
     </thead>
     <tbody>
@@ -20,30 +21,32 @@
             class="proficiency-select"
             name="system.attributes.strength.proficiency"
           >
-            <option value="Untrained" selected>Untrained</option>
-            <option value="Trained">Trained</option>
-            <option value="Expert">Expert</option>
-            <option value="Master">Master</option>
-            <option value="Legendary">Legendary</option>
+            <option value="untrained" {{#if (eq system.attributes.strength.proficiency 'untrained')}}selected{{/if}}{{#if (eq system.attributes.strength.proficiency 'Untrained')}}selected{{/if}}>Untrained</option>
+            <option value="trained" {{#if (eq system.attributes.strength.proficiency 'trained')}}selected{{/if}}{{#if (eq system.attributes.strength.proficiency 'Trained')}}selected{{/if}}>Trained</option>
+            <option value="expert" {{#if (eq system.attributes.strength.proficiency 'expert')}}selected{{/if}}{{#if (eq system.attributes.strength.proficiency 'Expert')}}selected{{/if}}>Expert</option>
+            <option value="master" {{#if (eq system.attributes.strength.proficiency 'master')}}selected{{/if}}{{#if (eq system.attributes.strength.proficiency 'Master')}}selected{{/if}}>Master</option>
+            <option value="legendary" {{#if (eq system.attributes.strength.proficiency 'legendary')}}selected{{/if}}{{#if (eq system.attributes.strength.proficiency 'Legendary')}}selected{{/if}}>Legendary</option>
           </select>
         </td>
         <td><input
             type="number"
-            name="system.attributes.strength.bonus"
-            value="{{toInt system.attributes.strength.bonus}}"
-            placeholder="Bonus"
+            name="system.attributes.strength.status"
+            value="{{toInt system.attributes.strength.status}}"
+            placeholder="Status"
           /></td>
         <td><input
             type="number"
-            name="system.attributes.strength.defenseDC"
-            value="{{toInt system.attributes.strength.defenseDC}}"
-            placeholder="DC"
+            name="system.attributes.strength.circun"
+            value="{{toInt system.attributes.strength.circun}}"
+            placeholder="Circun"
           /></td>
         <td><input
             type="number"
             name="system.attributes.strength.item"
             value="{{toInt system.attributes.strength.item}}"
+            placeholder="Item"
           /></td>
+        <td><div class="attribute-total">{{toInt system.attributes.strength.total}}</div></td>
       </tr>
       {{! DEXTERITY }}
       <tr>
@@ -53,30 +56,32 @@
             class="proficiency-select"
             name="system.attributes.dexterity.proficiency"
           >
-            <option value="Untrained" selected>Untrained</option>
-            <option value="Trained">Trained</option>
-            <option value="Expert">Expert</option>
-            <option value="Master">Master</option>
-            <option value="Legendary">Legendary</option>
+            <option value="untrained" {{#if (eq system.attributes.dexterity.proficiency 'untrained')}}selected{{/if}}{{#if (eq system.attributes.dexterity.proficiency 'Untrained')}}selected{{/if}}>Untrained</option>
+            <option value="trained" {{#if (eq system.attributes.dexterity.proficiency 'trained')}}selected{{/if}}{{#if (eq system.attributes.dexterity.proficiency 'Trained')}}selected{{/if}}>Trained</option>
+            <option value="expert" {{#if (eq system.attributes.dexterity.proficiency 'expert')}}selected{{/if}}{{#if (eq system.attributes.dexterity.proficiency 'Expert')}}selected{{/if}}>Expert</option>
+            <option value="master" {{#if (eq system.attributes.dexterity.proficiency 'master')}}selected{{/if}}{{#if (eq system.attributes.dexterity.proficiency 'Master')}}selected{{/if}}>Master</option>
+            <option value="legendary" {{#if (eq system.attributes.dexterity.proficiency 'legendary')}}selected{{/if}}{{#if (eq system.attributes.dexterity.proficiency 'Legendary')}}selected{{/if}}>Legendary</option>
           </select>
         </td>
         <td><input
             type="number"
-            name="system.attributes.dexterity.bonus"
-            value="{{toInt system.attributes.dexterity.bonus}}"
-            placeholder="Bonus"
+            name="system.attributes.dexterity.status"
+            value="{{toInt system.attributes.dexterity.status}}"
+            placeholder="Status"
           /></td>
         <td><input
             type="number"
-            name="system.attributes.dexterity.defenseDC"
-            value="{{toInt system.attributes.dexterity.defenseDC}}"
-            placeholder="DC"
+            name="system.attributes.dexterity.circun"
+            value="{{toInt system.attributes.dexterity.circun}}"
+            placeholder="Circun"
           /></td>
         <td><input
             type="number"
             name="system.attributes.dexterity.item"
             value="{{toInt system.attributes.dexterity.item}}"
+            placeholder="Item"
           /></td>
+        <td><div class="attribute-total">{{toInt system.attributes.dexterity.total}}</div></td>
       </tr>
       {{! INTELLIGENCE }}
       <tr>
@@ -86,30 +91,32 @@
             class="proficiency-select"
             name="system.attributes.intelligence.proficiency"
           >
-            <option value="Untrained" selected>Untrained</option>
-            <option value="Trained">Trained</option>
-            <option value="Expert">Expert</option>
-            <option value="Master">Master</option>
-            <option value="Legendary">Legendary</option>
+            <option value="untrained" {{#if (eq system.attributes.intelligence.proficiency 'untrained')}}selected{{/if}}{{#if (eq system.attributes.intelligence.proficiency 'Untrained')}}selected{{/if}}>Untrained</option>
+            <option value="trained" {{#if (eq system.attributes.intelligence.proficiency 'trained')}}selected{{/if}}{{#if (eq system.attributes.intelligence.proficiency 'Trained')}}selected{{/if}}>Trained</option>
+            <option value="expert" {{#if (eq system.attributes.intelligence.proficiency 'expert')}}selected{{/if}}{{#if (eq system.attributes.intelligence.proficiency 'Expert')}}selected{{/if}}>Expert</option>
+            <option value="master" {{#if (eq system.attributes.intelligence.proficiency 'master')}}selected{{/if}}{{#if (eq system.attributes.intelligence.proficiency 'Master')}}selected{{/if}}>Master</option>
+            <option value="legendary" {{#if (eq system.attributes.intelligence.proficiency 'legendary')}}selected{{/if}}{{#if (eq system.attributes.intelligence.proficiency 'Legendary')}}selected{{/if}}>Legendary</option>
           </select>
         </td>
         <td><input
             type="number"
-            name="system.attributes.intelligence.bonus"
-            value="{{toInt system.attributes.intelligence.bonus}}"
-            placeholder="Bonus"
+            name="system.attributes.intelligence.status"
+            value="{{toInt system.attributes.intelligence.status}}"
+            placeholder="Status"
           /></td>
         <td><input
             type="number"
-            name="system.attributes.intelligence.defenseDC"
-            value="{{toInt system.attributes.intelligence.defenseDC}}"
-            placeholder="DC"
+            name="system.attributes.intelligence.circun"
+            value="{{toInt system.attributes.intelligence.circun}}"
+            placeholder="Circun"
           /></td>
         <td><input
             type="number"
             name="system.attributes.intelligence.item"
             value="{{toInt system.attributes.intelligence.item}}"
+            placeholder="Item"
           /></td>
+        <td><div class="attribute-total">{{toInt system.attributes.intelligence.total}}</div></td>
       </tr>
       {{! WISDOM }}
       <tr>
@@ -119,30 +126,32 @@
             class="proficiency-select"
             name="system.attributes.wisdom.proficiency"
           >
-            <option value="Untrained" selected>Untrained</option>
-            <option value="Trained">Trained</option>
-            <option value="Expert">Expert</option>
-            <option value="Master">Master</option>
-            <option value="Legendary">Legendary</option>
+            <option value="untrained" {{#if (eq system.attributes.wisdom.proficiency 'untrained')}}selected{{/if}}{{#if (eq system.attributes.wisdom.proficiency 'Untrained')}}selected{{/if}}>Untrained</option>
+            <option value="trained" {{#if (eq system.attributes.wisdom.proficiency 'trained')}}selected{{/if}}{{#if (eq system.attributes.wisdom.proficiency 'Trained')}}selected{{/if}}>Trained</option>
+            <option value="expert" {{#if (eq system.attributes.wisdom.proficiency 'expert')}}selected{{/if}}{{#if (eq system.attributes.wisdom.proficiency 'Expert')}}selected{{/if}}>Expert</option>
+            <option value="master" {{#if (eq system.attributes.wisdom.proficiency 'master')}}selected{{/if}}{{#if (eq system.attributes.wisdom.proficiency 'Master')}}selected{{/if}}>Master</option>
+            <option value="legendary" {{#if (eq system.attributes.wisdom.proficiency 'legendary')}}selected{{/if}}{{#if (eq system.attributes.wisdom.proficiency 'Legendary')}}selected{{/if}}>Legendary</option>
           </select>
         </td>
         <td><input
             type="number"
-            name="system.attributes.wisdom.bonus"
-            value="{{toInt system.attributes.wisdom.bonus}}"
-            placeholder="Bonus"
+            name="system.attributes.wisdom.status"
+            value="{{toInt system.attributes.wisdom.status}}"
+            placeholder="Status"
           /></td>
         <td><input
             type="number"
-            name="system.attributes.wisdom.defenseDC"
-            value="{{toInt system.attributes.wisdom.defenseDC}}"
-            placeholder="DC"
+            name="system.attributes.wisdom.circun"
+            value="{{toInt system.attributes.wisdom.circun}}"
+            placeholder="Circun"
           /></td>
         <td><input
             type="number"
             name="system.attributes.wisdom.item"
             value="{{toInt system.attributes.wisdom.item}}"
+            placeholder="Item"
           /></td>
+        <td><div class="attribute-total">{{toInt system.attributes.wisdom.total}}</div></td>
       </tr>
       {{! PRESENCE }}
       <tr>
@@ -152,30 +161,32 @@
             class="proficiency-select"
             name="system.attributes.presence.proficiency"
           >
-            <option value="Untrained" selected>Untrained</option>
-            <option value="Trained">Trained</option>
-            <option value="Expert">Expert</option>
-            <option value="Master">Master</option>
-            <option value="Legendary">Legendary</option>
+            <option value="untrained" {{#if (eq system.attributes.presence.proficiency 'untrained')}}selected{{/if}}{{#if (eq system.attributes.presence.proficiency 'Untrained')}}selected{{/if}}>Untrained</option>
+            <option value="trained" {{#if (eq system.attributes.presence.proficiency 'trained')}}selected{{/if}}{{#if (eq system.attributes.presence.proficiency 'Trained')}}selected{{/if}}>Trained</option>
+            <option value="expert" {{#if (eq system.attributes.presence.proficiency 'expert')}}selected{{/if}}{{#if (eq system.attributes.presence.proficiency 'Expert')}}selected{{/if}}>Expert</option>
+            <option value="master" {{#if (eq system.attributes.presence.proficiency 'master')}}selected{{/if}}{{#if (eq system.attributes.presence.proficiency 'Master')}}selected{{/if}}>Master</option>
+            <option value="legendary" {{#if (eq system.attributes.presence.proficiency 'legendary')}}selected{{/if}}{{#if (eq system.attributes.presence.proficiency 'Legendary')}}selected{{/if}}>Legendary</option>
           </select>
         </td>
         <td><input
             type="number"
-            name="system.attributes.presence.bonus"
-            value="{{toInt system.attributes.presence.bonus}}"
-            placeholder="Bonus"
+            name="system.attributes.presence.status"
+            value="{{toInt system.attributes.presence.status}}"
+            placeholder="Status"
           /></td>
         <td><input
             type="number"
-            name="system.attributes.presence.defenseDC"
-            value="{{toInt system.attributes.presence.defenseDC}}"
-            placeholder="DC"
+            name="system.attributes.presence.circun"
+            value="{{toInt system.attributes.presence.circun}}"
+            placeholder="Circun"
           /></td>
         <td><input
             type="number"
             name="system.attributes.presence.item"
             value="{{toInt system.attributes.presence.item}}"
+            placeholder="Item"
           /></td>
+        <td><div class="attribute-total">{{toInt system.attributes.presence.total}}</div></td>
       </tr>
     </tbody>
   </table>

@@ -1,0 +1,32 @@
+/* Attribute styles: pentagon, attribute table, labels, and values */
+.wayfinder .attributes {
+  flex: 0 0 100%;
+  padding: 10px;
+}
+
+.wayfinder .attributes .attribute {
+  height: 70px;
+  text-align: center;
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.wayfinder .attributes .attribute .attribute-name {
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.wayfinder .attributes .attribute .attribute-value {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.wayfinder .attributes .attribute .attribute-label {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* ...other attribute-specific rules... */
