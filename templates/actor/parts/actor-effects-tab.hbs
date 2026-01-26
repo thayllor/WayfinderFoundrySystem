@@ -1,0 +1,37 @@
+<h2 class="tab-title tab-title-actions">Efeitos</h2>
+
+<div class="effects-container">
+  {{! ACTIVE EFFECTS TABLE }}
+  <div class="effects-section">
+    <h3 class="effects-subtitle">Efeitos Ativos</h3>
+    <div class="effects-list-wrapper">
+      {{#if (gt activeEffects.length 0)}}
+        <div class="effects-collapsible-list">
+          {{#each activeEffects as |effect index|}}
+            {{{collapsibleEffect effect=effect idx=index}}}
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="effects-empty">Nenhum efeito ativo adicionado. Arraste efeitos
+          aqui!</p>
+      {{/if}}
+    </div>
+  </div>
+
+  {{! PASSIVE EFFECTS TABLE }}
+  <div class="effects-section">
+    <h3 class="effects-subtitle">Efeitos Passivos</h3>
+    <div class="effects-list-wrapper">
+      {{#if (gt passiveEffects.length 0)}}
+        <div class="effects-collapsible-list">
+          {{#each passiveEffects as |effect index|}}
+            {{{collapsibleEffect effect=effect idx=index}}}
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="effects-empty">Nenhum efeito passivo adicionado. Arraste
+          efeitos aqui!</p>
+      {{/if}}
+    </div>
+  </div>
+</div>

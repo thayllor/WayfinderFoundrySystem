@@ -331,27 +331,21 @@ export const preloadHandlebarsTemplates = async function() {
   return foundry.applications.handlebars.loadTemplates([
     "systems/wayfinder/templates/actor/actor-character-sheet.hbs",
     "systems/wayfinder/templates/actor/actor-npc-sheet.hbs",
-    "systems/wayfinder/templates/actor/parts/actor-features.hbs",
-    "systems/wayfinder/templates/actor/parts/actor-items.hbs",
-    "systems/wayfinder/templates/actor/parts/actor-spells.hbs",
-    "systems/wayfinder/templates/actor/parts/actor-effects.hbs",
-    "systems/wayfinder/templates/actor/parts/actor-talents.hbs",
+    "systems/wayfinder/templates/actor/parts/actor-talents-tab.hbs",
+    "systems/wayfinder/templates/actor/parts/actor-skills-tab.hbs",
+    "systems/wayfinder/templates/actor/parts/actor-inventory-tab.hbs",
+    "systems/wayfinder/templates/actor/parts/actor-effects-tab.hbs",
     "systems/wayfinder/templates/item/item-active-effect-sheet.hbs",
     "systems/wayfinder/templates/item/item-passive-effect-sheet.hbs",
     "systems/wayfinder/templates/item/item-trait-sheet.hbs",
     "systems/wayfinder/templates/item/item-talent-sheet.hbs",
+    "systems/wayfinder/templates/item/item-item-sheet.hbs",
     "systems/wayfinder/templates/components/attributes-pentagon.hbs",
     "systems/wayfinder/templates/components/defenses-table.hbs",
-    "systems/wayfinder/templates/components/Top-Resources-Row.hbs",
-    "systems/wayfinder/templates/components/Tab-Skills.hbs",
-    "systems/wayfinder/templates/components/Tab-Resources.hbs",
-    "systems/wayfinder/templates/components/Tab-Actions.hbs",
-    "systems/wayfinder/templates/components/Sheet-Header.hbs",
-    "systems/wayfinder/templates/components/Resource-Item.hbs",
-    "systems/wayfinder/templates/components/Resource-Block.hbs",
-    "systems/wayfinder/templates/components/defense-row.hbs",
-    "systems/wayfinder/templates/components/Character-Info.hbs",
-    "systems/wayfinder/templates/components/Attributes-Resources-Section.hbs"
+    "systems/wayfinder/templates/components/top-resources-row.hbs",
+    "systems/wayfinder/templates/components/sheet-header.hbs",
+    "systems/wayfinder/templates/components/character-info.hbs",
+    "systems/wayfinder/templates/components/attributes-resources-section.hbs"
   ]).then(() => {
     console.log('✓ Wayfinder | All templates loaded successfully');
   });

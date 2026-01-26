@@ -1,134 +1,8 @@
 <form class="wayfinder flexcol" autocomplete="off">
   {{!-- CHARACTER INFO ROW --}}
-  <div class="character-info-row">
-    <div class="character-portrait">
-      <img class="character-portrait-img" src="{{actor.img}}" data-edit="img" title="Retrato do Personagem" height="150" width="150"/>
-    </div>
-    <div class="character-info-fields">
-      {{!-- First Row --}}
-      <div class="info-field">
-        <label>Nome do Personagem</label>
-        <input type="text" name="name" value="{{actor.name}}" placeholder="Nome"/>
-      </div>
-      <div class="info-field">
-        <label>Nome do Jogador</label>
-        <input type="text" name="system.playerName" value="{{system.playerName}}" placeholder="Jogador"/>
-      </div>
-      <div class="info-field">
-        <label>Pronome</label>
-        <input type="text" name="system.pronoun" value="{{system.pronoun}}" placeholder="ex: ele/dele"/>
-      </div>
-      <div class="info-field">
-        <label>Idade</label>
-        <input type="number" name="system.age" value="{{system.age}}" placeholder="Idade"/>
-      </div>
-      {{!-- Second Row --}}
-      <div class="info-field">
-        <label>Ascendência</label>
-        <input type="text" name="system.ancestry" value="{{system.ancestry}}" placeholder="Ascendência"/>
-      </div>
-      <div class="info-field">
-        <label>Classe</label>
-        <input type="text" name="system.class" value="{{system.class}}" placeholder="Classe"/>
-      </div>
-      <div class="info-field">
-        <label>Nível</label>
-        <input type="number" name="system.level" value="{{system.level}}" min="1" max="20" placeholder="Nível"/>
-      </div>
-      <div class="info-field">
-        <label>Experiência</label>
-        <input type="number" name="system.exp" value="{{system.exp}}" placeholder="Experiência"/>
-      </div>
-    </div>
-  </div>
-
-  {{!-- TOP RESOURCES ROW --}}
-  <div class="top-resources-row">
-    <div class="resource-block stamina-block">
-      <h4>Stamina</h4>
-      <div class="resource-block-content stamina-layout">
-        <div class="stamina-row">
-          <div class="resource-item">
-            <label>Current</label>
-            <input type="number" name="system.stamina.current" value="{{system.stamina.current}}" data-dtype="Number"/>
-          </div>
-          <div class="resource-item">
-            <label>Maximum</label>
-            <input type="number" name="system.stamina.maximum" value="{{system.stamina.maximum}}" data-dtype="Number"/>
-          </div>
-        </div>
-        <div class="resource-item">
-          <label class="centered-label">Temporary</label>
-          <input type="number" name="system.stamina.temporary" value="{{system.stamina.temporary}}" placeholder="0" data-dtype="Number"/>
-        </div>
-      </div>
-    </div>
-
-    <div class="resource-block">
-      <h4>Surges</h4>
-      <div class="resource-block-content">
-        <div class="resource-item">
-          <label class="centered-label">Current</label>
-          <input type="number" name="system.surges.current" value="{{#if (isObject system.surges.current)}}0{{else}}{{system.surges.current}}{{/if}}" data-dtype="Number"/>
-        </div>
-        <div class="resource-item">
-          <label class="centered-label">Maximum</label>
-          <input type="number" name="system.surges.maximum" value="{{#if (isObject system.surges.maximum)}}0{{else}}{{system.surges.maximum}}{{/if}}" data-dtype="Number"/>
-        </div>
-      </div>
-    </div>
-
-    <div class="resource-block">
-      <div class="resource-block-content">
-        <div class="resource-item">
-          <h3>Focus</h3>
-          <input type="number" name="system.focus.current" value="{{#if (isObject system.focus.current)}}0{{else}}{{system.focus.current}}{{/if}}" data-dtype="Number"/>
-        </div>
-        <div class="resource-item">
-          <h3>Hero Points</h3>
-          <input type="number" name="system.heroPoints.current" value="{{#if (isObject system.heroPoints.current)}}0{{else}}{{system.heroPoints.current}}{{/if}}" data-dtype="Number"/>
-        </div>
-      </div>
-    </div>
-
-    <div class="resource-block">
-      <div class="resource-block-content">
-        <div class="resource-item">
-          <h3>Class DC</h3>
-          <input type="number" name="system.classDC" value="{{#if (isObject system.classDC)}}0{{else}}{{system.classDC}}{{/if}}" data-dtype="Number"/>
-        </div>
-        <div class="resource-item">
-          <h3>Speed</h3>
-          <input type="number" name="system.speed" value="{{#if (isObject system.speed)}}0{{else}}{{system.speed}}{{/if}}" placeholder="0" data-dtype="Number"/>
-        </div>
-      </div>
-    </div>
-
-    <div class="resource-block">
-      <h4>Size</h4>
-      <div class="resource-block-content">
-        <select name="system.size">
-          <option value="Tiny" {{#if (eq system.size "Tiny")}}selected{{/if}}>Tiny</option>
-          <option value="Small" {{#if (eq system.size "Small")}}selected{{/if}}>Small</option>
-          <option value="Medium" {{#if (eq system.size "Medium")}}selected{{/if}}>Medium</option>
-          <option value="Large" {{#if (eq system.size "Large")}}selected{{/if}}>Large</option>
-          <option value="Huge" {{#if (eq system.size "Huge")}}selected{{/if}}>Huge</option>
-          <option value="Gargantuan" {{#if (eq system.size "Gargantuan")}}selected{{/if}}>Gargantuan</option>
-        </select>
-        <div class="resource-item">
-          <label>Percepção</label>
-          <select name="system.generalProficiency" class="short-input">
-            <option value="untrained" {{#if (eq system.generalProficiency 'untrained')}}selected{{/if}}>Untrained</option>
-            <option value="trained" {{#if (eq system.generalProficiency 'trained')}}selected{{/if}}>Trained</option>
-            <option value="expert" {{#if (eq system.generalProficiency 'expert')}}selected{{/if}}>Expert</option>
-            <option value="master" {{#if (eq system.generalProficiency 'master')}}selected{{/if}}>Master</option>
-            <option value="legendary" {{#if (eq system.generalProficiency 'legendary')}}selected{{/if}}>Legendary</option>
-          </select>
-        </div>
-
-      </div>
-    </div>
-  </div>
+  {{> "systems/wayfinder/templates/components/character-info.hbs"}}
+  {{!-- Resources Row --}}
+  {{> "systems/wayfinder/templates/components/top-resources-row.hbs"}}
 
   <div class="attributes-resources-horizontal">
     {{!-- ATTRIBUTES PENTAGON (esquerda) --}}
@@ -149,102 +23,23 @@
   {{!-- Sheet Body --}}
   <section class="sheet-body">
     {{!-- SKILLS TAB --}}
-    {{> "systems/wayfinder/templates/components/Tab-Skills.hbs"}}
+    <div class="tab" data-group="primary" data-tab="skills">
+      {{> "systems/wayfinder/templates/actor/parts/actor-skills-tab.hbs"}}
+    </div>
 
     {{!-- ACTIONS TAB (Efeitos) --}}
     <div class="tab" data-group="primary" data-tab="actions">
-      <h2 class="tab-title tab-title-actions">Efeitos</h2>
-
-      <div class="effects-container">
-        {{!-- ACTIVE EFFECTS TABLE --}}
-        <div class="effects-section">
-          <h3 class="effects-subtitle">Efeitos Ativos</h3>
-            <div class="effects-list-wrapper">
-             {{#if (gt activeEffects.length 0)}}
-              <div class="effects-collapsible-list">
-                {{#each activeEffects as |effect index|}}
-                  {{{collapsibleEffect effect=effect idx=index}}}
-                {{/each}}
-              </div>
-            {{else}}
-              <p class="effects-empty">Nenhum efeito ativo adicionado. Arraste efeitos aqui!</p>
-            {{/if}}
-          </div>
-        </div>
-
-        {{!-- PASSIVE EFFECTS TABLE --}}
-        <div class="effects-section">
-          <h3 class="effects-subtitle">Efeitos Passivos</h3>
-          <div class="effects-list-wrapper">
-            {{#if (gt passiveEffects.length 0)}}
-              <div class="effects-collapsible-list">
-                {{#each passiveEffects as |effect index|}}
-                  {{{collapsibleEffect effect=effect idx=index}}}
-                {{/each}}
-              </div>
-            {{else}}
-              <p class="effects-empty">Nenhum efeito passivo adicionado. Arraste efeitos aqui!</p>
-            {{/if}}
-          </div>
-        </div>
-      </div>
+      {{> "systems/wayfinder/templates/actor/parts/actor-effects-tab.hbs"}}
     </div>
 
     {{!-- TALENTS TAB --}}
     <div class="tab" data-group="primary" data-tab="talents">
-      {{> "systems/wayfinder/templates/actor/parts/actor-talents.hbs"}}
+      {{> "systems/wayfinder/templates/actor/parts/actor-talents-tab.hbs"}}
     </div>
 
     {{!-- RESOURCES TAB --}}
     <div class="tab" data-group="primary" data-tab="resources">
-      <h2 class="tab-title tab-title-resources">Inventário</h2>
-      <div class="resources-grid grid grid-2col">
-        <div class="resource flex-group-center">
-          <h4>Stamina</h4>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="number" name="system.stamina.current" value="{{system.stamina.current}}"/>
-            <span> / </span>
-            <input type="number" name="system.stamina.maximum" value="{{system.stamina.maximum}}"/>
-          </div>
-        </div>
-
-        <div class="resource flex-group-center">
-          <h4>Hero Points</h4>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="number" name="system.heroPoints.current" value="{{system.heroPoints.current}}"/>
-          </div>
-        </div>
-
-        <div class="resource flex-group-center">
-          <h4>Focus</h4>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="number" name="system.focus.current" value="{{system.focus.current}}"/>
-          </div>
-        </div>
-
-        <div class="resource flex-group-center">
-          <h4>Resonance</h4>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="number" name="system.resonance.current" value="{{system.resonance.current}}"/>
-            <span> / </span>
-            <input type="number" name="system.resonance.maximum" value="{{system.resonance.maximum}}"/>
-          </div>
-        </div>
-
-        <div class="resource flex-group-center">
-          <h4>Surges</h4>
-          <div class="resource-content flexrow flex-center flex-between">
-            <input type="number" name="system.surges.current" value="{{system.surges.current}}"/>
-            <span> / </span>
-            <input type="number" name="system.surges.maximum" value="{{system.surges.maximum}}"/>
-          </div>
-        </div>
-
-        <div class="resource flex-group-center">
-          <h4>EXP</h4>
-          <input type="number" name="system.exp" value="{{system.exp}}"/>
-        </div>
-      </div>
+      {{> "systems/wayfinder/templates/actor/parts/actor-inventory-tab.hbs"}}
     </div>
   </section>
 </form>
