@@ -262,10 +262,11 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     tabsClone.classList.add('wayfinder');
     tabsClone.setAttribute('data-sheet-id', this.id);
     tabsClone.style.position = 'fixed';
-    tabsClone.style.zIndex = '9999';
+    // Lower z-index so the external tabs appear behind app windows
+    tabsClone.style.zIndex = '0';
     tabsClone.style.display = 'flex';
     tabsClone.style.flexDirection = 'column';
-    tabsClone.style.gap = '10px';
+    tabsClone.style.gap = '2px';
     tabsClone.style.padding = '10px 0';
     tabsClone.style.pointerEvents = 'all';
     tabsClone.style.width = '70px';
@@ -281,7 +282,7 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
       const width = this.position.width || 1042;
       const height = this.position.height || 751;
 
-      tabsClone.style.left = (posX - 80) + 'px';
+      tabsClone.style.left = (posX - 50) + 'px';
       tabsClone.style.top = (posY + height / 2) + 'px';
       tabsClone.style.transform = 'translateY(-50%)';
     };

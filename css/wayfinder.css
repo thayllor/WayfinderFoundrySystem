@@ -265,7 +265,8 @@
   border: none;
   background: transparent;
   clear: none;
-  z-index: 9999;
+  /* Keep behind windows */
+  z-index: 0;
   padding: 10px 0;
   pointer-events: all;
   clip-path: inset(0 0 0 -100%);
@@ -273,16 +274,16 @@
 
 /* Style tabs inside external container */
 .tabs-external .item {
-  /* Reduced size: half of original (35x35) */
-  line-height: 35px;
+  /* Slightly smaller tab box (reduced ~3px) */
+  line-height: 32px;
   font-weight: bold;
-  width: 35px;
-  height: 35px;
+  width: 32px;
+  height: 32px;
   border: 2px solid rgba(140, 110, 80, 0.6);
-  border-radius: 6px;
+  border-radius: 5px;
   color: var(--wayfinder-primary-dark);
   text-align: center;
-  padding: 0 6px;
+  padding: 0 5px;
   cursor: pointer;
   transition: all 0.22s ease;
   font-size: 10px;
@@ -294,13 +295,14 @@
   word-break: break-word;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.18);
   position: relative;
+  overflow: visible;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   font-size: 0;
   line-height: 1;
-  transform: translateX(12px);
+  transform: translateX(10px);
   opacity: 0.95;
-  /* Use the light accent from the palette for a clear tab color */
+  /* Use the light accent from the palette for tab background */
   background: var(--wayfinder-accent-light);
   color: var(--wayfinder-primary-dark);
 }
@@ -308,13 +310,18 @@
 /* Ícones nos tabs */
 .tabs-external .item::before {
   content: "";
-  width: 20px;
-  height: 20px;
+  /* Slightly reduced icon size as requested */
+  width: 30px;
+  height: 30px;
   display: block;
-  background-size: 60%;
+  background-size: 80%;
   background-repeat: no-repeat;
   background-position: center;
-  margin: 0 auto;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 
 .tabs-external .item[data-icon="d20"]::before {
@@ -332,25 +339,23 @@
 /* Fallback star icon using a glyph when no image is provided */
 .tabs-external .item[data-icon="star"]::before {
   content: "\2605"; /* black star glyph */
-  font-size: 18px;
+  font-size: 22px;
   color: var(--wayfinder-primary-dark);
   display: block;
-  width: 25px;
-  height: 25px;
-  line-height: 25px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
   text-align: center;
   background: transparent;
 }
 
 .tabs-external .item:nth-child(1),
 .tabs-external .item:nth-child(2),
-.tabs-external .item:nth-child(3) {
-  /* Keep tabs visually light and uniform */
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.96),
-    rgba(250, 250, 250, 0.92)
-  );
+.tabs-external .item:nth-child(3),
+.tabs-external .item:nth-child(4) {
+  /* Use the light accent from the palette for these tabs */
+  background: var(--wayfinder-accent-light);
+  color: var(--wayfinder-primary-dark);
 }
 
 .tabs-external .item:hover {
