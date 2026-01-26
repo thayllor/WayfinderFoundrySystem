@@ -273,42 +273,41 @@
 
 /* Style tabs inside external container */
 .tabs-external .item {
-  line-height: 70px;
+  /* Reduced size: half of original (35x35) */
+  line-height: 35px;
   font-weight: bold;
-  width: 70px;
-  height: 70px;
-  border: 3px solid var(--wayfinder-border);
-  border-radius: 8px;
+  width: 35px;
+  height: 35px;
+  border: 2px solid rgba(140,110,80,0.6);
+  border-radius: 6px;
   color: var(--wayfinder-primary-dark);
   text-align: center;
-  padding: 0 10px;
+  padding: 0 6px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 11px;
+  transition: all 0.22s ease;
+  font-size: 10px;
   text-transform: capitalize;
   display: flex;
   align-items: center;
   justify-content: center;
   white-space: normal;
   word-break: break-word;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.18);
   position: relative;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   font-size: 0;
   line-height: 1;
-  transform: translateX(25px);
-  opacity: 0.7;
-  gap: 5px;
-  font-size: 0;
-  line-height: 1;
+  transform: translateX(12px);
+  opacity: 0.95;
+  background: rgba(255,255,255,0.92); /* light / clara */
 }
 
 /* Ícones nos tabs */
 .tabs-external .item::before {
   content: "";
-  width: 50px;
-  height: 50px;
+  width: 25px;
+  height: 25px;
   display: block;
   background-size: 80%;
   background-repeat: no-repeat;
@@ -341,49 +340,30 @@
   background: transparent;
 }
 
-.tabs-external .item:nth-child(1) {
-  background: linear-gradient(
-    90deg,
-    var(--wayfinder-primary-dark) 0%,
-    var(--wayfinder-primary) 100%
-  );
-}
-
-.tabs-external .item:nth-child(2) {
-  background: linear-gradient(
-    90deg,
-    var(--wayfinder-accent-dark) 0%,
-    var(--wayfinder-accent-light) 100%
-  );
-}
-
+.tabs-external .item:nth-child(1),
+.tabs-external .item:nth-child(2),
 .tabs-external .item:nth-child(3) {
-  background: linear-gradient(
-    90deg,
-    var(--wayfinder-border) 0%,
-    var(--wayfinder-primary-dark) 100%
-  );
+  /* Keep tabs visually light and uniform */
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,250,250,0.92));
 }
 
 .tabs-external .item:hover {
-  transform: translateX(15px) scale(1.05);
-  box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.4);
-  border-color: var(--wayfinder-accent-light);
-  filter: brightness(1.1);
-  opacity: 0.85;
+  transform: translateX(8px) scale(1.05);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.28);
+  border-color: rgba(140,110,80,0.8);
+  filter: brightness(1.06);
+  opacity: 1;
 }
 
 .tabs-external .item.active {
-  transform: translateX(-15px) scale(1.1);
+  transform: translateX(-8px) scale(1.06);
   opacity: 1;
-  border-width: 4px;
+  border-width: 3px;
   border-color: var(--wayfinder-primary);
-  box-shadow:
-    8px 8px 16px rgba(168, 117, 26, 0.5),
-    inset 0 0 0 3px var(--wayfinder-accent-light);
-  font-weight: 900;
+  box-shadow: 6px 6px 10px rgba(168, 117, 26, 0.28), inset 0 0 0 2px var(--wayfinder-accent-light);
+  font-weight: 800;
   text-decoration: none;
-  filter: brightness(1.2);
+  filter: brightness(1.08);
 }
 
 /* Tab tooltip styling */
@@ -394,15 +374,15 @@
 .tabs-external .item:hover::after {
   content: attr(title);
   position: absolute;
-  left: 85px;
+  left: 50px;
   top: 50%;
   transform: translateY(-50%);
   background: var(--wayfinder-primary-dark);
   color: var(--wayfinder-accent-light);
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 4px;
   white-space: nowrap;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: bold;
   pointer-events: none;
   z-index: 10000;
