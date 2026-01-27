@@ -1,4 +1,4 @@
-<div class="effect-collapsible">
+<div class="effect-item" data-item-id="{{effect.uuid}}">
   <div class="effect-collapsible-header {{#if isActive}}active-header{{else}}passive-header{{/if}}" data-effect-id="{{effectId}}">
     <i class="fas fa-chevron-right effect-collapsible-icon"></i>
     <span class="effect-collapsible-title">{{effect.name}}</span>
@@ -6,9 +6,7 @@
     {{#if isActive}}
       {{#if effect.isMagic}}
         {{#if effect.magicCircle}}
-          <span class="effect-badge magic-badge"><i class="fas fa-hat-wizard"></i>
-            {{#if (eq effect.magicCircle 'cantrip')}}Cantrip{{else}}{{effect.magicCircle}}º Círculo{{/if}}
-          </span>
+          <span class="effect-badge magic-badge"><i class="fas fa-hat-wizard"></i> {{#if (eq effect.magicCircle 'cantrip')}}Cantrip{{else}}{{effect.magicCircle}}º Círculo{{/if}}</span>
         {{/if}}
       {{/if}}
       {{#if (gt effect.focusCost 0)}}
@@ -40,30 +38,37 @@
         </div>
       {{/if}}
 
-      {{#if effect.isMagic}}
-        <div class="spell-title"><i class="fas fa-scroll"></i><span>Magia</span></div>
-      {{/if}}
-
       {{#if hasMetadata}}
         <div class="effect-section effect-meta-block">
-          <div class="effect-meta-flex">
+          <div class="description-card">
             {{#if effect.isMagic}}
-              <div class="effect-meta-chip"><i class="fas fa-hat-wizard"></i>
-                <span>{{#if (eq effect.magicCircle 'cantrip')}}Cantrip{{else}}{{effect.magicCircle}}º Círculo{{/if}}</span>
+              <div class="description-card-header">
+                <div class="description-card-title"><i class="fas fa-scroll"></i> Magia</div>
               </div>
             {{/if}}
-            {{#if (gt effect.focusCost 0)}}
-              <div class="effect-meta-chip"><i class="fas fa-star"></i><span>{{effect.focusCost}} Foco</span></div>
-            {{/if}}
-            {{#if effect.range}}
-              <div class="effect-meta-chip"><i class="fas fa-ruler-combined"></i><span>Alcance: {{effect.range}}</span></div>
-            {{/if}}
-            {{#if effect.target}}
-              <div class="effect-meta-chip"><i class="fas fa-crosshairs"></i><span>Alvo: {{effect.target}}</span></div>
-            {{/if}}
-            {{#if effect.duration}}
-              <div class="effect-meta-chip"><i class="fas fa-hourglass-half"></i><span>Duração: {{effect.duration}}</span></div>
-            {{/if}}
+            <div class="description-card-content">
+              <div class="effect-meta-flex">
+
+                {{#if effect.isMagic}}
+                  <div class="effect-meta-chip"><i class="fas fa-hat-wizard"></i>
+                    <span>{{#if (eq effect.magicCircle 'cantrip')}}Cantrip{{else}}{{effect.magicCircle}}º Círculo{{/if}}</span>
+                  </div>
+                {{/if}}
+                {{#if (gt effect.focusCost 0)}}
+                  <div class="effect-meta-chip"><i class="fas fa-star"></i><span>{{effect.focusCost}} Foco</span></div>
+                {{/if}}
+                {{#if effect.range}}
+                  <div class="effect-meta-chip"><i class="fas fa-ruler-combined"></i><span>Alcance: {{effect.range}}</span></div>
+                {{/if}}
+                {{#if effect.target}}
+                  <div class="effect-meta-chip"><i class="fas fa-crosshairs"></i><span>Alvo: {{effect.target}}</span></div>
+                {{/if}}
+                {{#if effect.duration}}
+                  <div class="effect-meta-chip"><i class="fas fa-hourglass-half"></i><span>Duração: {{effect.duration}}</span></div>
+                {{/if}}
+
+              </div>
+            </div>
           </div>
         </div>
       {{/if}}

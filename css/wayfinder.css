@@ -990,6 +990,82 @@
   );
   color: var(--wayfinder-accent-light);
 }
+
+/* Ensure effects listed in the main Effects tab keep the system "effect" styling
+   even when other talent-specific rules exist. This targets the effects tab
+   container to avoid inheriting `.talent-item-content` rules. */
+.wayfinder .effects-container .effect-collapsible-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  background: linear-gradient(
+    90deg,
+    var(--wayfinder-accent-light),
+    var(--wayfinder-accent-dark)
+  );
+  color: var(--wayfinder-primary-dark);
+}
+.wayfinder .effect-item {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  margin-bottom: 8px;
+}
+
+/* More specific rule to ensure white background inside the effects tab container */
+.wayfinder .effects-container .effect-item {
+  background: #ffffff;
+  padding: 8px;
+}
+
+.wayfinder .effects-container .spell-title,
+.wayfinder .effects-container .spell-title i {
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary) 0%,
+    var(--wayfinder-accent-dark) 100%
+  );
+  color: white;
+}
+.wayfinder .effect-details > * {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.wayfinder .effect-details .effect-meta-block .effect-meta-flex {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Place the spell title at the top of the meta card and style it */
+.wayfinder .effect-details .effect-meta-block .spell-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--wayfinder-primary) 0%,
+    var(--wayfinder-accent-dark) 100%
+  );
+  color: white;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
 .wayfinder .effect-collapsible-icon {
   transition: transform 0.18s ease;
   color: var(--wayfinder-primary-dark);
@@ -1334,6 +1410,13 @@
   border: none;
   opacity: 0.7;
   pointer-events: none;
+}
+
+.wayfinder .effect-details .description-card .description-card-title {
+  color: #000000;
+}
+.wayfinder .effect-details .description-card .description-card-title i {
+  color: #000000;
 }
 
 .wayfinder .pentagon-attributes-container {
@@ -2621,7 +2704,7 @@
 
 .wayfinder.sheet.item .description-card-title {
   font-weight: 700;
-  color: var(--wayfinder-primary);
+  color: var(--wayfinder-primary-dark);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -2629,6 +2712,7 @@
 }
 
 .wayfinder.sheet.item .description-card-title i {
+  color: var(--wayfinder-primary-dark);
   font-size: 14px;
 }
 
@@ -3598,6 +3682,9 @@
       var(--wayfinder-accent-dark) 100%
     );
     color: white;
+
+    /* Make the outer effect item background neutral/white to match talent panels */
+
     cursor: pointer;
     user-select: none;
     transition: all 0.25s ease;
@@ -4523,6 +4610,7 @@
     var(--wayfinder-primary) 0%,
     var(--wayfinder-primary-dark) 100%
   );
+  color: var(--wayfinder-primary-dark);
   padding: 12px 15px;
   display: flex;
   justify-content: space-between;
@@ -4530,7 +4618,7 @@
 }
 
 .talent-item-content .description-card-title {
-  color: white;
+  color: var(--wayfinder-primary-dark);
   font-weight: 700;
   font-size: 14px;
   text-transform: uppercase;
