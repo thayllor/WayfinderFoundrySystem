@@ -206,8 +206,175 @@
   border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
+/* Heightened table redesign */
+.heightened-section {
+  margin-top: 10px;
+}
+.heightened-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 10px;
+  font-size: 13px;
+}
+.heightened-table thead th {
+  text-align: center;
+  font-weight: 700;
+  color: #fff;
+  padding: 10px 12px;
+  background: linear-gradient(
+    90deg,
+    var(--wayfinder-primary) 0%,
+    var(--wayfinder-accent-dark) 100%
+  );
+  border-radius: 6px;
+}
+.heightened-table tbody tr {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.6),
+    rgba(250, 245, 238, 0.9)
+  );
+  border: 1px solid var(--wayfinder-border);
+  border-radius: 8px;
+  /* rows use natural content height */
+}
+.heightened-table td {
+  padding: 8px 10px;
+  vertical-align: top;
+}
+.heightened-table td.level-col,
+.heightened-table th.level-col {
+  width: 60px;
+  max-width: 60px;
+}
+.heightened-level {
+  width: 48px;
+  max-width: 48px;
+  padding: 6px 8px;
+  border: 1px solid var(--wayfinder-border);
+  border-radius: 6px;
+  text-align: center;
+  background: var(--wayfinder-accent-light);
+  color: var(--wayfinder-primary-dark);
+}
+.heightened-table td.desc-col {
+  /* Large flexible column for rich text */
+  width: auto;
+}
+.heightened-table td.delete-col {
+  width: 36px;
+  text-align: center;
+}
+.heightened-table thead th.delete-col {
+  display: none;
+}
+.remove-heightened-btn {
+  background: var(--wayfinder-primary);
+  color: #fff;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.heightened-table tbody tr:hover {
+  transform: translateY(-2px);
+}
+.trait-description-group {
+  margin: 0; /* inline editor inside table */
+}
+.trait-editor-wrapper {
+  padding: 0;
+}
+.trait-editor-content {
+  padding: 6px 8px;
+  min-height: 38px;
+}
+
 .trait-chip-name {
   white-space: nowrap;
+}
+
+/* ----------------------------------------- */
+/* Effects Category Card Styling            */
+/* ----------------------------------------- */
+/* Card container for each effects category (active / passive) */
+.wayfinder .effects-category {
+  /* Make cards responsive to the sheet/window width. The min-width is
+     viewport-based so the card will not become narrower than the window. */
+  width: 100%;
+  max-width: 100%;
+  min-width: 40vw;
+  box-sizing: border-box;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(250, 245, 238, 0.95)
+  );
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(30, 20, 10, 0.06);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.wayfinder .effects-category:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(30, 20, 10, 0.09);
+}
+
+.wayfinder .effects-category .effects-title {
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--wayfinder-primary-dark);
+}
+
+.wayfinder .effects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wayfinder .effect-item {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+/* Distinguish active vs passive categories with a subtle accent */
+.wayfinder .active-effects-category {
+  border-left: 5px solid var(--wayfinder-primary);
+}
+
+.wayfinder .passive-effects-category {
+  border-left: 5px solid var(--wayfinder-accent-dark);
+}
+
+/* Keep the empty-message pleasant inside the card */
+.wayfinder .effects-category .empty-message {
+  margin: 6px 0 0 0;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Responsive: ensure cards fit narrow windows */
+@media (max-width: 780px) {
+  .wayfinder .effects-category {
+    padding: 8px;
+    /* On very narrow viewports, ensure the min-width doesn't force overflow */
+    min-width: 100%;
+  }
+  .wayfinder .effects-category .effects-title {
+    font-size: 0.95rem;
+    gap: 6px;
+  }
 }
 
 .wayfinder .sheet-header {
@@ -785,7 +952,7 @@
   padding: 2px 6px;
   margin-left: 6px;
   background: rgba(255, 255, 255, 0.12);
-  color: var(--wayfinder-accent-light);
+  color: var(--wayfinder-primary-dark);
   border-radius: 4px;
   font-size: 12px;
 }
@@ -2154,6 +2321,7 @@
 /* Effect Item Sheet Styling                 */
 /* ----------------------------------------- */
 
+.wayfinder.sheet.actor .sheet-header,
 .wayfinder.sheet.item .sheet-header {
   border-bottom: 2px solid var(--wayfinder-primary);
   background: linear-gradient(
@@ -2326,6 +2494,7 @@
   background: white;
 }
 
+.wayfinder.sheet.actor .profile-img,
 .wayfinder.sheet.item .profile-img {
   width: 80px;
   height: 80px;
@@ -2349,6 +2518,7 @@
   justify-content: space-between;
 }
 
+.wayfinder.sheet.actor .charname input,
 .wayfinder.sheet.item .charname input {
   font-family: "Cinzel", serif;
   font-size: 24px;
@@ -2360,6 +2530,7 @@
   background: transparent;
 }
 
+.wayfinder.sheet.actor .charname input:focus,
 .wayfinder.sheet.item .charname input:focus {
   outline: none;
   border-bottom-color: var(--wayfinder-primary);
@@ -2472,6 +2643,23 @@
   gap: 15px;
 }
 
+/* Style for moved compact effect info to match description-card */
+.wayfinder .nice-block.compact-effect-info,
+.wayfinder.sheet.item .nice-block.compact-effect-info {
+  background: white;
+  border: 1px solid rgba(168, 117, 26, 0.25);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  margin-bottom: 12px;
+}
+
+.wayfinder .nice-block.compact-effect-info .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
 .wayfinder.sheet.item .form-group.checkbox {
   display: flex;
   align-items: center;
@@ -2556,6 +2744,7 @@
   justify-content: space-between;
 }
 
+.wayfinder.sheet.actor .sheet-header .trait-editor-toggle-btn,
 .wayfinder.sheet.item .sheet-header .trait-editor-toggle-btn {
   background: linear-gradient(
     135deg,
@@ -2579,12 +2768,14 @@
   margin-left: 12px;
 }
 
+.wayfinder.sheet.actor .sheet-header .trait-editor-toggle-btn:hover,
 .wayfinder.sheet.item .sheet-header .trait-editor-toggle-btn:hover {
   opacity: 0.95;
   transform: translateY(-1px);
   box-shadow: 0 4px 10px rgba(168, 117, 26, 0.3);
 }
 
+.wayfinder.sheet.actor .sheet-header .trait-editor-toggle-btn:active,
 .wayfinder.sheet.item .sheet-header .trait-editor-toggle-btn:active {
   transform: translateY(0);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -3359,6 +3550,18 @@
     gap: 10px;
   }
 
+  /* Ensure active/passive variants use primary-dark color */
+  .effects-title.active-title,
+  .effects-title.passive-title {
+    color: var(--wayfinder-primary-dark) !important;
+  }
+
+  /* Stronger scope in case rules are overridden elsewhere */
+  .wayfinder.sheet.item .effects-title.active-title,
+  .wayfinder.sheet.item .effects-title.passive-title {
+    color: var(--wayfinder-primary-dark) !important;
+  }
+
   .wayfinder.sheet.item .effects-list {
     margin: 15px 0;
   }
@@ -3539,8 +3742,9 @@
     color: var(--wayfinder-primary);
   }
 
-  /* Pretty spell title shown above metadata for magic effects */
-  .wayfinder.sheet.item .spell-title {
+  /* Pretty spell title shown above metadata for magic effects (item + actor sheets) */
+  .wayfinder.sheet.item .spell-title,
+  .wayfinder.sheet.actor .spell-title {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -3559,7 +3763,8 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
-  .wayfinder.sheet.item .spell-title i {
+  .wayfinder.sheet.item .spell-title i,
+  .wayfinder.sheet.actor .spell-title i {
     font-size: 14px;
   }
 
@@ -4583,7 +4788,8 @@
 }
 .wayfinder .heightened-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
   gap: 10px;
 }
 .wayfinder .heightened-badge {

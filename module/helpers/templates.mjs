@@ -31,6 +31,13 @@ export const preloadHandlebarsTemplates = async function() {
     return value !== null && value !== undefined && typeof value === 'object';
   });
 
+  // Simple concat helper for building dynamic field names in templates
+  Handlebars.registerHelper('concat', function(...args) {
+    // The last arg is Handlebars options object
+    args.pop();
+    return args.map(a => String(a)).join('');
+  });
+
   Handlebars.registerHelper('or', function(...args) {
     const value = args[0];
     const comparison = args[1];

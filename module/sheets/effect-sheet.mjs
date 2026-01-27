@@ -64,6 +64,115 @@ export class WayfinderActiveEffectSheet extends foundry.applications.api.Handleb
     return context;
   }
 
+  _saveScrollPosition() {
+    try {
+      const sheetBody = this.element?.querySelector('.sheet-body');
+      const appEl = this.element?.closest('.app') || this.element?.closest('.window-app') || null;
+      const windowScroll = (typeof window !== 'undefined') ? window.scrollY : 0;
+      const sheetScroll = sheetBody ? sheetBody.scrollTop : null;
+      const appScroll = appEl ? appEl.scrollTop : null;
+      this._wayfinderSavedScrolls = { windowScroll, sheetScroll, appScroll };
+      console.log('Wayfinder: saved scrolls', this._wayfinderSavedScrolls);
+    } catch (err) {
+      this._wayfinderSavedScrolls = null;
+    }
+  }
+
+  _saveFocusedElement() {
+    try {
+      const active = document.activeElement;
+      if (!active) {
+        this._wayfinderSavedFocus = null;
+        return;
+      }
+      // Only save if element is inside this sheet
+      if (!this.element?.contains(active)) {
+        this._wayfinderSavedFocus = null;
+        return;
+      }
+      const info = {
+        tagName: active.tagName,
+        id: active.id || null,
+        name: active.getAttribute ? active.getAttribute('name') : null,
+        datasetField: active.dataset ? active.dataset.field || null : null,
+        classList: active.className || null
+      };
+      this._wayfinderSavedFocus = info;
+      console.log('Wayfinder: saved focused element', info);
+    } catch (err) {
+      this._wayfinderSavedFocus = null;
+    }
+  }
+
+  _restoreFocusedElement() {
+    try {
+      const info = this._wayfinderSavedFocus;
+      if (!info) return;
+      let el = null;
+      if (info.name) el = this.element.querySelector(`[name="${info.name}"]`);
+      if (!el && info.datasetField) el = this.element.querySelector(`[data-field="${info.datasetField}"]`);
+      if (!el && info.id) el = this.element.querySelector(`#${info.id}`);
+      if (!el && info.classList) {
+        // try find by one class
+        const cls = info.classList.split(' ')[0];
+        if (cls) el = this.element.querySelector('.' + cls);
+      }
+      if (el) {
+        try {
+          el.focus();
+          if (el.setSelectionRange && typeof el.value === 'string') {
+            const len = el.value.length;
+            el.setSelectionRange(len, len);
+          }
+          if (el.isContentEditable) {
+            // place caret at end
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+          console.log('Wayfinder: restored focus to element', info);
+        } catch (err) {
+          console.warn('Wayfinder: could not restore focus', err);
+        }
+      }
+      this._wayfinderSavedFocus = null;
+    } catch (err) {
+      this._wayfinderSavedFocus = null;
+    }
+  }
+
+  _restoreScrollPosition() {
+    try {
+      if (this._wayfinderSavedScroll == null) return;
+      const apply = () => {
+        try {
+          const sheetBody = this.element?.querySelector('.sheet-body');
+          const appEl = this.element?.closest('.app') || this.element?.closest('.window-app') || null;
+          if (this._wayfinderSavedScrolls?.sheetScroll != null && sheetBody) {
+            sheetBody.scrollTop = this._wayfinderSavedScrolls.sheetScroll;
+          }
+          if (this._wayfinderSavedScrolls?.appScroll != null && appEl) {
+            appEl.scrollTop = this._wayfinderSavedScrolls.appScroll;
+          }
+          if (this._wayfinderSavedScrolls?.windowScroll != null) {
+            window.scrollTo(0, this._wayfinderSavedScrolls.windowScroll);
+          }
+          console.log('Wayfinder: restored scrolls', this._wayfinderSavedScrolls);
+        } catch (err) {
+          console.warn('Wayfinder: failed to restore scrolls', err);
+        }
+        this._wayfinderSavedScrolls = null;
+      };
+      // Try to restore on next paint for reliability
+      requestAnimationFrame(() => requestAnimationFrame(apply));
+    } catch (err) {
+      this._wayfinderSavedScroll = null;
+    }
+  }
+
   async _preparePartContext(partId, context) {
     context = await super._preparePartContext(partId, context);
     return context;
@@ -88,10 +197,26 @@ export class WayfinderActiveEffectSheet extends foundry.applications.api.Handleb
 
     if (!html) return;
 
+    try {
+      const heightened = this.document.system?.heightened ?? [];
+      console.log('Wayfinder: rendering Effect sheet, current heightened count:', Array.isArray(heightened) ? heightened.length : 0, 'contents:', JSON.stringify(heightened));
+      // Restore last saved scroll position and focused element (if any)
+      setTimeout(() => {
+        this._restoreScrollPosition();
+        this._restoreFocusedElement();
+      }, 10);
+    } catch (err) {
+      console.log('Wayfinder: rendering Effect sheet, could not stringify heightened', this.document.system?.heightened, err);
+    }
+
     if (this.isEditable) {
-      html.addEventListener('change', (ev) => {
-        this._submitForm(ev);
-      });
+      if (!html.dataset.wayfinderChangeBound) {
+        html.dataset.wayfinderChangeBound = '1';
+        html.addEventListener('change', (ev) => {
+          try { this._saveFocusedElement(ev.target); } catch (e) {}
+          this._submitForm(ev);
+        });
+      }
 
       this._setupInlineEditor(html);
       this._setupMagicSection(html);
@@ -128,85 +253,63 @@ export class WayfinderActiveEffectSheet extends foundry.applications.api.Handleb
   _setupMagicSection(html) {
     const magicToggle = html.querySelector('.magic-toggle');
     if (!magicToggle) return;
-
-    // Handle magic toggle
-    magicToggle.addEventListener('change', (ev) => {
-      ev.preventDefault();
-      this._submitForm(ev);
-      setTimeout(() => {
+    // Prevent binding duplicate listeners on re-render
+    if (!magicToggle.dataset.wayfinderBound) {
+      magicToggle.dataset.wayfinderBound = '1';
+      // Handle magic toggle: update the single field, stop propagation so the generic
+      // form 'change' listener doesn't submit prematurely, then re-render.
+      magicToggle.addEventListener('change', async (ev) => {
+        ev.stopPropagation();
+        const checked = ev.target.checked;
+        console.log('Wayfinder: magic-toggle changed ->', !!checked);
+        this._saveScrollPosition();
+        this._saveFocusedElement();
+        await this.document.update({ 'system.isMagic': !!checked });
         this.render();
-      }, 100);
-    });
+      });
+    }
 
-    // Handle add heightened button - use event delegation for better reliability
-    html.addEventListener('click', async (ev) => {
-      const addBtn = ev.target.closest('.add-heightened-btn');
-      if (addBtn) {
-        ev.preventDefault();
-        const current = Array.isArray(this.document.system?.heightened) ? [...this.document.system.heightened] : [];
-        const newIdx = current.length;
-        current.push({ level: '', effects: '' });
-        await this.document.update({ 'system.heightened': current }, { render: false });
-
-        // Dynamically add new row without re-rendering
-        const tbody = html.querySelector('.heightened-table tbody');
-        if (tbody) {
-          const newRow = document.createElement('tr');
-          newRow.className = 'heightened-row';
-          newRow.dataset.idx = newIdx;
-          newRow.innerHTML = `
-            <td><input type="text" name="system.heightened.${newIdx}.level" value="" placeholder="Ex: +1, +2, 3" class="heightened-level"/></td>
-            <td><div contenteditable="true" class="heightened-effects-editor" data-field="system.heightened.${newIdx}.effects"></div><textarea name="system.heightened.${newIdx}.effects" class="heightened-effects-hidden" style="display: none;"></textarea></td>
-            <td><button type="button" class="remove-heightened-btn" data-idx="${newIdx}">×</button></td>
-          `;
-          tbody.appendChild(newRow);
-
-          // Setup event listeners for the new row's editor
-          const newEditor = newRow.querySelector('.heightened-effects-editor');
-          const newTextarea = newRow.querySelector('.heightened-effects-hidden');
-
-          newEditor.addEventListener('input', (e) => {
-            newTextarea.value = newEditor.innerHTML;
-          });
-
-          newEditor.addEventListener('blur', (e) => {
-            newTextarea.value = newEditor.innerHTML;
-            this._submitForm(e);
-          });
-
-          newEditor.addEventListener('paste', (e) => {
-            e.preventDefault();
-            const text = (e.clipboardData || window.clipboardData).getData('text/html') ||
-                         (e.clipboardData || window.clipboardData).getData('text/plain');
-            if (text) {
-              try {
-                document.execCommand('insertHTML', false, text);
-              } catch (err) {
-                document.execCommand('insertText', false, text);
-              }
-            }
-            setTimeout(() => {
-              newTextarea.value = newEditor.innerHTML;
-            }, 10);
-          });
-
-          // Focus on the level input
-          newRow.querySelector('.heightened-level').focus();
+    // Single delegated click handler for add/remove heightened rows
+    if (!html.dataset.wayfinderHeightenedBound) {
+      html.dataset.wayfinderHeightenedBound = '1';
+      html.addEventListener('click', async (ev) => {
+        const addBtn = ev.target.closest('.add-heightened-btn');
+        if (addBtn) {
+          ev.preventDefault();
+            const current = Array.isArray(this.document.system?.heightened) ? [...this.document.system.heightened] : [];
+            const newIdx = current.length;
+            current.push({ level: '', effects: '' });
+            console.log('Wayfinder: add-heightened clicked -> updating document', { newIdx, willLength: current.length });
+            // Persist the new row to the document and allow Foundry to re-render the sheet
+            this._saveScrollPosition();
+            this._saveFocusedElement();
+            const updated = await this.document.update({ 'system.heightened': current });
+            console.log('Wayfinder: document.update resolved, heightened length now', Array.isArray(updated.system?.heightened) ? updated.system.heightened.length : 0);
+            return;
         }
-      }
-    });
 
-    // Handle remove heightened buttons using event delegation
-    html.addEventListener('click', async (ev) => {
-      const removeBtn = ev.target.closest('.remove-heightened-btn');
-      if (removeBtn) {
-        ev.preventDefault();
-        const idx = parseInt(removeBtn.dataset.idx);
-        const current = Array.isArray(this.document.system?.heightened) ? [...this.document.system.heightened] : [];
-        current.splice(idx, 1);
-        await this.document.update({ 'system.heightened': current });
-      }
-    });
+        const removeBtn = ev.target.closest('.remove-heightened-btn');
+        if (removeBtn) {
+          ev.preventDefault();
+          // Determine index from the row's position in the tbody to avoid stale data-idx values
+          const row = removeBtn.closest('tr.heightened-row');
+          const tbody = row?.parentElement;
+          if (!row || !tbody) return;
+          const rows = Array.from(tbody.querySelectorAll('tr.heightened-row'));
+          const idx = rows.indexOf(row);
+          const current = Array.isArray(this.document.system?.heightened) ? [...this.document.system.heightened] : [];
+          console.log('Wayfinder: remove-heightened clicked', { idx, rowsLength: rows.length, currentLength: current.length });
+          if (idx !== -1 && idx >= 0 && idx < current.length) {
+            current.splice(idx, 1);
+            this._saveScrollPosition();
+            this._saveFocusedElement();
+            await this.document.update({ 'system.heightened': current });
+            console.log('Wayfinder: removed heightened, new current length', current.length);
+          }
+          return;
+        }
+      });
+    }
 
     // Setup heightened effects editors (contenteditable with HTML support)
     const effectsEditors = html.querySelectorAll('.heightened-effects-editor');
@@ -214,15 +317,20 @@ export class WayfinderActiveEffectSheet extends foundry.applications.api.Handleb
       const fieldName = editor.dataset.field;
       const hiddenTextarea = editor.parentElement.querySelector('.heightened-effects-hidden');
 
+      // Avoid double-binding handlers after re-render
+      if (editor.dataset.wayfinderEditorBound) return;
+      editor.dataset.wayfinderEditorBound = '1';
+
       // Sync contenteditable to hidden textarea on input
       editor.addEventListener('input', (ev) => {
         hiddenTextarea.value = editor.innerHTML;
       });
 
       // Also sync on blur to ensure form submission catches it
-      editor.addEventListener('blur', (ev) => {
-        hiddenTextarea.value = editor.innerHTML;
-        this._submitForm(ev);
+        editor.addEventListener('blur', (ev) => {
+          hiddenTextarea.value = editor.innerHTML;
+          try { this._saveFocusedElement(editor); } catch (err) {}
+          this._submitForm(ev);
       });
 
       // Allow paste with formatting
@@ -501,8 +609,28 @@ export class WayfinderActiveEffectSheet extends foundry.applications.api.Handleb
 
   async _submitForm(event, { render = true } = {}) {
     if (!this.form) return;
+    // Preserve scroll position across form-submitted updates
+    this._saveScrollPosition();
     const formData = new FormData(this.form);
     const updates = foundry.utils.expandObject(Object.fromEntries(formData));
+    console.log('Wayfinder: _submitForm preparing update, keys:', Object.keys(updates), 'heightenedPresent:', !!updates.system?.heightened);
+
+    // Normalize expanded form input where array-like fields become objects with numeric keys
+    try {
+      if (updates.system && updates.system.heightened && !Array.isArray(updates.system.heightened) && typeof updates.system.heightened === 'object') {
+        console.log('Wayfinder: _submitForm detected object-shaped heightened, converting to array', updates.system.heightened);
+        const obj = updates.system.heightened;
+        const numericKeys = Object.keys(obj).filter(k => String(parseInt(k)) === k).map(k => parseInt(k)).sort((a,b) => a-b);
+        if (numericKeys.length > 0) {
+          const arr = numericKeys.map(k => obj[String(k)]);
+          updates.system.heightened = arr;
+          console.log('Wayfinder: _submitForm converted heightened to array, new length', arr.length);
+        }
+      }
+    } catch (err) {
+      console.warn('Wayfinder: error normalizing heightened in _submitForm', err);
+    }
+
     await this.document.update(updates, { render });
   }
 
