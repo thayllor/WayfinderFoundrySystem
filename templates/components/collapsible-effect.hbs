@@ -1,0 +1,105 @@
+<div class="effect-collapsible">
+  <div class="effect-collapsible-header {{#if isActive}}active-header{{else}}passive-header{{/if}}" data-effect-id="{{effectId}}">
+    <i class="fas fa-chevron-right effect-collapsible-icon"></i>
+    <span class="effect-collapsible-title">{{effect.name}}</span>
+
+    {{#if isActive}}
+      {{#if effect.isMagic}}
+        {{#if effect.magicCircle}}
+          <span class="effect-badge magic-badge"><i class="fas fa-hat-wizard"></i>
+            {{#if (eq effect.magicCircle 'cantrip')}}Cantrip{{else}}{{effect.magicCircle}}º Círculo{{/if}}
+          </span>
+        {{/if}}
+      {{/if}}
+      {{#if (gt effect.focusCost 0)}}
+        <span class="effect-badge focus-badge"><i class="fas fa-star"></i> {{effect.focusCost}} Foco</span>
+      {{/if}}
+    {{else}}
+      {{#unless effect.isPermanent}}
+        <label class="effect-toggle" title="{{#if effect.isActive}}Ativo{{else}}Inativo{{/if}}">
+          <input type="checkbox" data-effect-uuid="{{effect.uuid}}" {{#if effect.isActive}}checked{{/if}}/>
+          <span class="toggle-label">{{#if effect.isActive}}Ativo{{else}}Inativo{{/if}}</span>
+        </label>
+      {{/unless}}
+    {{/if}}
+  </div>
+
+  <div class="effect-collapsible-content" id="{{effectId}}" style="display: none;">
+    <div class="effect-details">
+
+      {{#if traits.length}}
+        <div class="effect-section effect-traits">
+          <div class="effect-section-header"><i class="fas fa-tags"></i> Traits</div>
+          <div class="effect-traits-row">
+            {{#each traits}}
+              <span class="trait-chip trait-chip-small" style="background-color: {{color}};" title="{{name}}">
+                <span class="trait-chip-name">{{name}}</span>
+              </span>
+            {{/each}}
+          </div>
+        </div>
+      {{/if}}
+
+      {{#if effect.isMagic}}
+        <div class="spell-title"><i class="fas fa-scroll"></i><span>Magia</span></div>
+      {{/if}}
+
+      {{#if hasMetadata}}
+        <div class="effect-section effect-meta-block">
+          <div class="effect-meta-flex">
+            {{#if effect.isMagic}}
+              <div class="effect-meta-chip"><i class="fas fa-hat-wizard"></i>
+                <span>{{#if (eq effect.magicCircle 'cantrip')}}Cantrip{{else}}{{effect.magicCircle}}º Círculo{{/if}}</span>
+              </div>
+            {{/if}}
+            {{#if (gt effect.focusCost 0)}}
+              <div class="effect-meta-chip"><i class="fas fa-star"></i><span>{{effect.focusCost}} Foco</span></div>
+            {{/if}}
+            {{#if effect.range}}
+              <div class="effect-meta-chip"><i class="fas fa-ruler-combined"></i><span>Alcance: {{effect.range}}</span></div>
+            {{/if}}
+            {{#if effect.target}}
+              <div class="effect-meta-chip"><i class="fas fa-crosshairs"></i><span>Alvo: {{effect.target}}</span></div>
+            {{/if}}
+            {{#if effect.duration}}
+              <div class="effect-meta-chip"><i class="fas fa-hourglass-half"></i><span>Duração: {{effect.duration}}</span></div>
+            {{/if}}
+          </div>
+        </div>
+      {{/if}}
+
+      {{#if effect.description}}
+        <div class="effect-section effect-description">
+          <div class="effect-section-header"><i class="fas fa-file-alt"></i> Descrição</div>
+          <div class="effect-text">{{{effect.description}}}</div>
+        </div>
+      {{/if}}
+
+      {{#if effect.effect}}
+        <div class="effect-section effect-effect">
+          <div class="effect-section-header"><i class="fas fa-magic"></i> Efeito</div>
+          <div class="effect-text">{{{effect.effect}}}</div>
+        </div>
+      {{/if}}
+
+      {{#if effect.isMagic}}
+        <div class="effect-section effect-heightened">
+          <div class="effect-section-header"><i class="fas fa-level-up-alt"></i> Efeitos Aprimorados</div>
+          {{#if heightenedEntries.length}}
+            <div class="heightened-list">
+              {{#each heightenedEntries}}
+                <div class="heightened-row">
+                  <span class="heightened-badge"><span class="heightened-label">Aprimorado</span><span class="heightened-level-pill">{{this.level}}</span></span>
+                  <div class="heightened-text">{{{or this.effects this.effect}}}</div>
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="heightened-empty" style="padding:8px 0;color:#666;font-size:13px">Nenhum aprimoramento definido.</div>
+          {{/if}}
+        </div>
+      {{/if}}
+
+    </div>
+  </div>
+</div>
