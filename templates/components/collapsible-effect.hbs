@@ -1,25 +1,29 @@
-<div class="effect-item" data-item-id="{{effect.uuid}}">
+<div class="effect-item" data-item-id="{{effect.uuid}}" data-effect-index="{{idx}}">
   <div class="effect-collapsible-header {{#if isActive}}active-header{{else}}passive-header{{/if}}" data-effect-id="{{effectId}}">
     <i class="fas fa-chevron-right effect-collapsible-icon"></i>
-    <span class="effect-collapsible-title">{{effect.name}}</span>
+    <span class="effect-collapsible-title">{{#if effect.sourceItemName}}{{effect.name}} — {{effect.sourceItemName}}{{else}}{{effect.name}}{{/if}}</span>
 
-    {{#if isActive}}
-      {{#if effect.isMagic}}
-        {{#if effect.magicCircle}}
-          <span class="effect-badge magic-badge"><i class="fas fa-hat-wizard"></i> {{#if (eq effect.magicCircle 'cantrip')}}Cantrip{{else}}{{effect.magicCircle}}º Círculo{{/if}}</span>
-        {{/if}}
+    {{#if effect.isMagic}}
+      {{#if effect.magicCircle}}
+        <span class="effect-badge magic-badge"><i class="fas fa-hat-wizard"></i> {{#if (eq effect.magicCircle 'cantrip')}}Cantrip{{else}}{{effect.magicCircle}}º Círculo{{/if}}</span>
       {{/if}}
-      {{#if (gt effect.focusCost 0)}}
-        <span class="effect-badge focus-badge"><i class="fas fa-star"></i> {{effect.focusCost}} Foco</span>
-      {{/if}}
-    {{else}}
+    {{/if}}
+
+    {{#if (gt effect.focusCost 0)}}
+      <span class="effect-badge focus-badge"><i class="fas fa-star"></i> {{effect.focusCost}} Foco</span>
+    {{/if}}
+    {{#if effect.actionCost}}
+      <span class="effect-badge action-badge"><i class="fas fa-bolt"></i> {{effect.actionCost}}</span>
+    {{/if}}
+
+    {{#unless isActive}}
       {{#unless effect.isPermanent}}
         <label class="effect-toggle" title="{{#if effect.isActive}}Ativo{{else}}Inativo{{/if}}">
           <input type="checkbox" data-effect-uuid="{{effect.uuid}}" {{#if effect.isActive}}checked{{/if}}/>
           <span class="toggle-label">{{#if effect.isActive}}Ativo{{else}}Inativo{{/if}}</span>
         </label>
       {{/unless}}
-    {{/if}}
+    {{/unless}}
   </div>
 
   <div class="effect-collapsible-content" id="{{effectId}}" style="display: none;">
@@ -62,6 +66,9 @@
                 {{/if}}
                 {{#if effect.target}}
                   <div class="effect-meta-chip"><i class="fas fa-crosshairs"></i><span>Alvo: {{effect.target}}</span></div>
+                {{/if}}
+                {{#if effect.actionCost}}
+                  <div class="effect-meta-chip"><i class="fas fa-bolt"></i><span>Ações: {{effect.actionCost}}</span></div>
                 {{/if}}
                 {{#if effect.duration}}
                   <div class="effect-meta-chip"><i class="fas fa-hourglass-half"></i><span>Duração: {{effect.duration}}</span></div>

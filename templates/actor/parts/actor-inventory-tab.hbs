@@ -1,4 +1,150 @@
 <h2 class="tab-title tab-title-resources">Inventário</h2>
-<div class="resources-grid grid grid-2col">
-  <h2>inventario</h2>
+<div class="inventory-cards">
+  <section class="inventory-card weapons-card">
+    <div class="inventory-card-header">Armas</div>
+    <div class="inventory-card-body">
+      {{#each items}}
+        {{#if (and (eq this.type "item") (eq this.system.itemType "weapon"))}}
+          <div class="inventory-item" data-item-id="{{this._id}}">
+            <div class="inventory-item-name">
+              <span class="inventory-item-name-text">{{this.name}}</span>
+              <button type="button" class="item-edit" title="Editar item" data-item-id="{{this._id}}">
+                <i class="fas fa-edit"></i>
+              </button>
+            </div>
+            <div class="inventory-item-controls">
+              <select
+                class="inventory-item-hand-select"
+                data-item-id="{{this._id}}"
+                name="inventory.hand"
+              >
+                <option value="1m" {{#if (eq this.system.inventory.hand "1m")}}selected{{/if}}>1 mão</option>
+                <option value="2m" {{#if (eq this.system.inventory.hand "2m")}}selected{{/if}}>2 mãos</option>
+                <option value="vestido" {{#if (eq this.system.inventory.hand "vestido")}}selected{{/if}}>vestido</option>
+                <option value="carregando" {{#if (eq this.system.inventory.hand "carregando")}}selected{{/if}}>carregando</option>
+              </select>
+              <label class="inventory-item-tuned">
+                <input
+                  type="checkbox"
+                  class="inventory-item-tuned-checkbox"
+                  data-item-id="{{this._id}}"
+                  name="inventory.tuned"
+                  {{#if this.system.inventory.tuned}}checked{{/if}}
+                />
+                <span>Sintonizado?</span>
+              </label>
+              <button
+                type="button"
+                class="item-delete"
+                title="Remover item"
+                data-item-id="{{this._id}}"
+              >
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+        {{/if}}
+      {{/each}}
+    </div>
+  </section>
+
+  <section class="inventory-card armor-card">
+    <div class="inventory-card-header">Armaduras</div>
+    <div class="inventory-card-body">
+      {{#each items}}
+        {{#if (and (eq this.type "item") (eq this.system.itemType "armor"))}}
+          <div class="inventory-item" data-item-id="{{this._id}}">
+            <div class="inventory-item-name">
+              <span class="inventory-item-name-text">{{this.name}}</span>
+              <button type="button" class="item-edit" title="Editar item" data-item-id="{{this._id}}">
+                <i class="fas fa-edit"></i>
+              </button>
+            </div>
+            <div class="inventory-item-controls">
+              <select
+                class="inventory-item-hand-select"
+                data-item-id="{{this._id}}"
+                name="inventory.hand"
+              >
+                <option value="vestido" {{#if (eq this.system.inventory.hand "vestido")}}selected{{/if}}>vestido</option>
+                <option value="carregando" {{#if (eq this.system.inventory.hand "carregando")}}selected{{/if}}>carregando</option>
+              </select>
+              <label class="inventory-item-tuned">
+                <input
+                  type="checkbox"
+                  class="inventory-item-tuned-checkbox"
+                  data-item-id="{{this._id}}"
+                  name="inventory.tuned"
+                  {{#if this.system.inventory.tuned}}checked{{/if}}
+                />
+                <span>Sintonizado?</span>
+              </label>
+              <button
+                type="button"
+                class="item-delete"
+                title="Remover item"
+                data-item-id="{{this._id}}"
+              >
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </div>
+        {{/if}}
+      {{/each}}
+    </div>
+  </section>
+
+  <section class="inventory-card other-card">
+    <div class="inventory-card-header">Outros</div>
+    <div class="inventory-card-body">
+      {{#each items}}
+        {{#if (eq this.type "item")}}
+          {{#unless
+            (or
+              (eq this.system.itemType "weapon")
+              (eq this.system.itemType "armor")
+            )
+          }}
+            <div class="inventory-item" data-item-id="{{this._id}}">
+              <div class="inventory-item-name">
+                <span class="inventory-item-name-text">{{this.name}}</span>
+                <button type="button" class="item-edit" title="Editar item" data-item-id="{{this._id}}">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </div>
+              <div class="inventory-item-controls">
+                <select
+                  class="inventory-item-hand-select"
+                  data-item-id="{{this._id}}"
+                  name="inventory.hand"
+                >
+                  <option value="wear" {{#if (eq this.system.inventory.hand "wear")}}selected{{/if}}>vestir</option>
+                  <option value="other" {{#if (eq this.system.inventory.hand "other")}}selected{{/if}}>outro</option>
+                  <option value="carregando" {{#if (eq this.system.inventory.hand "carregando")}}selected{{/if}}>carregando</option>
+                </select>
+                <label class="inventory-item-tuned">
+                  <input
+                    type="checkbox"
+                    class="inventory-item-tuned-checkbox"
+                    data-item-id="{{this._id}}"
+                    name="inventory.tuned"
+                    {{#if this.system.inventory.tuned}}checked{{/if}}
+                  />
+                  <span>Sintonizado?</span>
+                </label>
+                <button
+                  type="button"
+                  class="item-delete"
+                  title="Remover item"
+                  data-item-id="{{this._id}}"
+                >
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </div>
+          {{/unless}}
+        {{/if}}
+      {{/each}}
+    </div>
+  </section>
 </div>

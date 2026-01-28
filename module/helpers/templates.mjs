@@ -116,11 +116,28 @@ export const preloadHandlebarsTemplates = async function() {
             const hue = _stringToHue(name);
             color = `hsl(${hue} 40% 45%)`;
           }
+          // Normalize color strings: ensure hex has '#', and make HSL use commas for broader compatibility
+          if (typeof color === 'string') {
+            color = color.trim();
+            if (/^[0-9a-fA-F]{6}$/.test(color)) color = `#${color}`;
+            else if (/^[0-9a-fA-F]{3}$/.test(color)) color = `#${color}`;
+            else if (/^[0-9]+$/.test(color)) color = `hsl(${Number(color)},40%,45%)`;
+            // Convert space-separated HSL to comma-separated (e.g. 'hsl(120 40% 45%)' -> 'hsl(120,40%,45%)')
+            color = color.replace(/^hsl\(\s*([0-9]+)\s+([0-9]+%?)\s+([0-9]+%?)\s*\)$/i, 'hsl($1,$2,$3)');
+          }
         } else if (traitEntry && typeof traitEntry === 'object') {
           name = traitEntry.name || traitEntry.label || traitEntry.id || 'Trait';
           if (traitEntry.color) color = traitEntry.color;
           else if (traitEntry.hex) color = traitEntry.hex;
           else if (traitEntry.hue) color = `hsl(${traitEntry.hue} 40% 45%)`;
+          // Normalize similarly
+          if (typeof color === 'string') {
+            color = color.trim();
+            if (/^[0-9a-fA-F]{6}$/.test(color)) color = `#${color}`;
+            else if (/^[0-9a-fA-F]{3}$/.test(color)) color = `#${color}`;
+            else if (/^[0-9]+$/.test(color)) color = `hsl(${Number(color)},40%,45%)`;
+            color = color.replace(/^hsl\(\s*([0-9]+)\s+([0-9]+%?)\s+([0-9]+%?)\s*\)$/i, 'hsl($1,$2,$3)');
+          }
           else {
             const hue = _stringToHue(name);
             color = `hsl(${hue} 40% 45%)`;
@@ -139,7 +156,7 @@ export const preloadHandlebarsTemplates = async function() {
     let heightenedEntries = _entriesFrom(effect.heightened);
     if (!heightenedEntries.length && effect.system) heightenedEntries = _entriesFrom(effect.system?.heightened);
 
-    const hasMetadata = (effect.range || effect.target || effect.duration || effect.isMagic || effect.focusCost > 0 || effect.magicCircle);
+    const hasMetadata = (effect.range || effect.target || effect.duration || effect.isMagic || effect.focusCost > 0 || effect.actionCost || effect.magicCircle);
 
     const context = { effect, idx, effectId, isActive, traits, heightenedEntries, hasMetadata };
 
@@ -159,7 +176,9 @@ export const preloadHandlebarsTemplates = async function() {
     "systems/wayfinder/templates/actor/actor-npc-sheet.hbs",
     "systems/wayfinder/templates/actor/parts/actor-talents-tab.hbs",
     "systems/wayfinder/templates/actor/parts/actor-skills-tab.hbs",
+    "systems/wayfinder/templates/actor/parts/actor-spells-tab.hbs",
     "systems/wayfinder/templates/actor/parts/actor-inventory-tab.hbs",
+    "systems/wayfinder/templates/actor/parts/actor-notes-tab.hbs",
     "systems/wayfinder/templates/actor/parts/actor-effects-tab.hbs",
     "systems/wayfinder/templates/item/item-active-effect-sheet.hbs",
     "systems/wayfinder/templates/item/item-passive-effect-sheet.hbs",
@@ -170,6 +189,7 @@ export const preloadHandlebarsTemplates = async function() {
     "systems/wayfinder/templates/components/defenses-table.hbs",
     "systems/wayfinder/templates/components/trait-editor.hbs",
     "systems/wayfinder/templates/components/collapsible-effect.hbs",
+    "systems/wayfinder/templates/actor/parts/actor-modifiers-tab.hbs",
     "systems/wayfinder/templates/components/top-resources-row.hbs",
     "systems/wayfinder/templates/components/sheet-header.hbs",
     "systems/wayfinder/templates/components/character-info.hbs",

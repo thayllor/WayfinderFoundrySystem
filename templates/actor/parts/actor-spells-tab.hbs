@@ -1,0 +1,450 @@
+{{!-- Spells and Casting Tab --}}
+<div class="spells-section">
+  <h2 class="tab-title tab-title-spells">Magia e Conjuração</h2>
+
+  <div class="spells-controls-card description-card skills-controls-wrapper">
+    <div class="spells-row">
+      <div class="spells-card description-card">
+        <div class="description-card-header">
+          <div class="description-card-title">Atributo de Conjuração</div>
+        </div>
+        <div class="description-card-body">
+          <select name="system.spell.attribute" class="short-input spell-attribute-select">
+            <option value="STR" {{#if (eq system.spell.attribute 'STR')}}selected{{/if}}>STR</option>
+            <option value="DEX" {{#if (eq system.spell.attribute 'DEX')}}selected{{/if}}>DEX</option>
+            <option value="INT" {{#if (eq system.spell.attribute 'INT')}}selected{{/if}}>INT</option>
+            <option value="WIS" {{#if (eq system.spell.attribute 'WIS')}}selected{{/if}}>WIS</option>
+            <option value="PRE" {{#if (eq system.spell.attribute 'PRE')}}selected{{/if}}>PRE</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="spells-card description-card">
+        <div class="description-card-header">
+          <div class="description-card-title">Proficiência em Conjuração</div>
+        </div>
+        <div class="description-card-body">
+          <select name="system.spell.prof" class="short-input spell-prof-select">
+            <option value="untrained" {{#if (eq system.spell.prof 'untrained')}}selected{{/if}}>Untrained</option>
+            <option value="trained" {{#if (eq system.spell.prof 'trained')}}selected{{/if}}>Trained</option>
+            <option value="expert" {{#if (eq system.spell.prof 'expert')}}selected{{/if}}>Expert</option>
+            <option value="master" {{#if (eq system.spell.prof 'master')}}selected{{/if}}>Master</option>
+            <option value="legendary" {{#if (eq system.spell.prof 'legendary')}}selected{{/if}}>Legendary</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="spells-card description-card">
+        <div class="description-card-header">
+          <div class="description-card-title">Spell DC</div>
+        </div>
+        <div class="description-card-body">
+          <div class="spell-dc-display">{{spell.spellDC}}</div>
+        </div>
+      </div>
+
+      <div class="spells-card description-card">
+        <div class="description-card-header">
+          <div class="description-card-title">Modificador de Conjuração</div>
+        </div>
+        <div class="description-card-body">
+          <div class="spell-modifier-display">{{spell.castingModifier}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Spell level separators: can render spells by level similar to talents --}}
+  <div class="spells-levels">
+      <div class="spell-type-category">
+        <div class="spell-type-header" data-spell-level="0">
+          <i class="fas fa-chevron-right spell-type-icon"></i>
+          <div class="spell-type-badge">Truques</div>
+          {{#with (lookup spells 0)}}
+            {{#if this.length}}
+              <span class="spell-count">{{this.length}}</span>
+            {{/if}}
+          {{/with}}
+        </div>
+        <div class="spell-type-content" style="display: none;">
+          {{#each (lookup spells 0)}}
+            {{#if (eq this.type 'talent')}}
+              <div class="talent-item" data-item-id="{{this.id}}">
+                <div class="talent-item-header" data-talent-id="{{this.id}}">
+                  <i class="fas fa-chevron-right talent-item-icon"></i>
+                  <span class="talent-item-name">{{this.name}}</span>
+                  <span class="talent-level-badge">Nv {{this.system.level}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="talent-edit-btn" data-item-id="{{this.id}}" title="Editar talento"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="talent-delete-btn" data-item-id="{{this.id}}" title="Remover talento"><i class="fas fa-trash"></i></button>
+                  {{/if}}
+                </div>
+                <div class="talent-item-content" style="display: none;"></div>
+              </div>
+            {{else}}
+              <div class="spell-entry" data-item-id="{{this.id}}">
+                <div class="spell-item-header">
+                  <span class="spell-item-name">{{this.name}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="item-edit" data-item-id="{{this.id}}"><i class="fas fa-edit"></i></button>
+                  {{/if}}
+                </div>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="spell-type-category">
+        <div class="spell-type-header" data-spell-level="1">
+          <i class="fas fa-chevron-right spell-type-icon"></i>
+          <div class="spell-type-badge">1º Círculo</div>
+          {{#with (lookup spells 1)}}
+            {{#if this.length}}
+              <span class="spell-count">{{this.length}}</span>
+            {{/if}}
+          {{/with}}
+        </div>
+        <div class="spell-type-content" style="display: none;">
+          {{#each (lookup spells 1)}}
+            {{#if (eq this.type 'talent')}}
+              <div class="talent-item" data-item-id="{{this.id}}">
+                <div class="talent-item-header" data-talent-id="{{this.id}}">
+                  <i class="fas fa-chevron-right talent-item-icon"></i>
+                  <span class="talent-item-name">{{this.name}}</span>
+                  <span class="talent-level-badge">Nv {{this.system.level}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="talent-edit-btn" data-item-id="{{this.id}}" title="Editar talento"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="talent-delete-btn" data-item-id="{{this.id}}" title="Remover talento"><i class="fas fa-trash"></i></button>
+                  {{/if}}
+                </div>
+                <div class="talent-item-content" style="display: none;"></div>
+              </div>
+            {{else}}
+              <div class="spell-entry" data-item-id="{{this.id}}">
+                <div class="spell-item-header">
+                  <span class="spell-item-name">{{this.name}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="item-edit" data-item-id="{{this.id}}"><i class="fas fa-edit"></i></button>
+                  {{/if}}
+                </div>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="spell-type-category">
+        <div class="spell-type-header" data-spell-level="2">
+          <i class="fas fa-chevron-right spell-type-icon"></i>
+          <div class="spell-type-badge">2º Círculo</div>
+          {{#with (lookup spells 2)}}
+            {{#if this.length}}
+              <span class="spell-count">{{this.length}}</span>
+            {{/if}}
+          {{/with}}
+        </div>
+        <div class="spell-type-content" style="display: none;">
+          {{#each (lookup spells 2)}}
+            {{#if (eq this.type 'talent')}}
+              <div class="talent-item" data-item-id="{{this.id}}">
+                <div class="talent-item-header" data-talent-id="{{this.id}}">
+                  <i class="fas fa-chevron-right talent-item-icon"></i>
+                  <span class="talent-item-name">{{this.name}}</span>
+                  <span class="talent-level-badge">Nv {{this.system.level}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="talent-edit-btn" data-item-id="{{this.id}}" title="Editar talento"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="talent-delete-btn" data-item-id="{{this.id}}" title="Remover talento"><i class="fas fa-trash"></i></button>
+                  {{/if}}
+                </div>
+                <div class="talent-item-content" style="display: none;"></div>
+              </div>
+            {{else}}
+              <div class="spell-entry" data-item-id="{{this.id}}">
+                <div class="spell-item-header">
+                  <span class="spell-item-name">{{this.name}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="item-edit" data-item-id="{{this.id}}"><i class="fas fa-edit"></i></button>
+                  {{/if}}
+                </div>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="spell-type-category">
+        <div class="spell-type-header" data-spell-level="3">
+          <i class="fas fa-chevron-right spell-type-icon"></i>
+          <div class="spell-type-badge">3º Círculo</div>
+          {{#with (lookup spells 3)}}
+            {{#if this.length}}
+              <span class="spell-count">{{this.length}}</span>
+            {{/if}}
+          {{/with}}
+        </div>
+        <div class="spell-type-content" style="display: none;">
+          {{#each (lookup spells 3)}}
+            {{#if (eq this.type 'talent')}}
+              <div class="talent-item" data-item-id="{{this.id}}">
+                <div class="talent-item-header" data-talent-id="{{this.id}}">
+                  <i class="fas fa-chevron-right talent-item-icon"></i>
+                  <span class="talent-item-name">{{this.name}}</span>
+                  <span class="talent-level-badge">Nv {{this.system.level}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="talent-edit-btn" data-item-id="{{this.id}}" title="Editar talento"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="talent-delete-btn" data-item-id="{{this.id}}" title="Remover talento"><i class="fas fa-trash"></i></button>
+                  {{/if}}
+                </div>
+                <div class="talent-item-content" style="display: none;"></div>
+              </div>
+            {{else}}
+              <div class="spell-entry" data-item-id="{{this.id}}">
+                <div class="spell-item-header">
+                  <span class="spell-item-name">{{this.name}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="item-edit" data-item-id="{{this.id}}"><i class="fas fa-edit"></i></button>
+                  {{/if}}
+                </div>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="spell-type-category">
+        <div class="spell-type-header" data-spell-level="4">
+          <i class="fas fa-chevron-right spell-type-icon"></i>
+          <div class="spell-type-badge">4º Círculo</div>
+          {{#with (lookup spells 4)}}
+            {{#if this.length}}
+              <span class="spell-count">{{this.length}}</span>
+            {{/if}}
+          {{/with}}
+        </div>
+        <div class="spell-type-content" style="display: none;">
+          {{#each (lookup spells 4)}}
+            {{#if (eq this.type 'talent')}}
+              <div class="talent-item" data-item-id="{{this.id}}">
+                <div class="talent-item-header" data-talent-id="{{this.id}}">
+                  <i class="fas fa-chevron-right talent-item-icon"></i>
+                  <span class="talent-item-name">{{this.name}}</span>
+                  <span class="talent-level-badge">Nv {{this.system.level}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="talent-edit-btn" data-item-id="{{this.id}}" title="Editar talento"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="talent-delete-btn" data-item-id="{{this.id}}" title="Remover talento"><i class="fas fa-trash"></i></button>
+                  {{/if}}
+                </div>
+                <div class="talent-item-content" style="display: none;"></div>
+              </div>
+            {{else}}
+              <div class="spell-entry" data-item-id="{{this.id}}">
+                <div class="spell-item-header">
+                  <span class="spell-item-name">{{this.name}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="item-edit" data-item-id="{{this.id}}"><i class="fas fa-edit"></i></button>
+                  {{/if}}
+                </div>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="spell-type-category">
+        <div class="spell-type-header" data-spell-level="5">
+          <i class="fas fa-chevron-right spell-type-icon"></i>
+          <div class="spell-type-badge">5º Círculo</div>
+          {{#with (lookup spells 5)}}
+            {{#if this.length}}
+              <span class="spell-count">{{this.length}}</span>
+            {{/if}}
+          {{/with}}
+        </div>
+        <div class="spell-type-content" style="display: none;">
+          {{#each (lookup spells 5)}}
+            {{#if (eq this.type 'talent')}}
+              <div class="talent-item" data-item-id="{{this.id}}">
+                <div class="talent-item-header" data-talent-id="{{this.id}}">
+                  <i class="fas fa-chevron-right talent-item-icon"></i>
+                  <span class="talent-item-name">{{this.name}}</span>
+                  <span class="talent-level-badge">Nv {{this.system.level}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="talent-edit-btn" data-item-id="{{this.id}}" title="Editar talento"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="talent-delete-btn" data-item-id="{{this.id}}" title="Remover talento"><i class="fas fa-trash"></i></button>
+                  {{/if}}
+                </div>
+                <div class="talent-item-content" style="display: none;"></div>
+              </div>
+            {{else}}
+              <div class="spell-entry" data-item-id="{{this.id}}">
+                <div class="spell-item-header">
+                  <span class="spell-item-name">{{this.name}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="item-edit" data-item-id="{{this.id}}"><i class="fas fa-edit"></i></button>
+                  {{/if}}
+                </div>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="spell-type-category">
+        <div class="spell-type-header" data-spell-level="6">
+          <i class="fas fa-chevron-right spell-type-icon"></i>
+          <div class="spell-type-badge">6º Círculo</div>
+          {{#with (lookup spells 6)}}
+            {{#if this.length}}
+              <span class="spell-count">{{this.length}}</span>
+            {{/if}}
+          {{/with}}
+        </div>
+        <div class="spell-type-content" style="display: none;">
+          {{#each (lookup spells 6)}}
+            {{#if (eq this.type 'talent')}}
+              <div class="talent-item" data-item-id="{{this.id}}">
+                <div class="talent-item-header" data-talent-id="{{this.id}}">
+                  <i class="fas fa-chevron-right talent-item-icon"></i>
+                  <span class="talent-item-name">{{this.name}}</span>
+                  <span class="talent-level-badge">Nv {{this.system.level}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="talent-edit-btn" data-item-id="{{this.id}}" title="Editar talento"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="talent-delete-btn" data-item-id="{{this.id}}" title="Remover talento"><i class="fas fa-trash"></i></button>
+                  {{/if}}
+                </div>
+                <div class="talent-item-content" style="display: none;"></div>
+              </div>
+            {{else}}
+              <div class="spell-entry" data-item-id="{{this.id}}">
+                <div class="spell-item-header">
+                  <span class="spell-item-name">{{this.name}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="item-edit" data-item-id="{{this.id}}"><i class="fas fa-edit"></i></button>
+                  {{/if}}
+                </div>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="spell-type-category">
+        <div class="spell-type-header" data-spell-level="7">
+          <i class="fas fa-chevron-right spell-type-icon"></i>
+          <div class="spell-type-badge">7º Círculo</div>
+          {{#with (lookup spells 7)}}
+            {{#if this.length}}
+              <span class="spell-count">{{this.length}}</span>
+            {{/if}}
+          {{/with}}
+        </div>
+        <div class="spell-type-content" style="display: none;">
+          {{#each (lookup spells 7)}}
+            {{#if (eq this.type 'talent')}}
+              <div class="talent-item" data-item-id="{{this.id}}">
+                <div class="talent-item-header" data-talent-id="{{this.id}}">
+                  <i class="fas fa-chevron-right talent-item-icon"></i>
+                  <span class="talent-item-name">{{this.name}}</span>
+                  <span class="talent-level-badge">Nv {{this.system.level}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="talent-edit-btn" data-item-id="{{this.id}}" title="Editar talento"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="talent-delete-btn" data-item-id="{{this.id}}" title="Remover talento"><i class="fas fa-trash"></i></button>
+                  {{/if}}
+                </div>
+                <div class="talent-item-content" style="display: none;"></div>
+              </div>
+            {{else}}
+              <div class="spell-entry" data-item-id="{{this.id}}">
+                <div class="spell-item-header">
+                  <span class="spell-item-name">{{this.name}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="item-edit" data-item-id="{{this.id}}"><i class="fas fa-edit"></i></button>
+                  {{/if}}
+                </div>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="spell-type-category">
+        <div class="spell-type-header" data-spell-level="8">
+          <i class="fas fa-chevron-right spell-type-icon"></i>
+          <div class="spell-type-badge">8º Círculo</div>
+          {{#with (lookup spells 8)}}
+            {{#if this.length}}
+              <span class="spell-count">{{this.length}}</span>
+            {{/if}}
+          {{/with}}
+        </div>
+        <div class="spell-type-content" style="display: block;">
+          {{#each (lookup spells 8)}}
+            {{#if (eq this.type 'talent')}}
+              <div class="talent-item" data-item-id="{{this.id}}">
+                <div class="talent-item-header" data-talent-id="{{this.id}}">
+                  <i class="fas fa-chevron-right talent-item-icon"></i>
+                  <span class="talent-item-name">{{this.name}}</span>
+                  <span class="talent-level-badge">Nv {{this.system.level}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="talent-edit-btn" data-item-id="{{this.id}}" title="Editar talento"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="talent-delete-btn" data-item-id="{{this.id}}" title="Remover talento"><i class="fas fa-trash"></i></button>
+                  {{/if}}
+                </div>
+                <div class="talent-item-content" style="display: none;"></div>
+              </div>
+            {{else}}
+              <div class="spell-entry" data-item-id="{{this.id}}">
+                <div class="spell-item-header">
+                  <span class="spell-item-name">{{this.name}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="item-edit" data-item-id="{{this.id}}"><i class="fas fa-edit"></i></button>
+                  {{/if}}
+                </div>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="spell-type-category">
+        <div class="spell-type-header" data-spell-level="9">
+          <i class="fas fa-chevron-right spell-type-icon"></i>
+          <div class="spell-type-badge">9º Círculo</div>
+          {{#with (lookup spells 9)}}
+            {{#if this.length}}
+              <span class="spell-count">{{this.length}}</span>
+            {{/if}}
+          {{/with}}
+        </div>
+        <div class="spell-type-content" style="display: block;">
+          {{#each (lookup spells 9)}}
+            {{#if (eq this.type 'talent')}}
+              <div class="talent-item" data-item-id="{{this.id}}">
+                <div class="talent-item-header" data-talent-id="{{this.id}}">
+                  <i class="fas fa-chevron-right talent-item-icon"></i>
+                  <span class="talent-item-name">{{this.name}}</span>
+                  <span class="talent-level-badge">Nv {{this.system.level}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="talent-edit-btn" data-item-id="{{this.id}}" title="Editar talento"><i class="fas fa-edit"></i></button>
+                    <button type="button" class="talent-delete-btn" data-item-id="{{this.id}}" title="Remover talento"><i class="fas fa-trash"></i></button>
+                  {{/if}}
+                </div>
+                <div class="talent-item-content" style="display: none;"></div>
+              </div>
+            {{else}}
+              <div class="spell-entry" data-item-id="{{this.id}}">
+                <div class="spell-item-header">
+                  <span class="spell-item-name">{{this.name}}</span>
+                  {{#if @root.editable}}
+                    <button type="button" class="item-edit" data-item-id="{{this.id}}"><i class="fas fa-edit"></i></button>
+                  {{/if}}
+                </div>
+              </div>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+  </div>
+</div>

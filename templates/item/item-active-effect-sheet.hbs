@@ -39,7 +39,21 @@
           editable=editable
         }}
       </div>
-
+      {{!-- Checkbox row: Is Magic and Is Attack (placed directly under description) --}}
+      <div class="form-row">
+        <div class="form-group checkbox">
+          <label>É Magia?</label>
+          <input type="checkbox" name="system.isMagic" class="magic-toggle" {{#if system.isMagic}}checked{{/if}}/>
+        </div>
+        <div class="form-group checkbox">
+          <label>É um Ataque?</label>
+          <input type="checkbox" name="system.isAttack" class="attack-toggle" {{#if system.isAttack}}checked{{/if}}/>
+        </div>
+        <div class="form-group checkbox">
+          <label>Dá Dano?</label>
+          <input type="checkbox" name="system.hasDamage" class="has-damage-toggle" {{#if system.hasDamage}}checked{{/if}}/>
+        </div>
+      </div>
       {{!-- Bloco movido: informações rápidas (Alcance/Alvo/Duração/Custo/Require Roll) --}}
       <div class="nice-block compact-effect-info">
         <div class="form-row">
@@ -54,10 +68,12 @@
         </div>
 
         <div class="form-row">
+          {{#if system.isMagic}}
           <div class="form-group">
             <label>Duração</label>
             <input type="text" name="system.duration" value="{{system.duration}}" placeholder="Ex: 1 rodada, 10 minutos" class="effect-input"/>
           </div>
+          {{/if}}
           <div class="form-group">
             <label>Custo em Foco</label>
             <input type="number" name="system.focusCost" value="{{system.focusCost}}" min="0" class="effect-input"/>
@@ -69,12 +85,11 @@
             <label>Requer Roll?</label>
             <input type="checkbox" name="system.requiresRoll" {{#if system.requiresRoll}}checked{{/if}}/>
           </div>
+          <div class="form-group">
+            <label>Ações</label>
+            <input type="text" name="system.actionCost" value="{{system.actionCost}}" placeholder="Ex: >, >>, >>>, <>" class="effect-input"/>
+          </div>
         </div>
-      </div>
-
-      <div class="form-group checkbox">
-        <label>É Magia?</label>
-        <input type="checkbox" name="system.isMagic" class="magic-toggle" {{#if system.isMagic}}checked{{/if}}/>
       </div>
 
       {{#if system.isMagic}}
@@ -125,6 +140,68 @@
           </div>
         </div>
       {{/if}}
+
+      {{!-- Damage fields when the effect deals damage --}}
+      {{#if system.hasDamage}}
+        <div class="description-card damage-section">
+          <div class="description-card-header">
+            <div class="description-card-title"><i class="fas fa-skull-crossbones"></i> Dano</div>
+          </div>
+          <div class="description-card-body grid grid-3col">
+            <div class="metadata-item">
+              <div class="metadata-icon"><i class="fas fa-exchange-alt"></i></div>
+              <div class="metadata-content">
+                <label>Fonte do Dado</label>
+                <select name="system.damageSource">
+                  <option value="weapon" {{#if (eq system.damageSource "weapon")}}selected{{/if}}>Arma (usar dado da arma)</option>
+                  <option value="custom" {{#if (eq system.damageSource "custom")}}selected{{/if}}>Personalizado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="metadata-item">
+              <div class="metadata-icon"><i class="fas fa-dice-d6"></i></div>
+              <div class="metadata-content">
+                <label>Dado de Dano (se Personalizado)</label>
+                {{#if (eq system.damageSource "custom")}}
+                  <input type="text" name="system.damageDie" value="{{system.damageDie}}" placeholder="1d6" />
+                {{else}}
+                  <div class="muted">Usa o dado da arma onde o efeito está</div>
+                {{/if}}
+              </div>
+            </div>
+
+            <div class="metadata-item">
+              <div class="metadata-icon"><i class="fas fa-fire"></i></div>
+              <div class="metadata-content">
+                <label>Tipo de Dano</label>
+                <select name="system.damageType">
+                  <option value="">Nenhum</option>
+                  <option value="bludgeoning" {{#if (eq system.damageType "bludgeoning")}}selected{{/if}}>Contusão</option>
+                  <option value="piercing" {{#if (eq system.damageType "piercing")}}selected{{/if}}>Perfurante</option>
+                  <option value="slashing" {{#if (eq system.damageType "slashing")}}selected{{/if}}>Cortante</option>
+                  <option value="fire" {{#if (eq system.damageType "fire")}}selected{{/if}}>Fogo</option>
+                  <option value="cold" {{#if (eq system.damageType "cold")}}selected{{/if}}>Gélido</option>
+                  <option value="acid" {{#if (eq system.damageType "acid")}}selected{{/if}}>Ácido</option>
+                  <option value="lightning" {{#if (eq system.damageType "lightning")}}selected{{/if}}>Elétrico</option>
+                  <option value="poison" {{#if (eq system.damageType "poison")}}selected{{/if}}>Veneno</option>
+                  <option value="psychic" {{#if (eq system.damageType "psychic")}}selected{{/if}}>Psíquico</option>
+                  <option value="radiant" {{#if (eq system.damageType "radiant")}}selected{{/if}}>Radiante</option>
+                  <option value="necrotic" {{#if (eq system.damageType "necrotic")}}selected{{/if}}>Necrótico</option>
+                  <option value="force" {{#if (eq system.damageType "force")}}selected{{/if}}>Força</option>
+                  <option value="thunder" {{#if (eq system.damageType "thunder")}}selected{{/if}}>Trovoada</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      {{/if}}
+
+        <div class="form-row">
+          <div class="form-group">
+            <button type="button" class="attach-to-item-btn">Associar a Arma...</button>
+          </div>
+        </div>
 
 
     </div>

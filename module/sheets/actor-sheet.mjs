@@ -98,9 +98,44 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
       editable: this.isEditable
     };
 
+    // Ensure language / proficiency arrays exist to avoid template errors
+    context.system.languages = Array.isArray(context.system.languages) ? context.system.languages : [];
+    context.system.proficiencies = context.system.proficiencies || {};
+    context.system.proficiencies.weapons = Array.isArray(context.system.proficiencies.weapons) ? context.system.proficiencies.weapons : [];
+    context.system.proficiencies.armors = Array.isArray(context.system.proficiencies.armors) ? context.system.proficiencies.armors : [];
+
+    // Provide labelled choices for weapons and armors and filter out already-selected ones
+    const ALL_WEAPONS = [
+      { key: 'crossbow', label: 'Besta' },
+      { key: 'dart', label: 'Dardo' },
+      { key: 'fetish', label: 'Fetiche' },
+      { key: 'flail', label: 'Mangual' },
+      { key: 'hammer', label: 'Martelo' },
+      { key: 'rod', label: 'Cajado' },
+      { key: 'knife', label: 'Faca' },
+      { key: 'pick', label: 'Picareta' },
+      { key: 'polearm', label: 'Haste' },
+      { key: 'shield', label: 'Escudo' },
+      { key: 'sling', label: 'Funda' },
+      { key: 'spear', label: 'Lança' },
+      { key: 'sword', label: 'Espada' },
+      { key: 'axe', label: 'Machado' }
+    ];
+    const ALL_ARMORS = [
+      { key: 'light', label: 'Leve' },
+      { key: 'medium', label: 'Média' },
+      { key: 'heavy', label: 'Pesada' }
+    ];
+
+    const selectedWeapons = Array.isArray(context.system.proficiencies.weapons) ? context.system.proficiencies.weapons : [];
+    const selectedArmors = Array.isArray(context.system.proficiencies.armors) ? context.system.proficiencies.armors : [];
+
+    context.availableWeapons = ALL_WEAPONS.filter(w => !selectedWeapons.includes(w.key));
+    context.availableArmors = ALL_ARMORS.filter(a => !selectedArmors.includes(a.key));
+
     // Prepare character data and items
     this._prepareCharacterData(context);
-    this._prepareItems(context);
+    await this._prepareItems(context);
 
     // Calculate midpoint for skills division
     const skillsArray = Object.keys(context.system.skills || {});
@@ -112,48 +147,259 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     context.skillsLeft = skillEntries.slice(0, midpoint).map(([k, s]) => ({ key: k, skill: s }));
     context.skillsRight = skillEntries.slice(midpoint).map(([k, s]) => ({ key: k, skill: s }));
 
-    // Prepare effects (active and passive)
-    context.activeEffects = this.document.items
+    // Prepare basic spell / casting context
+    // Ensure a system.spell object exists
+    context.system.spell = context.system.spell || {};
+    // Provide defaults
+    const spellSys = context.system.spell;
+    // Casting attribute abbreviation (STR/DEX/INT/WIS/PRE)
+    const castAttr = spellSys.attribute || 'PRE';
+    const ATTR_MAP = { STR: 'strength', DEX: 'dexterity', INT: 'intelligence', WIS: 'wisdom', PRE: 'presence' };
+    // Resolve proficiency for spells: accept either a category string or a numeric bonus
+    const PROF_MAP = { untrained: 0, trained: 2, expert: 4, master: 6, legendary: 8 };
+    const profRaw = spellSys.prof ?? spellSys.profBonus;
+    const levelValue = Number(context.system.level?.value ?? context.system.level ?? 0) || 0;
+    let profBonus = 0;
+    if (typeof profRaw === 'string') {
+      const key = profRaw.toString().toLowerCase();
+      const base = PROF_MAP[key] ?? 0;
+      profBonus = (base > 0) ? (base + levelValue) : 0;
+    } else {
+      const num = Number(profRaw || 0) || 0;
+      profBonus = (num > 0) ? (num + levelValue) : 0;
+    }
+    // Spell DC if explicitly set, otherwise attempt a simple fallback
+    // Resolve attribute numeric value for spell calculations (prefer .total then .value)
+    let spellAttrValue = 0;
+    try {
+      const attrKey = ATTR_MAP[castAttr?.toString?.().toUpperCase()] || (castAttr || '').toString().toLowerCase();
+      const aobj = context.system.attributes?.[attrKey];
+      spellAttrValue = Number(aobj?.value ?? 0) || 0;
+    } catch (e) {
+      spellAttrValue = 0;
+    }
+    const spellDC = spellSys.dc !== undefined ? spellSys.dc : (profBonus + spellAttrValue + 10);
+
+    // Compute casting modifier: (circ + item + bonus + prof) + attribute value
+    const circ = Number(spellSys.circ || 0) || 0;
+    const itemMod = Number(spellSys.item || 0) || 0;
+    const prof = profBonus;
+    const attrValue = spellAttrValue;
+    const status = Number(spellSys.status || 0) || 0;
+    // Casting modifier should be: prof + circ + itemMod + status + attribute
+    const castingModifier = prof + circ + itemMod + status + attrValue;
+
+    context.spell = {
+      castingAttribute: castAttr,
+      prof: spellSys.prof || null,
+      profBonus,
+      spellDC,
+      castingModifier
+    };
+
+    // Ensure spells container exists (from earlier _prepareItems)
+    context.spells = context.spells || {0: [], 1: [], 2: []};
+
+    // Prepare effects (active and passive) from both Item-stored effects and
+    // embedded ActiveEffect documents on the Actor. This ensures ActiveEffects
+    // that were created programmatically (e.g. from embedded item modifiers)
+    // appear in the sheet's Effects tab.
+    context.activeEffects = [];
+    context.passiveEffects = [];
+    // Separate collections for UI: effects coming from Talent references vs Item-stored effects
+    context.itemActiveEffects = [];
+    context.itemPassiveEffects = [];
+    context.talentActiveEffects = [];
+    context.talentPassiveEffects = [];
+    // Separate collections for spell-type talents' effects
+    context.talentSpellActiveEffects = [];
+    context.talentSpellPassiveEffects = [];
+
+    // First include any Item-based active/passive effect documents
+    const itemActive = this.document.items
       .filter(item => item.type === 'active-effect')
+      .map(item => ({
+        _id: item._id,
+        uuid: item.uuid || item._id,
+        name: item.name,
+        type: item.type,
+        range: String(item.system.range || ''),
+        target: String(item.system.target || ''),
+        duration: String(item.system.duration || ''),
+            focusCost: item.system.focusCost || 0,
+            actionCost: item.system.actionCost || item.system.actions || '',
+        requiresRoll: item.system.requiresRoll || false,
+        isActive: item.system.isActive || false,
+        isMagic: !!item.system.isMagic,
+        magicCircle: item.system.magicCircle || null,
+        traitsResolved: item.system.traitsResolved || item.system.traits || [],
+        description: item.system.description || '',
+        effect: item.system.effect || '',
+        heightened: item.system.heightened || []
+      }));
+    const itemPassive = this.document.items
+      .filter(item => item.type === 'passive-effect')
+      .map(item => ({
+        _id: item._id,
+        uuid: item.uuid || item._id,
+        name: item.name,
+        type: item.type,
+        effect: String(item.system.effect || ''),
+        isPermanent: item.system.isPermanent !== false,
+        isActive: item.system.isActive !== false,
+        traitsResolved: item.system.traitsResolved || item.system.traits || [],
+        description: item.system.description || ''
+      }));
+
+    // Keep item-based effects separate for the new two-part Effects tab
+    context.itemActiveEffects.push(...itemActive);
+    context.itemPassiveEffects.push(...itemPassive);
+    // Also include them in the legacy active/passive lists so other code stays compatible
+    context.activeEffects.push(...itemActive);
+    context.passiveEffects.push(...itemPassive);
+
+    // Also include any embedded effects stored on arbitrary items (e.g. weapons)
+    try {
+      for (const item of this.document.items) {
+        const embedded = Array.isArray(item.flags?.wayfinder?.embeddedEffects) ? item.flags.wayfinder.embeddedEffects : null;
+        if (!embedded) continue;
+        for (const ef of embedded) {
+          const systemData = ef.system || {};
+          const effectObj = {
+            _id: ef._id || ef.id || `${item._id}::${ef.uuid || ef.name}`,
+            uuid: ef.uuid || ef._id || ef.id || null,
+            name: ef.name || ef.label || `${item.name} - ${ef.name || ef.label || 'Effect'}`,
+            type: ef.type || systemData.type || 'active-effect',
+            range: String(ef.range ?? systemData.range ?? ''),
+            target: String(ef.target ?? systemData.target ?? ''),
+            duration: String(ef.duration ?? systemData.duration ?? ''),
+            focusCost: ef.focusCost ?? systemData.focusCost ?? 0,
+            actionCost: ef.actionCost ?? systemData.actionCost ?? systemData.actions ?? '',
+            requiresRoll: ef.requiresRoll ?? systemData.requiresRoll ?? false,
+            isActive: ef.isActive ?? (systemData.isActive !== false),
+            isMagic: ef.isMagic ?? !!systemData.isMagic,
+            magicCircle: ef.magicCircle ?? systemData.magicCircle ?? null,
+            traitsResolved: ef.traitsResolved ?? systemData.traitsResolved ?? systemData.traits ?? [],
+            description: ef.description ?? systemData.description ?? '',
+            effect: ef.effect ?? systemData.effect ?? '',
+            heightened: ef.heightened ?? systemData.heightened ?? [],
+            system: systemData,
+            sourceItemId: item._id,
+            sourceItemName: item.name
+          };
+
+          if (effectObj.type === 'passive-effect') {
+            context.itemPassiveEffects.push(effectObj);
+            context.passiveEffects.push(effectObj);
+          } else {
+            context.itemActiveEffects.push(effectObj);
+            context.activeEffects.push(effectObj);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Wayfinder | error including embedded effects from items', err);
+    }
+
+    // Then include embedded ActiveEffect documents from the Actor itself,
+    // avoiding duplicates by _id.
+    try {
+      const existingIds = new Set(context.activeEffects.filter(e => e._id).map(e => e._id));
+      // Collect any ActiveEffects that originate from Item modifiers so we can
+      // represent them separately in `context.modifiers` instead of showing
+      // them in the main Effects tab.
+      const effectsFromItems = [];
+      for (const ef of this.document.effects) {
+        const eid = ef.id || ef._id;
+        if (!eid) continue;
+        if (existingIds.has(eid)) continue;
+        existingIds.add(eid);
+
+        const srcItemId = ef.flags?.wayfinder?.sourceItemId;
+        if (srcItemId) {
+          // Extract a simple modifier representation from the ActiveEffect
+          const change = Array.isArray(ef.changes) && ef.changes.length ? ef.changes[0] : null;
+          const value = change ? (isNaN(Number(change.value)) ? change.value : Number(change.value)) : 0;
+          // Resolve originating item name for a friendly source label
+          let sourceLabel = `Item (${srcItemId})`;
+          try {
+            const srcItem = this.document.items.get(srcItemId);
+            if (srcItem) sourceLabel = `Item: ${srcItem.name}`;
+          } catch (e) {
+            // ignore
+          }
+          effectsFromItems.push({
+            _id: ef.id || ef._id,
+            uuid: ef.uuid || ef.id || ef._id,
+            name: ef.label || ef.name || 'Modifier',
+            type: 'modifier',
+            pillar: ef.flags?.wayfinder?.pillar || 'item',
+            value: value,
+            description: ef.flags?.wayfinder?.description || ef.description || '',
+            sourceItemId: srcItemId,
+            sourceLabel: sourceLabel,
+            targetPath: change?.key || null,
+            effectId: ef.id || ef._id
+          });
+          continue;
+        }
+
+        // Map embedded effect to the same shape as item-based effects
+        context.activeEffects.push({
+          _id: eid,
+          uuid: ef.uuid || eid,
+          name: ef.label || ef.name || 'Effect',
+          type: 'active-effect',
+          range: String(ef.system?.range || ''),
+          target: String(ef.system?.target || ''),
+          duration: String(ef.system?.duration || ''),
+              focusCost: ef.system?.focusCost || 0,
+              actionCost: ef.system?.actionCost ?? ef.system?.actions ?? '',
+          requiresRoll: ef.system?.requiresRoll || false,
+          isActive: ef.system?.isActive !== false && !ef.disabled,
+          isMagic: !!ef.system?.isMagic,
+          magicCircle: ef.system?.magicCircle || null,
+          traitsResolved: ef.system?.traitsResolved || ef.system?.traits || [],
+          description: ef.system?.description || '',
+          effect: ef.system?.effect || '',
+          heightened: ef.system?.heightened || []
+        });
+      }
+
+      // Expose effectsFromItems to be merged into `context.modifiers` later
+      this._effectsFromItems = effectsFromItems;
+    } catch (err) {
+      console.warn('Wayfinder | error merging embedded ActiveEffects into context.activeEffects', err);
+    }
+
+    // Prepare modifier items (custom type 'modifier')
+    context.modifiers = this.document.items
+      .filter(item => item.type === 'modifier')
       .map(item => {
-        const e = {
+        return {
           _id: item._id,
           uuid: item.uuid || item._id,
           name: item.name,
           type: item.type,
-          // Flatten commonly used properties for the collapsibleEffect helper
-          range: String(item.system.range || ''),
-          target: String(item.system.target || ''),
-          duration: String(item.system.duration || ''),
-          focusCost: item.system.focusCost || 0,
-          requiresRoll: item.system.requiresRoll || false,
-          isActive: item.system.isActive || false,
-          isMagic: !!item.system.isMagic,
-          magicCircle: item.system.magicCircle || null,
-          traitsResolved: item.system.traitsResolved || item.system.traits || [],
-          description: item.system.description || '',
-          effect: item.system.effect || '',
-          heightened: item.system.heightened || []
+          pillar: item.system?.pillar || 'status',
+          value: item.system?.value ?? 0,
+          description: item.system?.description || '',
+          isActive: item.system?.isActive !== false,
+          // Editor-friendly fields for display in the modifiers tab
+          sourceType: 'local',
+          sourceLabel: item.system?.originItemName || 'Manual',
+          targetPath: item.system?.targetPath || item.system?.target || null
         };
-        return e;
       });
 
-    context.passiveEffects = this.document.items
-      .filter(item => item.type === 'passive-effect')
-      .map(item => {
-        const e = {
-          _id: item._id,
-          uuid: item.uuid || item._id,
-          name: item.name,
-          type: item.type,
-          effect: String(item.system.effect || ''),
-          isPermanent: item.system.isPermanent !== false,
-          isActive: item.system.isActive !== false,
-          traitsResolved: item.system.traitsResolved || item.system.traits || [],
-          description: item.system.description || ''
-        };
-        return e;
-      });
+    // If we discovered ActiveEffects that were created from item modifiers,
+    // include them in the modifiers list so they show up in the Modifiers tab
+    // rather than in the Effects tab.
+    if (Array.isArray(this._effectsFromItems) && this._effectsFromItems.length) {
+      context.modifiers = context.modifiers.concat(this._effectsFromItems);
+      // Clear the temp storage to avoid leaking between renders
+      this._effectsFromItems = [];
+    }
 
     // Also include effects that are referenced by Talent items (by UUID), so they appear
     // in the global Effects tab even when stored as referenced documents inside talents.
@@ -166,60 +412,121 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
       for (const e of context.passiveEffects) if (e._id) seenEffectIds.add(e._id);
 
       for (const t of talentItems) {
-        const uuids = Array.isArray(t.system.effects) ? t.system.effects : [];
-        if (uuids.length) console.log(`Wayfinder | Talent ${t.name} references ${uuids.length} effect UUID(s)`);
-        for (const uuid of uuids) {
+        const rawEffects = Array.isArray(t.system.effects) ? t.system.effects : [];
+        if (rawEffects.length) console.log(`Wayfinder | Talent ${t.name} references ${rawEffects.length} effect entry(ies)`);
+        for (const entry of rawEffects) {
           try {
-            const doc = fromUuidSync(uuid);
-            if (!doc) {
-              console.warn('Wayfinder | fromUuidSync returned null for', uuid);
-              continue;
-            }
-            const eid = doc._id || doc.id || uuid;
-            if (seenEffectIds.has(eid)) {
-              console.log('Wayfinder | skipping duplicate effect', eid);
-              continue;
-            }
-            seenEffectIds.add(eid);
+            // If the entry is a string, treat it as a UUID reference
+            if (typeof entry === 'string') {
+              const doc = await fromUuid(entry);
+              if (!doc) {
+                console.warn('Wayfinder | fromUuidSync returned null for', entry);
+                continue;
+              }
+              const eid = doc._id || doc.id || entry;
+              if (seenEffectIds.has(eid)) {
+                console.log('Wayfinder | skipping duplicate effect', eid);
+                continue;
+              }
+              seenEffectIds.add(eid);
 
-            if (doc.type === 'active-effect') {
-              console.log('Wayfinder | adding referenced active-effect', doc.name, eid);
-              context.activeEffects.push({
-                _id: doc._id,
-                uuid: uuid || doc._id,
-                name: doc.name,
-                type: doc.type,
-                range: String(doc.system.range || ''),
-                target: String(doc.system.target || ''),
-                duration: String(doc.system.duration || ''),
-                focusCost: doc.system.focusCost || 0,
-                requiresRoll: doc.system.requiresRoll || false,
-                isActive: doc.system.isActive || false,
-                isMagic: !!doc.system.isMagic,
-                magicCircle: doc.system.magicCircle || null,
-                traitsResolved: doc.system.traitsResolved || doc.system.traits || [],
-                description: doc.system.description || '',
-                effect: doc.system.effect || '',
-                heightened: doc.system.heightened || []
-              });
-            } else if (doc.type === 'passive-effect') {
-              console.log('Wayfinder | adding referenced passive-effect', doc.name, eid);
-              context.passiveEffects.push({
-                _id: doc._id,
-                uuid: uuid || doc._id,
-                name: doc.name,
-                type: doc.type,
-                effect: String(doc.system.effect || ''),
-                isPermanent: doc.system.isPermanent !== false,
-                isActive: doc.system.isActive !== false,
-                traitsResolved: doc.system.traitsResolved || doc.system.traits || [],
-                description: doc.system.description || ''
-              });
-            } else {
-              console.log('Wayfinder | referenced doc is not an effect:', doc.type, doc.name, uuid);
+              if (doc.type === 'active-effect') {
+                console.log('Wayfinder | adding referenced active-effect (talent)', doc.name, eid);
+                const mapped = {
+                  _id: doc._id,
+                  uuid: entry || doc._id,
+                  name: doc.name,
+                  type: doc.type,
+                  range: String(doc.system.range || ''),
+                  target: String(doc.system.target || ''),
+                  duration: String(doc.system.duration || ''),
+                  focusCost: doc.system.focusCost || 0,
+                  actionCost: doc.system.actionCost ?? doc.system.actions ?? '',
+                  requiresRoll: doc.system.requiresRoll || false,
+                  isActive: doc.system.isActive || false,
+                  isMagic: !!doc.system.isMagic,
+                  magicCircle: doc.system.magicCircle || null,
+                  traitsResolved: doc.system.traitsResolved || doc.system.traits || [],
+                  description: doc.system.description || '',
+                  effect: doc.system.effect || '',
+                  heightened: doc.system.heightened || []
+                };
+                // attach source talent metadata
+                mapped.sourceTalentId = t._id;
+                mapped.sourceTalentName = t.name;
+                mapped.sourceTalentType = t.system?.talentType || 'General';
+                context.talentActiveEffects.push(mapped);
+                context.activeEffects.push(mapped);
+                if ((mapped.sourceTalentType || '').toString().toLowerCase() === 'spell') context.talentSpellActiveEffects.push(mapped);
+              } else if (doc.type === 'passive-effect') {
+                console.log('Wayfinder | adding referenced passive-effect (talent)', doc.name, eid);
+                const mapped = {
+                  _id: doc._id,
+                  uuid: entry || doc._id,
+                  name: doc.name,
+                  type: doc.type,
+                  effect: String(doc.system.effect || ''),
+                  isPermanent: doc.system.isPermanent !== false,
+                  isActive: doc.system.isActive !== false,
+                  traitsResolved: doc.system.traitsResolved || doc.system.traits || [],
+                  description: doc.system.description || ''
+                };
+                mapped.sourceTalentId = t._id;
+                mapped.sourceTalentName = t.name;
+                mapped.sourceTalentType = t.system?.talentType || 'General';
+                context.talentPassiveEffects.push(mapped);
+                context.passiveEffects.push(mapped);
+                if ((mapped.sourceTalentType || '').toString().toLowerCase() === 'spell') context.talentSpellPassiveEffects.push(mapped);
+              } else {
+                console.log('Wayfinder | referenced doc is not an effect:', doc.type, doc.name, entry);
+              }
+            } else if (entry && typeof entry === 'object') {
+              // Inline effect object defined inside the talent data
+              const systemData = entry.system || {};
+              const type = entry.type || systemData.type || (systemData.effect ? 'active-effect' : 'passive-effect');
+              const eid = entry._id || entry.id || entry.uuid || `${t._id}::inline::${entry.name || 'effect'}`;
+              if (seenEffectIds.has(eid)) {
+                continue;
+              }
+              seenEffectIds.add(eid);
+
+              const mapped = {
+                _id: entry._id || entry.id || null,
+                uuid: entry.uuid || entry._id || null,
+                name: entry.name || entry.label || (entry.system && entry.system.name) || `${t.name} - Effect`,
+                type: type,
+                range: String(entry.range ?? systemData.range ?? ''),
+                target: String(entry.target ?? systemData.target ?? ''),
+                duration: String(entry.duration ?? systemData.duration ?? ''),
+                focusCost: entry.focusCost ?? systemData.focusCost ?? 0,
+                actionCost: entry.actionCost ?? systemData.actionCost ?? systemData.actions ?? '',
+                requiresRoll: entry.requiresRoll ?? systemData.requiresRoll ?? false,
+                isActive: entry.isActive ?? (systemData.isActive !== false),
+                isMagic: entry.isMagic ?? !!systemData.isMagic,
+                magicCircle: entry.magicCircle ?? systemData.magicCircle ?? null,
+                traitsResolved: entry.traitsResolved ?? systemData.traitsResolved ?? systemData.traits ?? [],
+                description: entry.description ?? systemData.description ?? '',
+                effect: entry.effect ?? systemData.effect ?? '',
+                heightened: entry.heightened ?? systemData.heightened ?? []
+              };
+
+              // attach source talent metadata
+              mapped.sourceTalentId = t._id;
+              mapped.sourceTalentName = t.name;
+              mapped.sourceTalentType = t.system?.talentType || 'General';
+
+              if (mapped.type === 'passive-effect') {
+                context.talentPassiveEffects.push(mapped);
+                context.passiveEffects.push(mapped);
+                if ((mapped.sourceTalentType || '').toString().toLowerCase() === 'spell') context.talentSpellPassiveEffects.push(mapped);
+              } else {
+                context.talentActiveEffects.push(mapped);
+                context.activeEffects.push(mapped);
+                if ((mapped.sourceTalentType || '').toString().toLowerCase() === 'spell') context.talentSpellActiveEffects.push(mapped);
+              }
             }
           } catch (err) {
-            console.warn('Erro ao resolver efeito referenciado pelo talento:', uuid, err);
+            console.warn('Erro ao resolver efeito referenciado pelo talento:', entry, err);
           }
         }
       }
@@ -373,6 +680,8 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
       v.label = k;
       // Só define 0 se for undefined/null, não sobrescreve valor digitado
       if (v.value === undefined || v.value === null) v.value = 0;
+      // Ensure a default defenseDC exists (fallback to 10)
+      if (v.defenseDC === undefined || v.defenseDC === null) v.defenseDC = 10;
       if (!v.proficiency) v.proficiency = "untrained";
       if (v.status === undefined || v.status === null) v.status = 0;
       if (v.circun === undefined || v.circun === null) v.circun = 0;
@@ -479,7 +788,7 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
    * @param {Object} actorData The actor to prepare
    * @return {undefined}
    */
-  _prepareItems(context) {
+  async _prepareItems(context) {
     // Initialize containers
     const gear = [];
     const features = [];
@@ -499,7 +808,8 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
       Basic: [],
       General: [],
       Ancestry: [],
-      Class: []
+      Class: [],
+      Spell: []
     };
 
     // Iterate through items, allocating to containers
@@ -521,16 +831,23 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
       }
       // Append to talents
       else if (i.type === 'talent') {
-        const talentType = i.system.talentType || 'General';
+        // Normalize talent type: prefer explicit setting, but treat any talent
+        // that defines a spell level as a Spell talent even if the field
+        // is missing or set to 'General'. Normalize casing to match keys.
+        let rawType = (i.system.talentType ?? '').toString();
+        if (!rawType) {
+          rawType = (i.system?.spellLevel !== undefined || i.system?.spell?.level !== undefined) ? 'Spell' : 'General';
+        }
+        const talentType = String(rawType).charAt(0).toUpperCase() + String(rawType).slice(1);
         if (!talents[talentType]) talents[talentType] = [];
 
         // Resolve effects for this talent
         const activeEffects = [];
         const passiveEffects = [];
 
-        if (Array.isArray(i.system.effects)) {
+          if (Array.isArray(i.system.effects)) {
           for (const effectUuid of i.system.effects) {
-            const effect = fromUuidSync(effectUuid);
+            const effect = await fromUuid(effectUuid);
             if (effect) {
               const effectData = {
                 _id: effect._id,
@@ -556,6 +873,16 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
           activeEffects,
           passiveEffects
         });
+        // If this talent is a Spell, also expose it in the spells container
+        try {
+          if (talentType === 'Spell') {
+            const lvl = Number(i.system?.spellLevel ?? i.system?.spell?.level ?? 0) || 0;
+            if (!spells[lvl]) spells[lvl] = [];
+            spells[lvl].push(i);
+          }
+        } catch (err) {
+          console.warn('Wayfinder | error adding talent-as-spell to spells list', i, err);
+        }
       }
     }
 
@@ -718,9 +1045,11 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     // Render the item sheet for viewing/editing prior to the editable check
     html.addEventListener('click', (ev) => {
       if (ev.target.closest('.item-edit')) {
-        const li = ev.target.closest(".item");
-        const item = this.document.items.get(li.dataset.itemId);
-        item.sheet.render(true);
+        const container = ev.target.closest('[data-item-id]');
+        const itemId = container?.dataset?.itemId;
+        if (!itemId) return;
+        const item = this.document.items.get(itemId);
+        if (item) item.sheet.render(true);
       }
     });
 
@@ -811,6 +1140,95 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
       console.warn('Error binding portrait click', err);
     }
 
+    // Skills tab: languages / proficiencies interactive handlers
+    try {
+      const skillsTab = html.querySelector('.tab[data-tab="skills"]');
+      if (skillsTab) {
+        const showLangAdd = (show) => {
+          const row = skillsTab.querySelector('.languages-add-row');
+          if (!row) return;
+          row.style.display = show ? 'flex' : 'none';
+        };
+
+        const langToggle = skillsTab.querySelector('.languages-toggle-add');
+        const langAddBtn = skillsTab.querySelector('.languages-add-btn');
+        const langInput = skillsTab.querySelector('.languages-input');
+        const langCancel = skillsTab.querySelector('.languages-cancel');
+        if (langToggle) langToggle.addEventListener('click', (ev) => { ev.preventDefault(); showLangAdd(true); langInput?.focus(); });
+        if (langCancel) langCancel.addEventListener('click', (ev) => { ev.preventDefault(); showLangAdd(false); });
+        if (langAddBtn) langAddBtn.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          const val = (langInput?.value || '').trim();
+          if (!val) return ui.notifications?.warn?.('Digite o nome da língua');
+          const existing = Array.isArray(this.document.system.languages) ? Array.from(this.document.system.languages) : [];
+          if (!existing.includes(val)) existing.push(val);
+          try { await this.document.update({ 'system.languages': existing }); this.render(true); } catch (err) { console.error('Failed to add language', err); }
+        });
+
+        // Delegate remove/add for weapons and armors
+        skillsTab.addEventListener('click', async (ev) => {
+          const removeLang = ev.target.closest('.language-remove');
+          if (removeLang) {
+            ev.preventDefault();
+            const chip = ev.target.closest('.language-chip');
+            if (!chip) return;
+            const idx = Number(chip.dataset.langIndex);
+            const arr = Array.isArray(this.document.system.languages) ? Array.from(this.document.system.languages) : [];
+            if (!Number.isNaN(idx) && idx >= 0 && idx < arr.length) arr.splice(idx, 1);
+            try { await this.document.update({ 'system.languages': arr }); this.render(true); } catch (err) { console.error('Failed to remove language', err); }
+            return;
+          }
+
+          const removeWeapon = ev.target.closest('.weapon-remove');
+          if (removeWeapon) {
+            ev.preventDefault();
+            const chip = ev.target.closest('.weapon-chip');
+            const idx = Number(chip?.dataset.weaponIndex);
+            const arr = Array.isArray(this.document.system.proficiencies?.weapons) ? Array.from(this.document.system.proficiencies.weapons) : [];
+            if (!Number.isNaN(idx) && idx >= 0 && idx < arr.length) arr.splice(idx, 1);
+            try { await this.document.update({ 'system.proficiencies.weapons': arr }); this.render(true); } catch (err) { console.error('Failed to remove weapon prof', err); }
+            return;
+          }
+
+          const removeArmor = ev.target.closest('.armor-remove');
+          if (removeArmor) {
+            ev.preventDefault();
+            const chip = ev.target.closest('.armor-chip');
+            const idx = Number(chip?.dataset.armorIndex);
+            const arr = Array.isArray(this.document.system.proficiencies?.armors) ? Array.from(this.document.system.proficiencies.armors) : [];
+            if (!Number.isNaN(idx) && idx >= 0 && idx < arr.length) arr.splice(idx, 1);
+            try { await this.document.update({ 'system.proficiencies.armors': arr }); this.render(true); } catch (err) { console.error('Failed to remove armor prof', err); }
+            return;
+          }
+        });
+
+        // Weapons add
+        const weaponsAddBtn = skillsTab.querySelector('.weapons-add-btn');
+        const weaponsSelect = skillsTab.querySelector('.weapons-select');
+        if (weaponsAddBtn) weaponsAddBtn.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          const val = weaponsSelect?.value || '';
+          if (!val) return ui.notifications?.warn?.('Escolha uma arma para adicionar');
+          const existing = Array.isArray(this.document.system.proficiencies?.weapons) ? Array.from(this.document.system.proficiencies.weapons) : [];
+          if (!existing.includes(val)) existing.push(val);
+          try { await this.document.update({ 'system.proficiencies.weapons': existing }); this.render(true); } catch (err) { console.error('Failed to add weapon prof', err); }
+        });
+
+        // Armors add
+        const armorsAddBtn = skillsTab.querySelector('.armors-add-btn');
+        const armorsSelect = skillsTab.querySelector('.armors-select');
+        if (armorsAddBtn) armorsAddBtn.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          const val = armorsSelect?.value || '';
+          if (!val) return ui.notifications?.warn?.('Escolha uma armadura para adicionar');
+          const existing = Array.isArray(this.document.system.proficiencies?.armors) ? Array.from(this.document.system.proficiencies.armors) : [];
+          if (!existing.includes(val)) existing.push(val);
+          try { await this.document.update({ 'system.proficiencies.armors': existing }); this.render(true); } catch (err) { console.error('Failed to add armor prof', err); }
+        });
+      }
+    } catch (err) {
+      console.warn('Wayfinder | error binding skills card handlers', err);
+    }
     // Click handler for attribute roll badges -> open dialog to collect components
     try {
       // Helper to construct a Dialog using V2 API when available
@@ -875,9 +1293,7 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
                 </div>
               </div>
               <p style="margin-top:8px;font-size:12px;color:var(--wayfinder-text-muted)">Preencha os valores vindos da tabela de Defenses; deixe 0 se não tiver.</p>
-            </form>
-          `;
-
+            </form>`;
           _makeDialog({
             title: `Rolagem: ${displayName}`,
             content: content,
@@ -1076,12 +1492,50 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     });
 
     // Delete Inventory Item
-    html.addEventListener('click', (ev) => {
+    html.addEventListener('click', async (ev) => {
       if (ev.target.closest('.item-delete')) {
-        const li = ev.target.closest(".item");
-        const item = this.document.items.get(li.dataset.itemId);
-        item.delete();
-        li.slideUp(200); // Foundry auto-renders on delete
+        ev.preventDefault();
+        ev.stopPropagation();
+        // Find the nearest element that carries the item id
+        const container = ev.target.closest('[data-item-id]');
+        const itemId = container?.dataset?.itemId;
+        if (!itemId) return;
+        try {
+          await this.document.deleteEmbeddedDocuments('Item', [itemId]);
+          // Remove the DOM row for immediate feedback
+          try { if (typeof container.slideUp === 'function') container.slideUp(200); else container.remove(); } catch (e) { container.remove(); }
+        } catch (err) {
+          console.error('Wayfinder | Error deleting inventory item', err);
+        }
+      }
+    });
+
+    // Inventory controls (hand select / tuned checkbox) - update the embedded Item when changed
+    html.addEventListener('change', async (ev) => {
+      const sel = ev.target.closest('.inventory-item-hand-select');
+      if (sel) {
+        const itemId = sel.dataset.itemId;
+        if (!itemId) return;
+        const value = sel.value;
+        try {
+          await this.document.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.inventory.hand': value }]);
+        } catch (err) {
+          console.error('Wayfinder | Error updating inventory hand for item', itemId, err);
+        }
+        return;
+      }
+
+      const cb = ev.target.closest('.inventory-item-tuned-checkbox');
+      if (cb) {
+        const itemId = cb.dataset.itemId;
+        if (!itemId) return;
+        const checked = !!cb.checked;
+        try {
+          await this.document.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.inventory.tuned': checked }]);
+        } catch (err) {
+          console.error('Wayfinder | Error updating inventory tuned for item', itemId, err);
+        }
+        return;
       }
     });
 
@@ -1104,6 +1558,8 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
 
     // Setup collapsible talents
     this._setupTalentsCollapsible(html);
+    // Setup collapsible spells sections
+    if (this._setupSpellsCollapsible) this._setupSpellsCollapsible(html);
 
     // Effect handlers - Remove old listener if exists
     if (this._boundEffectClick) {
@@ -1297,6 +1753,29 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
   }
 
   /**
+   * Setup collapsible spell level sections similar to talents
+   * @private
+   */
+  _setupSpellsCollapsible(html) {
+    const typeHeaders = html.querySelectorAll('.spell-type-header');
+    typeHeaders.forEach(header => {
+      header.addEventListener('click', (e) => {
+        e.preventDefault();
+        const content = header.nextElementSibling;
+        const icon = header.querySelector('.spell-type-icon');
+
+        if (content.style.display === 'none') {
+          content.style.display = 'block';
+          if (icon) icon.style.transform = 'rotate(90deg)';
+        } else {
+          content.style.display = 'none';
+          if (icon) icon.style.transform = 'rotate(0deg)';
+        }
+      });
+    });
+  }
+
+  /**
    * Render talent content for display in actor sheet
    * @private
    */
@@ -1338,6 +1817,7 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
             target: doc.system?.target || '',
             duration: doc.system?.duration || '',
             focusCost: doc.system?.focusCost || 0,
+            actionCost: doc.system?.actionCost ?? doc.system?.actions ?? '',
             isMagic: doc.system?.isMagic || false,
             magicCircle: doc.system?.magicCircle || '',
             isPermanent: doc.system?.isPermanent || false,
@@ -1645,8 +2125,14 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
    * @private
    */
   async _onActivateEffect(effectId) {
-    const effect = this.document.items.get(effectId);
-    if (!effect || effect.type !== 'active-effect') return;
+    // Effects may be stored as Items on the actor or as embedded ActiveEffect documents.
+    // Try to resolve either an Item or an ActiveEffect by id.
+    let effect = this.document.items.get(effectId);
+    let ae = null;
+    if (!effect) {
+      ae = this.document.effects.get(effectId);
+      if (!ae) return;
+    } else if (effect.type !== 'active-effect') return;
 
     const focusCost = effect.system.focusCost || 0;
     const currentFocus = this.document.system.focus.current || 0;
@@ -1683,17 +2169,162 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
       });
     }
 
-    // Perform roll if required
-    if (effect.system.requiresRoll && effect.system.rollFormula) {
-      try {
-        const roll = new Roll(effect.system.rollFormula, this.document.getRollData());
-        await roll.evaluate();
+    // Perform attack roll + damage if this effect represents an attack
+    const isAttack = (effect && effect.system && effect.system.isAttack) || (ae && ae.system && ae.system.isAttack);
+    const requiresRoll = (effect && effect.system && effect.system.requiresRoll) || (ae && ae.system && ae.system.requiresRoll);
 
-        const speaker = ChatMessage.getSpeaker({ actor: this.document });
-        await roll.toMessage({
-          speaker: speaker,
-          flavor: `${effect.name} - Roll`
+    if (isAttack) {
+      try {
+        // Compute modifier components (same as before)
+        let prof = 0;
+        try { prof = Number((effect && effect.system && effect.system.prof) ?? (ae && ae.system && ae.system.prof) ?? this.document.system?.proficiencyBonus ?? 0) || 0; } catch(e){ prof = 0; }
+
+        let attrKey = (effect && effect.system && effect.system.attribute) || (ae && ae.system && ae.system.attribute) || null;
+        try {
+          const origin = (effect && effect.flags?.wayfinder?.sourceItemId) || (effect && effect.origin) || (ae && ae.origin) || null;
+          if (origin && String(origin).startsWith('Item.')) {
+            const parts = String(origin).split('.');
+            const itemId = parts[1] || null;
+            if (itemId) {
+              const srcItem = this.document.items.get(itemId);
+              if (srcItem && srcItem.system && srcItem.system.attribute) attrKey = attrKey || srcItem.system.attribute;
+            }
+          }
+        } catch (e) {}
+
+        let attrValue = 0;
+        if (attrKey) {
+          try { const aobj = this.document.system?.attributes?.[attrKey]; if (aobj) attrValue = Number(aobj.total ?? aobj.value ?? 0) || 0; } catch (e) { attrValue = 0; }
+        }
+
+        const strike = (effect && effect.system && effect.system.strike) || (ae && ae.system && ae.system.strike) || {};
+        const circun = Number(strike.circun ?? (effect && effect.system && effect.system.circun) ?? 0) || 0;
+        const itemMod = Number(strike.item ?? (effect && effect.system && effect.system.item) ?? 0) || 0;
+        const status = Number(strike.status ?? (effect && effect.system && effect.system.status) ?? 0) || 0;
+
+        const modsTotal = prof + attrValue + circun + itemMod + status;
+        const attackFormula = `2d10 + ${modsTotal}`;
+
+        // Prepare damage formula and type. Effects can specify a damageSource: 'weapon' to use the originating weapon's die, or 'custom'.
+        let damageFormula = '1d6';
+        let damageType = (effect && effect.system && effect.system.damageType) || (ae && ae.system && ae.system.damageType) || strike.damage?.type || null;
+        const damageSource = (effect && effect.system && effect.system.damageSource) || (ae && ae.system && ae.system.damageSource) || null;
+
+        // If using the weapon's die, attempt to resolve the item that hosts the effect
+        if (damageSource === 'weapon') {
+          try {
+            let sourceItemId = null;
+            if (effect && effect.flags?.wayfinder?.sourceItemId) sourceItemId = effect.flags.wayfinder.sourceItemId;
+            else if (ae && ae.flags?.wayfinder?.sourceItemId) sourceItemId = ae.flags.wayfinder.sourceItemId;
+            else if (effect && effect.origin && String(effect.origin).startsWith('Item.')) sourceItemId = String(effect.origin).split('.')[1];
+            else if (ae && ae.origin && String(ae.origin).startsWith('Item.')) sourceItemId = String(ae.origin).split('.')[1];
+            else if (effect && effect.system && effect.system.sourceItemId) sourceItemId = effect.system.sourceItemId;
+
+            if (sourceItemId) {
+              const srcItem = this.document.items.get(sourceItemId);
+              if (srcItem) {
+                damageFormula = srcItem.system?.damageDie || srcItem.system?.damageFormula || damageFormula;
+                damageType = srcItem.system?.damageType || damageType;
+              }
+            }
+          } catch (e) {
+            console.warn('Wayfinder | could not resolve weapon source for effect damage', e);
+          }
+        } else if (damageSource === 'custom') {
+          const dd = (effect && effect.system && effect.system.damageDie) || (ae && ae.system && ae.system.damageDie) || strike.damage?.die || null;
+          if (dd) damageFormula = dd;
+        } else {
+          // Fallback: prefer any explicit damageFormula on effect/A.E., then strike damage
+          if ((effect && effect.system && effect.system.damageFormula) || (ae && ae.system && ae.system.damageFormula)) {
+            damageFormula = (effect && effect.system && effect.system.damageFormula) || (ae && ae.system && ae.system.damageFormula);
+          } else if (strike.damage?.formula) {
+            damageFormula = strike.damage.formula;
+          } else if (effect && effect.system && effect.system.damageDie) {
+            damageFormula = effect.system.damageDie;
+          } else if (effect && effect.system && effect.system.damage) {
+            damageFormula = effect.system.damage;
+          }
+        }
+
+        const dmgMods = (circun + itemMod + status) || 0;
+        if (dmgMods) damageFormula = `${damageFormula} + ${dmgMods}`;
+
+        const attackPreview = `Formula de Ataque: <code>${attackFormula}</code>`;
+        const damagePreview = `Formula de Dano: <code>${damageFormula}</code>${damageType ? ` <strong>(${damageType})</strong>` : ''}`;
+
+        // Show a dialog to the user to choose rolling behavior
+        const dialogContent = `<div style="padding:8px">${attackPreview}<div style="margin-top:6px">${damagePreview}</div></div>`;
+        const dlg = new Dialog({
+          title: `Rolagem de Ataque: ${(effect && effect.name) || (ae && ae.label) || 'Ataque'}`,
+          content: dialogContent,
+          buttons: {
+            attack: {
+              icon: '<i class="fas fa-bullseye"></i>',
+              label: 'Roll Attack',
+              callback: async () => {
+                try {
+                  const attackRoll = new Roll(attackFormula, this.document.getRollData());
+                  await attackRoll.evaluate({ async: true });
+                  const flavor = `<div class="wf-roll-card" style="border-radius:12px;padding:14px;background:linear-gradient(180deg,var(--wayfinder-accent-light),#fff);color:var(--wayfinder-text);max-width:560px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 10px 24px rgba(0,0,0,0.12)">` +
+                    `<div style="display:flex;align-items:center;justify-content:space-between;gap:16px"><div style="flex:1;min-width:0"><div style="background:var(--wayfinder-primary);color:#fff;padding:12px 14px;border-radius:10px;font-weight:800;font-size:18px;text-transform:capitalize">${(effect && effect.name) || (ae && ae.label) || 'Ataque'}</div>` +
+                    `<div style="margin-top:10px;font-size:13px;display:flex;gap:12px;flex-wrap:wrap"><div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">Ataque</div><div style="font-weight:800;font-size:16px">${attackRoll.total}</div></div>` +
+                    `</div></div></div></div>`;
+                  await attackRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: this.document }), flavor: flavor });
+                } catch (err) {
+                  console.error('Erro ao rolar ataque:', err);
+                  ui.notifications.error('Erro ao rolar ataque');
+                }
+              }
+            },
+            both: {
+              icon: '<i class="fas fa-bolt"></i>',
+              label: 'Roll Attack + Damage',
+              callback: async () => {
+                try {
+                  const attackRoll = new Roll(attackFormula, this.document.getRollData());
+                  await attackRoll.evaluate({ async: true });
+                  const damageRoll = new Roll(damageFormula, this.document.getRollData());
+                  await damageRoll.evaluate({ async: true });
+                  const flavor = `<div class="wf-roll-card" style="border-radius:12px;padding:14px;background:linear-gradient(180deg,var(--wayfinder-accent-light),#fff);color:var(--wayfinder-text);max-width:560px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 10px 24px rgba(0,0,0,0.12)">` +
+                    `<div style="display:flex;align-items:center;justify-content:space-between;gap:16px"><div style="flex:1;min-width:0"><div style="background:var(--wayfinder-primary);color:#fff;padding:12px 14px;border-radius:10px;font-weight:800;font-size:18px;text-transform:capitalize">${(effect && effect.name) || (ae && ae.label) || 'Ataque'}</div>` +
+                    `<div style="margin-top:10px;font-size:13px;display:flex;gap:12px;flex-wrap:wrap">` +
+                    `<div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">Ataque</div><div style="font-weight:800;font-size:16px">${attackRoll.total}</div></div>` +
+                    `<div style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"><div style="font-size:11px;color:rgba(0,0,0,0.6)">Dano${damageType ? ' · ' + damageType : ''}</div><div style="font-weight:800;font-size:16px">${damageRoll.total}</div></div>` +
+                    `</div></div></div></div>`;
+                  // Post combined result as a single chat message
+                  await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this.document }), content: flavor, type: CONST.CHAT_MESSAGE_TYPES.ROLL });
+                } catch (err) {
+                  console.error('Erro ao rolar ataque+dano:', err);
+                  ui.notifications.error('Erro ao rolar ataque+dano');
+                }
+              }
+            },
+            cancel: { label: 'Cancelar' }
+          },
+          default: 'attack'
         });
+        dlg.render(true);
+      } catch (err) {
+        console.error('Erro ao executar ataque do efeito:', err);
+        ui.notifications.error('Erro ao executar ataque do efeito');
+      }
+    } else if (requiresRoll && ((effect && effect.system && effect.system.rollFormula) || (ae && ae.system && ae.system.rollFormula))) {
+      // Fallback: generic roll formula on the effect
+      try {
+        const formula = (effect && effect.system && effect.system.rollFormula) || (ae && ae.system && ae.system.rollFormula);
+        const roll = new Roll(formula, this.document.getRollData());
+        // Show dialog for generic roll as well
+        const dialogContent = `Formula: <code>${formula}</code>`;
+        const dlg = new Dialog({
+          title: `${(effect && effect.name) || (ae && ae.label) || 'Roll'}`,
+          content: `<div style="padding:8px">${dialogContent}</div>`,
+          buttons: {
+            roll: { label: 'Roll', callback: async () => { try { await roll.evaluate({ async: true }); await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: this.document }), flavor: '' }); } catch (e) { console.error('Roll error', e); ui.notifications.error('Erro na rolagem'); } } },
+            cancel: { label: 'Cancelar' }
+          },
+          default: 'roll'
+        });
+        dlg.render(true);
       } catch (err) {
         console.error('Erro ao fazer roll do efeito:', err);
         ui.notifications.error('Erro ao fazer roll do efeito');
@@ -1746,8 +2377,8 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     const item = await fromUuid(data.uuid);
     if (!item) return;
 
-    // Only allow active-effect, passive-effect, and talent types to be added
-    if (!['active-effect', 'passive-effect', 'talent'].includes(item.type)) {
+    // Allow active-effect, passive-effect, talent and regular items (weapons/armors/other)
+    if (!['active-effect', 'passive-effect', 'talent', 'item', 'trait'].includes(item.type)) {
       return;
     }
 
@@ -1760,8 +2391,12 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     // Add to actor as embedded document
     try {
       const created = await this.document.createEmbeddedDocuments('Item', [itemData]);
-      const typeName = item.type === 'talent' ? 'Talento' : 'Efeito';
-      ui.notifications.info(`${item.name} adicionado como ${typeName}.`);
+      // Notify depending on type
+      let typeName = 'Item';
+      if (item.type === 'talent') typeName = 'Talento';
+      else if (item.type === 'active-effect' || item.type === 'passive-effect') typeName = 'Efeito';
+      else if (item.type === 'trait') typeName = 'Trait';
+      ui.notifications.info(`${item.name} adicionado ao inventário como ${typeName}.`);
       // The activeTab property will preserve the current tab during auto-render
     } catch (error) {
       console.error('Erro ao adicionar item:', error);

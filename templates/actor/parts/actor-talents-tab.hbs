@@ -196,4 +196,52 @@
       {{/if}}
     </div>
   </div>
+  {{! Spell Talents }}
+  <div class="talent-type-category">
+    <div class="talent-type-header" data-talent-type="Spell">
+      <i class="fas fa-chevron-right talent-type-icon"></i>
+      <div class="talent-type-badge Spell">
+        <i class="fas fa-hat-wizard"></i>
+        <span>Spell Talents</span>
+      </div>
+      {{#if talents.Spell.length}}
+        <span class="talent-count">{{talents.Spell.length}}</span>
+      {{/if}}
+    </div>
+    <div class="talent-type-content" style="display: block;">
+      {{#if talents.Spell.length}}
+        {{#each talents.Spell as |talent|}}
+          <div class="talent-item" data-item-id="{{talent.id}}">
+            <div class="talent-item-header" data-talent-id="{{talent.id}}">
+              <i class="fas fa-chevron-right talent-item-icon"></i>
+              <span class="talent-item-name">{{talent.name}}</span>
+              <span class="talent-level-badge">Nv {{talent.system.level}}</span>
+              {{#if @root.editable}}
+                <button
+                  type="button"
+                  class="talent-edit-btn"
+                  data-item-id="{{talent.id}}"
+                  title="Editar talento"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button
+                  type="button"
+                  class="talent-delete-btn"
+                  data-item-id="{{talent.id}}"
+                  title="Remover talento"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              {{/if}}
+            </div>
+            <div class="talent-item-content" style="display: none;"></div>
+          </div>
+        {{/each}}
+      {{else}}
+        <p class="empty-message"><i class="fas fa-info-circle"></i>
+          Nenhum talento Spell.</p>
+      {{/if}}
+    </div>
+  </div>
 </div>

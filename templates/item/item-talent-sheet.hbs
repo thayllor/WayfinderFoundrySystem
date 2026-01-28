@@ -17,7 +17,7 @@
           />
         </h1>
         <div class="talent-type-badge {{system.talentType}}">
-          <i class="fas fa-{{#if (eq system.talentType "Basic")}}circle{{else if (eq system.talentType "General")}}star{{else if (eq system.talentType "Ancestry")}}dna{{else}}shield-alt{{/if}}"></i>
+          <i class="fas fa-{{#if (eq system.talentType "Basic")}}circle{{else if (eq system.talentType "General")}}star{{else if (eq system.talentType "Ancestry")}}dna{{else if (eq system.talentType "Spell")}}hat-wizard{{else}}shield-alt{{/if}}"></i>
           <span>{{system.talentType}}</span>
         </div>
       </div>
@@ -49,6 +49,7 @@
               <option value="General" {{#if (eq system.talentType "General")}}selected{{/if}}>General</option>
               <option value="Ancestry" {{#if (eq system.talentType "Ancestry")}}selected{{/if}}>Ancestry</option>
               <option value="Class" {{#if (eq system.talentType "Class")}}selected{{/if}}>Class</option>
+              <option value="Spell" {{#if (eq system.talentType "Spell")}}selected{{/if}}>Spell</option>
             </select>
           </div>
         </div>

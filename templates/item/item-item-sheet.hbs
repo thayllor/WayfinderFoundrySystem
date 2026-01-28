@@ -1,75 +1,402 @@
-<form class="{{cssClass}} flexcol" autocomplete="off">
-
-  {{! Sheet Header }}
+<form class="{{cssClasses}}" autocomplete="off">
   <header class="sheet-header">
     <img
       class="profile-img"
       src="{{item.img}}"
       data-edit="img"
       title="{{item.name}}"
-      height="64"
-      width="64"
     />
-    <div class="header-fields">
-      <h1 class="charname"><input
-          name="name"
-          type="text"
-          value="{{item.name}}"
-          placeholder="Item Name"
-        /></h1>
-    </div>
+    <section class="header-fields">
+      <div class="header-top">
+        <h1 class="charname">
+          <input
+            name="name"
+            type="text"
+            value="{{item.name}}"
+            placeholder="Nome do Item"
+          />
+        </h1>
+        <div class="talent-type-badge {{system.talentType}}">
+          <i class="fas fa-{{#if (eq system.talentType "Basic")}}circle{{else if (eq system.talentType "General")}}star{{else if (eq system.talentType "Ancestry")}}dna{{else}}shield-alt{{/if}}"></i>
+          <span>{{system.talentType}}</span>
+        </div>
+      </div>
+      <div class="talent-metadata-card">
+        <div class="metadata-item">
+          <div class="metadata-icon">
+            <i class="fas fa-layer-group"></i>
+          </div>
+          <div class="metadata-content">
+            <label>Nível</label>
+            <input
+              type="number"
+              name="system.level"
+              value="{{system.level}}"
+              min="1"
+              max="20"
+              class="talent-level-input"
+            />
+          </div>
+        </div>
+        <div class="metadata-item">
+          <div class="metadata-icon type-icon">
+            <i class="fas fa-tag"></i>
+          </div>
+          <div class="metadata-content">
+            <label>Categoria</label>
+            <select name="system.itemType" class="item-type-select">
+              <option value="weapon" {{#if (eq system.itemType "weapon")}}selected{{/if}}>Arma</option>
+              <option value="armor" {{#if (eq system.itemType "armor")}}selected{{/if}}>Armadura</option>
+              <option value="other" {{#if (eq system.itemType "other")}}selected{{/if}}>Outro</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
   </header>
-
-  {{! Sheet Tab Navigation }}
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="description">Description</a>
-    <a class="item" data-tab="attributes">Attributes</a>
-  </nav>
 
   {{! Sheet Body }}
   <section class="sheet-body">
+    {{! Traits Section }}
+    {{#if traitsResolved.length}}
+      <div class="trait-chip-row">
+        <span class="trait-chip-label">Traits:</span>
+        {{#each traitsResolved as |trait|}}
+          <div
+            class="trait-chip"
+            style="background-color: {{trait.color}};"
+            title="{{trait.name}}"
+          >
+            <span class="trait-chip-name">{{trait.name}}</span>
+            {{#if @root.editable}}
+              <button
+                type="button"
+                class="trait-chip-remove"
+                data-uuid="{{trait.uuid}}"
+                title="Remover trait"
+              >×</button>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
 
-    {{! Description Tab }}
-    <div class="tab" data-group="primary" data-tab="description">
-      {{editor
-        system.description
-        target="system.description"
-        button=true
-        owner=owner
-        editable=editable
-      }}
+    {{! Description Section }}
+    <div class="talent-description-section">
+      <div class="description-card item-info-card">
+        <div class="description-card-header">
+          <div class="description-card-title"><i class="fas fa-coins"></i> Informações</div>
+        </div>
+        <div class="description-card-body grid grid-3col">
+          <div class="metadata-item">
+            <div class="metadata-icon">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="metadata-content">
+              <label>Preço</label>
+              <div class="price-row">
+                <input type="number" step="0.01" name="system.price" value="{{system.price}}" />
+                <select name="system.priceCurrency" class="price-currency-select">
+                  <option value="cp" {{#if (eq system.priceCurrency "cp")}}selected{{/if}}>CP</option>
+                  <option value="sp" {{#if (eq system.priceCurrency "sp")}}selected{{/if}}>SP</option>
+                  <option value="gp" {{#if (eq system.priceCurrency "gp")}}selected{{/if}}>GP</option>
+                  <option value="pp" {{#if (eq system.priceCurrency "pp")}}selected{{/if}}>PP</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="metadata-item">
+            <div class="metadata-icon">
+              <i class="fas fa-weight-hanging"></i>
+            </div>
+            <div class="metadata-content">
+              <label>Peso</label>
+              <input type="text" name="system.weight" value="{{system.weight}}" />
+            </div>
+
+          </div>
+          {{#if (eq system.itemType "weapon")}}
+              <div class="metadata-item">
+                <div class="metadata-icon">
+                  <i class="fas fa-hand-paper"></i>
+                </div>
+                <div class="metadata-content">
+                  <label>Mãos</label>
+                  <select name="system.hands" class="hands-select">
+                    <option value="one" {{#if (eq system.hands "one")}}selected{{/if}}>1 mão</option>
+                    <option value="two" {{#if (eq system.hands "two")}}selected{{/if}}>2 mãos</option>
+                  </select>
+                </div>
+              </div>
+            {{/if}}
+        </div>
+      </div>
+
+      <div class="description-card">
+        <div class="description-card-header">
+          <div class="description-card-title"><i class="fas fa-file-alt"></i> Descrição do Item</div>
+          <div class="description-card-hint">Use formatação rica para descrever o item.</div>
+        </div>
+        {{textoEstilizado
+          name="system.description"
+          value=system.description
+          label=""
+          editable=editable
+        }}
+      </div>
     </div>
 
-    {{! Attributes Tab }}
-    <div class="tab attributes" data-group="primary" data-tab="attributes">
-      <div class="form-group">
-        <label>Quantity</label>
-        <input
-          type="text"
-          name="system.quantity"
-          value="{{system.quantity}}"
-          data-dtype="Number"
-        />
+    {{! Effects Section }}
+
+    {{!-- Per-category form sections --}}
+    <div class="item-type-forms">
+      <div class="item-type-form item-type-weapon" data-type="weapon" {{#unless (eq system.itemType "weapon")}}hidden{{/unless}}>
+        <div class="description-card">
+          <div class="description-card-header">
+            <div class="description-card-title"><i class="fas fa-crosshairs"></i> Arma</div>
+          </div>
+          <div class="description-card-body">
+            <div class="grid grid-3col">
+              <div class="metadata-item">
+                <div class="metadata-icon"><i class="fas fa-dice-d20"></i></div>
+                <div class="metadata-content">
+                  <label>Dado de Dano</label>
+                  <input type="text" name="system.damageDie" value="{{system.damageDie}}" placeholder="1d6" />
+                </div>
+              </div>
+
+              <div class="metadata-item">
+                <div class="metadata-icon"><i class="fas fa-bullseye"></i></div>
+                <div class="metadata-content">
+                  <label>Tipo de Proficiência</label>
+                  <select name="system.weaponType">
+                    <option value="axe" {{#if (eq system.weaponType "axe")}}selected{{/if}}>Machado</option>
+                    <option value="bow" {{#if (eq system.weaponType "bow")}}selected{{/if}}>Arco</option>
+                    <option value="club" {{#if (eq system.weaponType "club")}}selected{{/if}}>Clava</option>
+                    <option value="crossbow" {{#if (eq system.weaponType "crossbow")}}selected{{/if}}>Besta</option>
+                    <option value="dart" {{#if (eq system.weaponType "dart")}}selected{{/if}}>Dardo</option>
+                    <option value="fetish" {{#if (eq system.weaponType "fetish")}}selected{{/if}}>Fetiche</option>
+                    <option value="flail" {{#if (eq system.weaponType "flail")}}selected{{/if}}>Mangual</option>
+                    <option value="hammer" {{#if (eq system.weaponType "hammer")}}selected{{/if}}>Martelo</option>
+                    <option value="rod" {{#if (eq system.weaponType "rod")}}selected{{/if}}>Cajado</option>
+                    <option value="knife" {{#if (eq system.weaponType "knife")}}selected{{/if}}>Faca</option>
+                    <option value="pick" {{#if (eq system.weaponType "pick")}}selected{{/if}}>Picareta</option>
+                    <option value="polearm" {{#if (eq system.weaponType "polearm")}}selected{{/if}}>Haste</option>
+                    <option value="shield" {{#if (eq system.weaponType "shield")}}selected{{/if}}>Escudo</option>
+                    <option value="sling" {{#if (eq system.weaponType "sling")}}selected{{/if}}>Funda</option>
+                    <option value="spear" {{#if (eq system.weaponType "spear")}}selected{{/if}}>Lança</option>
+                    <option value="sword" {{#if (eq system.weaponType "sword")}}selected{{/if}}>Espada</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="metadata-item">
+                <div class="metadata-icon"><i class="fas fa-tree"></i></div>
+                <div class="metadata-content">
+                  <label>Atributo</label>
+                  <select name="system.attribute">
+                    {{#each attributesList}}
+                      <option value="{{this.key}}" {{#if (eq ../system.attribute this.key)}}selected{{/if}}>{{this.label}}</option>
+                    {{/each}}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Weight</label>
-        <input
-          type="text"
-          name="system.weight"
-          value="{{system.weight}}"
-          data-dtype="Number"
-        />
+
+      <div class="item-type-form item-type-armor" data-type="armor" {{#unless (eq system.itemType "armor")}}hidden{{/unless}}>
+        <div class="description-card">
+          <div class="description-card-header">
+            <div class="description-card-title"><i class="fas fa-shield-alt"></i> Armadura</div>
+          </div>
+          <div class="description-card-body">
+            <div class="description-card defenses-card">
+              <div class="description-card-header">
+                <div class="description-card-title">
+                  <i class="fas fa-shield"></i>
+                  Defesas por Atributo
+                  <input type="text" name="system.defensesLabelNote" class="defenses-title-input" value="{{system.defensesLabelNote}}" placeholder="rótulo" />
+                </div>
+              </div>
+              <div class="description-card-body">
+                <table class="defenses-table defenses-table-horizontal">
+                  <thead>
+                    <tr>
+                      {{#each defensesList}}
+                        <th>{{this.label}}</th>
+                      {{/each}}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      {{#each defensesList}}
+                        <td>
+                          <input type="number" name="system.defenses.armor.{{this.key}}" value="{{this.value}}" />
+                        </td>
+                      {{/each}}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <label>Penalidade</label>
+            <input type="text" name="system.penalty" value="{{system.penalty}}" />
+
+            <label>Tipo de Armadura</label>
+            <select name="system.armorType">
+              <option value="heavy" {{#if (eq system.armorType "heavy")}}selected{{/if}}>Pesada</option>
+              <option value="medium" {{#if (eq system.armorType "medium")}}selected{{/if}}>Média</option>
+              <option value="light" {{#if (eq system.armorType "light")}}selected{{/if}}>Leve</option>
+            </select>
+
+            <label>Requerimento</label>
+            <input type="text" name="system.requirement" value="{{system.requirement}}" placeholder="Requerimento (ex.: Proficiência)" />
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Price</label>
-        <input
-          type="text"
-          name="system.price"
-          value="{{system.price}}"
-          data-dtype="Number"
-        />
+
+      <div class="item-type-form item-type-other" data-type="other" {{#unless (eq system.itemType "other")}}hidden{{/unless}}>
+        <div class="description-card">
+          <div class="description-card-header">
+            <div class="description-card-title"><i class="fas fa-box"></i> Outro</div>
+          </div>
+          <div class="description-card-body">
+            <label>Quantidade</label>
+            <input type="text" name="system.quantity" value="{{system.quantity}}" />
+          </div>
+        </div>
       </div>
     </div>
 
+    <div class="description-card">
+      <div class="description-card-header">
+        <div class="description-card-title">
+          <i class="fas fa-plus-square"></i>
+          Active Modifiers (Item)
+        </div>
+        <div class="description-card-actions">
+          {{#if editable}}
+            <button type="button" class="create-modifier-btn" title="Criar Modificador">
+              <i class="fas fa-plus"></i>
+            </button>
+          {{/if}}
+        </div>
+      </div>
+      <div class="description-card-body">
+        {{#if system.modifiers}}
+          <ul class="item-modifiers-list">
+            {{#each system.modifiers as |mod idx|}}
+              <li class="item-modifier-row" data-mod-id="{{this.id}}">
+                <div class="modifier-left">
+                  <div class="modifier-name">{{this.name}}</div>
+                  <div class="modifier-meta">
+                    <span class="modifier-target">{{this.targetPath}}</span>
+                  </div>
+                </div>
+                <div class="modifier-right">
+                  <div class="modifier-value">{{this.value}}</div>
+                  {{#if ../editable}}
+                    <div class="modifier-actions">
+                      <button type="button" class="modifier-edit" data-mod-id="{{this.id}}" title="Editar modificador"><i class="fas fa-edit"></i></button>
+                      <button type="button" class="modifier-remove" data-mod-id="{{this.id}}" title="Remover modificador"><i class="fas fa-trash"></i></button>
+                    </div>
+                  {{/if}}
+                </div>
+              </li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <p style="color:#666;">No modifiers on this item. Click "Criar Modificador" to add one.</p>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="talent-effects-section">
+      {{! Active Effects }}
+      <div class="effects-category active-effects-category">
+        <h3 class="effects-title active-title" style="color: var(--wayfinder-primary-dark);">
+          <i class="fas fa-bolt"></i>
+          Efeitos Ativos
+          {{#if activeEffects.length}}
+            <span class="effect-count">{{activeEffects.length}}</span>
+          {{/if}}
+        </h3>
+
+        {{#if activeEffects.length}}
+          <div class="effects-list">
+            {{#each activeEffects as |effect idx|}}
+              <div
+                class="effect-item active-effect-item"
+                data-uuid="{{effect.uuid}}"
+              >
+                {{collapsibleEffect effect=effect idx=idx}}
+
+                {{#if @root.editable}}
+                  <div class="effect-item-actions">
+                    <button
+                      type="button"
+                      class="remove-effect-btn"
+                      data-uuid="{{effect.uuid}}"
+                      title="Remover efeito"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                {{/if}}
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <p class="empty-message">
+            <i class="fas fa-info-circle"></i>
+            Nenhum efeito ativo. Arraste efeitos ativos aqui para adicionar.
+          </p>
+        {{/if}}
+      </div>
+
+      {{! Passive Effects }}
+      <div class="effects-category passive-effects-category">
+        <h3 class="effects-title passive-title" style="color: var(--wayfinder-primary-dark);">
+          <i class="fas fa-shield-alt"></i>
+          Efeitos Passivos
+          {{#if passiveEffects.length}}
+            <span class="effect-count">{{passiveEffects.length}}</span>
+          {{/if}}
+        </h3>
+
+        {{#if passiveEffects.length}}
+          <div class="effects-list">
+            {{#each passiveEffects as |effect idx|}}
+              <div
+                class="effect-item passive-effect-item"
+                data-uuid="{{effect.uuid}}"
+              >
+                {{collapsibleEffect effect=effect idx=idx}}
+
+                {{#if @root.editable}}
+                  <div class="effect-item-actions">
+                    <button
+                      type="button"
+                      class="remove-effect-btn"
+                      data-uuid="{{effect.uuid}}"
+                      title="Remover efeito"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                {{/if}}
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <p class="empty-message">
+            <i class="fas fa-info-circle"></i>
+            Nenhum efeito passivo. Arraste efeitos passivos aqui para adicionar.
+          </p>
+        {{/if}}
+      </div>
+    </div>
   </section>
 </form>

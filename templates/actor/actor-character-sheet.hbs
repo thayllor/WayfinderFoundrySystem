@@ -16,7 +16,10 @@
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item active" data-tab="skills" data-icon="d20">Perícias</a>
     <a class="item" data-tab="actions" data-icon="actions">Ações</a>
+    <a class="item" data-tab="modifiers" data-icon="wf-plus-or-minus">Active Modifiers</a>
     <a class="item" data-tab="talents" data-icon="star">Talentos</a>
+    <a class="item" data-tab="spells" data-icon="magic">Magia e Conjuração</a>
+    <a class="item" data-tab="notes" data-icon="open-book">Anotações</a>
     <a class="item" data-tab="resources" data-icon="items">Inventário</a>
   </nav>
 
@@ -32,9 +35,24 @@
       {{> "systems/wayfinder/templates/actor/parts/actor-effects-tab.hbs"}}
     </div>
 
+    {{!-- MODIFIERS TAB --}}
+    <div class="tab" data-group="primary" data-tab="modifiers">
+      {{> "systems/wayfinder/templates/actor/parts/actor-modifiers-tab.hbs"}}
+    </div>
+
     {{!-- TALENTS TAB --}}
     <div class="tab" data-group="primary" data-tab="talents">
       {{> "systems/wayfinder/templates/actor/parts/actor-talents-tab.hbs"}}
+    </div>
+
+    {{!-- SPELLS TAB --}}
+    <div class="tab" data-group="primary" data-tab="spells">
+      {{> "systems/wayfinder/templates/actor/parts/actor-spells-tab.hbs"}}
+    </div>
+
+    {{!-- NOTES TAB --}}
+    <div class="tab" data-group="primary" data-tab="notes">
+      {{> "systems/wayfinder/templates/actor/parts/actor-notes-tab.hbs"}}
     </div>
 
     {{!-- RESOURCES TAB --}}

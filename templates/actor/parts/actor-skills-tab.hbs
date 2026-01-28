@@ -1,6 +1,85 @@
 {{!-- Skills Tab Component --}}
   <div class="skills-section">
   <h2 class="tab-title tab-title-skills">Perícias</h2>
+    <div class="skills-controls-card description-card skills-controls-wrapper">
+      <div class="languages-card description-card">
+        <div class="description-card-header">
+          <div class="description-card-title"><i class="fas fa-language"></i> Línguas</div>
+          <div class="description-card-actions">
+            <button type="button" class="languages-toggle-add btn">+</button>
+          </div>
+        </div>
+        <div class="description-card-body languages-body">
+          <div class="languages-list">
+            {{#if system.languages.length}}
+              {{#each system.languages as |lang idx|}}
+                <span class="trait-chip trait-chip-small language-chip" data-lang-index="{{idx}}">{{lang}} <button type="button" class="language-remove">×</button></span>
+              {{/each}}
+            {{else}}
+              <div class="empty-message">Nenhuma língua adicionada.</div>
+            {{/if}}
+          </div>
+          <div class="languages-add-row" style="display:none">
+            <input type="text" class="languages-input short-input" placeholder="Nome da língua" />
+            <button type="button" class="languages-add-btn btn">Adicionar</button>
+            <button type="button" class="languages-cancel btn">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="proficiencies-card description-card">
+        <div class="description-card-header">
+          <div class="description-card-title"><i class="fas fa-crosshairs"></i> Proficiência com Armas</div>
+          <div class="description-card-actions">
+            <select class="weapons-select short-input">
+              <option value="">-- Escolher arma --</option>
+              {{#each availableWeapons as |w|}}
+                <option value="{{w.key}}">{{w.label}}</option>
+              {{/each}}
+            </select>
+            <button type="button" class="weapons-add-btn btn">+</button>
+          </div>
+        </div>
+        <div class="description-card-body weapons-body">
+          <div class="weapons-list">
+            {{#if system.proficiencies.weapons.length}}
+              {{#each system.proficiencies.weapons as |wp idx|}}
+                <span class="trait-chip trait-chip-small weapon-chip" data-weapon-index="{{idx}}">{{wp}} <button type="button" class="weapon-remove">×</button></span>
+              {{/each}}
+            {{else}}
+              <div class="empty-message">Nenhuma proficiência de arma.</div>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+
+      <div class="proficiencies-card description-card">
+        <div class="description-card-header">
+          <div class="description-card-title"><i class="fas fa-shield-alt"></i> Proficiência com Armaduras</div>
+          <div class="description-card-actions">
+            <select class="armors-select short-input">
+              <option value="">-- Escolher --</option>
+              {{#each availableArmors as |a|}}
+                <option value="{{a.key}}">{{a.label}}</option>
+              {{/each}}
+            </select>
+            <button type="button" class="armors-add-btn btn">+</button>
+          </div>
+        </div>
+        <div class="description-card-body armors-body">
+          <div class="armors-list">
+            {{#if system.proficiencies.armors.length}}
+              {{#each system.proficiencies.armors as |ap idx|}}
+                <span class="trait-chip trait-chip-small armor-chip" data-armor-index="{{idx}}">{{ap}} <button type="button" class="armor-remove">×</button></span>
+              {{/each}}
+            {{else}}
+              <div class="empty-message">Nenhuma proficiência de armadura.</div>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="skills-table-container">
       <table class="skills-table skills-table-left">
         <thead>
@@ -36,9 +115,9 @@
                 <option value="legendary" {{#if (eq entry.skill.proficiency 'legendary')}}selected{{/if}}>Legendary</option>
               </select>
             </td>
-            <td><input type="number" name="system.skills.{{entry.key}}.status" value="{{entry.skill.status}}" class="short-input"/></td>
-            <td><input type="number" name="system.skills.{{entry.key}}.circun" value="{{entry.skill.circun}}" class="short-input"/></td>
-            <td><input type="number" name="system.skills.{{entry.key}}.item" value="{{entry.skill.item}}" class="short-input"/></td>
+            <td><input type="number" name="system.skills.{{entry.key}}.status" value="{{entry.skill.status}}" class="short-input" disabled/></td>
+            <td><input type="number" name="system.skills.{{entry.key}}.circun" value="{{entry.skill.circun}}" class="short-input" disabled/></td>
+            <td><input type="number" name="system.skills.{{entry.key}}.item" value="{{entry.skill.item}}" class="short-input" disabled/></td>
             <td><div class="attribute-total" data-skill-key="{{entry.key}}" data-formula="{{entry.skill.formula}}">{{entry.skill.total}}</div></td>
           </tr>
           {{/each}}
@@ -79,9 +158,9 @@
                 <option value="legendary" {{#if (eq entry.skill.proficiency 'legendary')}}selected{{/if}}>Legendary</option>
               </select>
             </td>
-            <td><input type="number" name="system.skills.{{entry.key}}.status" value="{{entry.skill.status}}" class="short-input"/></td>
-            <td><input type="number" name="system.skills.{{entry.key}}.circun" value="{{entry.skill.circun}}" class="short-input"/></td>
-            <td><input type="number" name="system.skills.{{entry.key}}.item" value="{{entry.skill.item}}" class="short-input"/></td>
+            <td><input type="number" name="system.skills.{{entry.key}}.status" value="{{entry.skill.status}}" class="short-input" disabled/></td>
+            <td><input type="number" name="system.skills.{{entry.key}}.circun" value="{{entry.skill.circun}}" class="short-input" disabled/></td>
+            <td><input type="number" name="system.skills.{{entry.key}}.item" value="{{entry.skill.item}}" class="short-input" disabled/></td>
             <td><div class="attribute-total" data-skill-key="{{entry.key}}" data-formula="{{entry.skill.formula}}">{{entry.skill.total}}</div></td>
           </tr>
           {{/each}}

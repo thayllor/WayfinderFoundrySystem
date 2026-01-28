@@ -1,0 +1,30 @@
+<h2 class="tab-title modifiers-title">Active Modifiers</h2>
+
+<div class="modifiers-container">
+  {{#if (gt modifiers.length 0)}}
+    <div class="modifiers-card">
+      {{#each modifiers as |mod idx|}}
+        <div class="modifier-card" data-item-id="{{mod._id}}">
+          <div class="modifier-line">
+            <div class="modifier-origin" title="{{mod.sourceLabel}}">{{mod.sourceLabel}}</div>
+            <div class="modifier-info">
+              <div class="modifier-name">{{mod.name}}</div>
+              {{#if mod.targetPath}}<div class="modifier-target">→ {{mod.targetPath}}</div>{{/if}}
+            </div>
+            <div class="modifier-value">{{mod.value}}</div>
+            {{#if ../editable}}
+              <div class="modifier-actions">
+                <button class="modifier-edit" data-action="edit">Editar</button>
+              </div>
+            {{/if}}
+          </div>
+          {{#if mod.description}}
+            <div class="modifier-desc">{{{mod.description}}}</div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <p class="modifiers-empty">No active modifiers added. Drag items from the compendium or inventory here.</p>
+  {{/if}}
+</div>

@@ -649,14 +649,9 @@ export class WayfinderActiveEffectSheet extends foundry.applications.api.Handleb
 
     const current = Array.isArray(this.document.system?.traits) ? [...this.document.system.traits] : [];
 
-    // Prevent duplicates and limit to 1 trait
+    // Prevent duplicate traits (allow multiple different traits)
     if (current.includes(item.uuid)) {
       ui.notifications?.warn(`${item.name} já está vinculado a este efeito.`);
-      return;
-    }
-
-    if (current.length >= 1) {
-      ui.notifications?.warn(`Este efeito já possui um trait. Remova o anterior antes de adicionar um novo.`);
       return;
     }
 

@@ -46,23 +46,20 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
     const activeEffects = [];
     const passiveEffects = [];
 
-    for (const uuid of effectUuids) {
+    for (const entry of effectUuids) {
       try {
-        const doc = await fromUuid(uuid);
-        if (doc && (doc.type === 'active-effect' || doc.type === 'passive-effect')) {
+        // If entry is a string, treat as UUID and resolve
+        if (typeof entry === 'string') {
+          const doc = await fromUuid(entry);
+          if (!doc) continue;
+
           const traitUuidsEffect = Array.isArray(doc.system?.traits) ? doc.system.traits : [];
           const traitsResolvedEffect = [];
-
           for (const tuuid of traitUuidsEffect) {
             try {
               const tdoc = await fromUuid(tuuid);
               if (tdoc && tdoc.type === 'trait') {
-                traitsResolvedEffect.push({
-                  uuid: tuuid,
-                  id: tdoc.id,
-                  name: tdoc.name,
-                  color: tdoc.system?.color || '#666666'
-                });
+                traitsResolvedEffect.push({ uuid: tuuid, id: tdoc.id, name: tdoc.name, color: tdoc.system?.color || '#666666' });
               }
             } catch (err) {
               console.warn('Erro ao resolver trait de efeito:', tuuid, err);
@@ -70,7 +67,7 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
           }
 
           const effectData = {
-            uuid,
+            uuid: entry,
             id: doc.id,
             name: doc.name,
             type: doc.type,
@@ -80,10 +77,11 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
             target: doc.system?.target || '',
             duration: doc.system?.duration || '',
             focusCost: doc.system?.focusCost || 0,
+            actionCost: doc.system?.actionCost ?? doc.system?.actions ?? '',
             isMagic: doc.system?.isMagic || false,
             magicCircle: doc.system?.magicCircle || '',
             isPermanent: doc.system?.isPermanent || false,
-            isActive: doc.system?.isActive !== false, // default true
+            isActive: doc.system?.isActive !== false,
             traitsResolved: traitsResolvedEffect,
             heightened: Array.isArray(doc.system?.heightened)
               ? doc.system.heightened
@@ -92,14 +90,52 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
                   : [])
           };
 
-          if (doc.type === 'active-effect') {
-            activeEffects.push(effectData);
-          } else {
-            passiveEffects.push(effectData);
+          if (doc.type === 'active-effect') activeEffects.push(effectData);
+          else passiveEffects.push(effectData);
+
+        } else if (entry && typeof entry === 'object') {
+          // Inline effect object on the talent
+          const systemData = entry.system || {};
+          const traitUuidsEffect = Array.isArray(systemData?.traits) ? systemData.traits : [];
+          const traitsResolvedEffect = [];
+          for (const tuuid of traitUuidsEffect) {
+            try {
+              const tdoc = await fromUuid(tuuid);
+              if (tdoc && tdoc.type === 'trait') {
+                traitsResolvedEffect.push({ uuid: tuuid, id: tdoc.id, name: tdoc.name, color: tdoc.system?.color || '#666666' });
+              } else {
+                traitsResolvedEffect.push({ uuid: tuuid, name: String(tuuid), color: '#666666' });
+              }
+            } catch (err) {
+              traitsResolvedEffect.push({ uuid: tuuid, name: String(tuuid), color: '#666666' });
+            }
           }
+
+          const effectData = {
+            uuid: entry.uuid || entry._id || null,
+            id: entry.id || entry._id || null,
+            name: entry.name || entry.label || 'Effect',
+            type: entry.type || systemData.type || 'active-effect',
+            description: entry.description ?? systemData.description ?? '',
+            effect: entry.effect ?? systemData.effect ?? '',
+            range: entry.range ?? systemData.range ?? '',
+            target: entry.target ?? systemData.target ?? '',
+            duration: entry.duration ?? systemData.duration ?? '',
+            focusCost: entry.focusCost ?? systemData.focusCost ?? 0,
+            actionCost: entry.actionCost ?? systemData.actionCost ?? systemData.actions ?? '',
+            isMagic: entry.isMagic ?? systemData.isMagic ?? false,
+            magicCircle: entry.magicCircle ?? systemData.magicCircle ?? '',
+            isPermanent: entry.isPermanent ?? systemData.isPermanent ?? false,
+            isActive: entry.isActive ?? true,
+            traitsResolved: traitsResolvedEffect,
+            heightened: Array.isArray(systemData?.heightened) ? systemData.heightened : (systemData?.heightened && typeof systemData.heightened === 'object' ? Object.values(systemData.heightened) : [])
+          };
+
+          if (effectData.type === 'active-effect') activeEffects.push(effectData);
+          else passiveEffects.push(effectData);
         }
       } catch (err) {
-        console.warn('Erro ao resolver efeito para talent:', uuid, err);
+        console.warn('Erro ao resolver efeito para talent:', entry, err);
       }
     }
 
