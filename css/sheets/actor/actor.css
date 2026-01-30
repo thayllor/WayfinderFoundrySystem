@@ -1,0 +1,18 @@
+/* Actor sheet entrypoint - imports component styles scoped to actor sheets */
+@import "./components/character-info.css";
+@import "./components/resources-row.css";
+@import "./components/attributes-resources-horizontal.css";
+@import "./components/sheet-tabs.css";
+
+@import "./components/tabs-skills.css";
+@import "./components/tabs-actions.css";
+@import "./components/tabs-modifiers.css";
+@import "./components/tabs-talents.css";
+@import "./components/tabs-spells.css";
+@import "./components/tabs-notes.css";
+@import "./components/tabs-resources.css";
+
+/* Add any actor-scoped utility rules below */
+.wayfinder.sheet.actor {
+  box-sizing: border-box;
+}

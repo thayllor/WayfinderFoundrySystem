@@ -1,0 +1,59 @@
+<div style="display:flex;flex-direction:column;gap:8px;padding:6px">
+  <div><strong>Effect:</strong> {{effectName}}</div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <label style="width:110px">Roll Type</label>
+    <select id="wf-roll-type"><option value="normal">Normal (2d10)</option><option
+        value="adv"
+      >Advantage (3d10 pick highest)</option><option value="dis">Disadvantage
+        (3d10 pick lowest)</option></select>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <label style="width:110px">Proficiency</label><input
+      id="wf-prof"
+      type="number"
+      value="{{prof}}"
+      style="width:120px"
+    />
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <label style="width:110px">Attribute ({{attrKey}})</label><input
+      id="wf-attr"
+      type="number"
+      value="{{attrValue}}"
+      style="width:120px"
+    />
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <label style="width:110px">Circun</label><input
+      id="wf-circun"
+      type="number"
+      value="{{circun}}"
+      style="width:120px"
+    />
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <label style="width:110px">Item Mod</label><input
+      id="wf-itemmod"
+      type="number"
+      value="{{itemMod}}"
+      style="width:120px"
+    />
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <label style="width:110px">Status</label><input
+      id="wf-status"
+      type="number"
+      value="{{status}}"
+      style="width:120px"
+    />
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <small>Attack preview:
+      <code id="wf-attack-preview">2d10 + {{initialMods}}</code></small>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <small>Damage preview:
+      <code>{{damageFormula}}</code>{{#if damageType}}
+        <strong>({{damageType}})</strong>{{/if}}</small>
+  </div>
+</div>

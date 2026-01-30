@@ -1,0 +1,25 @@
+<form>
+  <div class="form-group">
+    <label>Name</label>
+    <input name="name" type="text" value="{{name}}" />
+  </div>
+  <div class="form-group">
+    <label>Target path (attribute/skill/actor)</label>
+    <input
+      list="wf-paths"
+      name="targetPath"
+      type="text"
+      value="{{targetPath}}"
+      placeholder="e.g. system.skills.athletics.item or system.attributes.strength.item"
+    />
+    <datalist id="wf-paths">
+      {{{datalistOptions}}}
+    </datalist>
+    <div style="font-size:0.85rem;color:#666;margin-top:6px;">Start typing to
+      see suggestions (attributes, skills, defenses)</div>
+  </div>
+  <div class="form-group">
+    <label>Value</label>
+    <input name="value" type="number" step="1" value="{{value}}" />
+  </div>
+</form>

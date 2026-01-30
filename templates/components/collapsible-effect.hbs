@@ -1,4 +1,4 @@
-<div class="effect-item" data-item-id="{{effect.uuid}}" data-effect-index="{{idx}}">
+<div class="effect-item effect-collapsible {{#if isActive}}active-effect-item{{else}}passive-effect-item{{/if}}" data-item-id="{{effect.uuid}}" data-real-id="{{effect._id}}" data-source-item-id="{{effect.sourceItemId}}" data-source-talent-id="{{effect.sourceTalentId}}" data-effect-index="{{idx}}" data-render-source="{{renderSource}}">
   <div class="effect-collapsible-header {{#if isActive}}active-header{{else}}passive-header{{/if}}" data-effect-id="{{effectId}}">
     <i class="fas fa-chevron-right effect-collapsible-icon"></i>
     <span class="effect-collapsible-title">{{#if effect.sourceItemName}}{{effect.name}} — {{effect.sourceItemName}}{{else}}{{effect.name}}{{/if}}</span>
@@ -29,63 +29,66 @@
   <div class="effect-collapsible-content" id="{{effectId}}" style="display: none;">
     <div class="effect-details">
 
-      {{#if traits.length}}
-        <div class="effect-section effect-traits">
-          <div class="effect-section-header"><i class="fas fa-tags"></i> Traits</div>
-          <div class="effect-traits-row">
+      <div class="effect-section effect-traits">
+        <div class="effect-section-header"><i class="fas fa-tags"></i> Traits</div>
+        <div class="effect-traits-row">
+          {{#if traits.length}}
             {{#each traits}}
               <span class="trait-chip trait-chip-small" style="background-color: {{color}};" title="{{name}}">
                 <span class="trait-chip-name">{{name}}</span>
               </span>
             {{/each}}
-          </div>
+          {{else}}
+            <div class="traits-empty" style="padding:6px 0;color:#666;font-size:13px">Nenhum trait definido.</div>
+          {{/if}}
         </div>
-      {{/if}}
+      </div>
 
-      {{#if hasMetadata}}
-        <div class="effect-section effect-meta-block">
-          <div class="description-card">
-            {{#if effect.isMagic}}
-              <div class="description-card-header">
-                <div class="description-card-title"><i class="fas fa-scroll"></i> Magia</div>
-              </div>
-            {{/if}}
-            <div class="description-card-content">
-              <div class="effect-meta-flex">
+      <div class="effect-section effect-meta-block">
+        <div class="description-card">
+          {{#if effect.isMagic}}
+            <div class="description-card-header">
+              <div class="description-card-title"><i class="fas fa-scroll"></i> Magia</div>
+            </div>
+          {{/if}}
+          <div class="description-card-content">
+            <div class="effect-meta-flex">
 
-                {{#if effect.isMagic}}
-                  <div class="effect-meta-chip"><i class="fas fa-hat-wizard"></i>
-                    <span>{{#if (eq effect.magicCircle 'cantrip')}}Cantrip{{else}}{{effect.magicCircle}}º Círculo{{/if}}</span>
-                  </div>
-                {{/if}}
-                {{#if (gt effect.focusCost 0)}}
-                  <div class="effect-meta-chip"><i class="fas fa-star"></i><span>{{effect.focusCost}} Foco</span></div>
-                {{/if}}
-                {{#if effect.range}}
-                  <div class="effect-meta-chip"><i class="fas fa-ruler-combined"></i><span>Alcance: {{effect.range}}</span></div>
-                {{/if}}
-                {{#if effect.target}}
-                  <div class="effect-meta-chip"><i class="fas fa-crosshairs"></i><span>Alvo: {{effect.target}}</span></div>
-                {{/if}}
-                {{#if effect.actionCost}}
-                  <div class="effect-meta-chip"><i class="fas fa-bolt"></i><span>Ações: {{effect.actionCost}}</span></div>
-                {{/if}}
-                {{#if effect.duration}}
-                  <div class="effect-meta-chip"><i class="fas fa-hourglass-half"></i><span>Duração: {{effect.duration}}</span></div>
-                {{/if}}
+              {{#if effect.isMagic}}
+                <div class="effect-meta-chip"><i class="fas fa-hat-wizard"></i>
+                  <span>{{#if (eq effect.magicCircle 'cantrip')}}Cantrip{{else}}{{effect.magicCircle}}º Círculo{{/if}}</span>
+                </div>
+              {{/if}}
+              {{#if (gt effect.focusCost 0)}}
+                <div class="effect-meta-chip"><i class="fas fa-star"></i><span>{{effect.focusCost}} Foco</span></div>
+              {{/if}}
+              {{#if effect.range}}
+                <div class="effect-meta-chip"><i class="fas fa-ruler-combined"></i><span>Alcance: {{effect.range}}</span></div>
+              {{/if}}
+              {{#if effect.target}}
+                <div class="effect-meta-chip"><i class="fas fa-crosshairs"></i><span>Alvo: {{effect.target}}</span></div>
+              {{/if}}
+              {{#if effect.actionCost}}
+                <div class="effect-meta-chip"><i class="fas fa-bolt"></i><span>Ações: {{effect.actionCost}}</span></div>
+              {{/if}}
+              {{#if effect.duration}}
+                <div class="effect-meta-chip"><i class="fas fa-hourglass-half"></i><span>Duração: {{effect.duration}}</span></div>
+              {{/if}}
 
-              </div>
+              {{!-- If no actual metadata, render a subtle placeholder so DOM is identical --}}
+              {{#unless hasMetadata}}
+                <div class="meta-empty" style="padding:6px 0;color:#666;font-size:13px">Nenhum metadado.</div>
+              {{/unless}}
+
             </div>
           </div>
         </div>
-      {{/if}}
+      </div>
 
-      {{#if effect.description}}
-        <div class="effect-section effect-description">
-          <div class="effect-section-header"><i class="fas fa-file-alt"></i> Descrição</div>
-          <div class="effect-text">{{{effect.description}}}</div>
-        </div>
-      {{/if}}
+      <div class="effect-section effect-description">
+        <div class="effect-section-header"><i class="fas fa-file-alt"></i> Descrição</div>
+        <div class="effect-text">{{{effect.description}}}</div>
+      </div>
 
       {{#if effect.effect}}
         <div class="effect-section effect-effect">
@@ -94,21 +97,30 @@
         </div>
       {{/if}}
 
-      {{#if effect.isMagic}}
-        <div class="effect-section effect-heightened">
-          <div class="effect-section-header"><i class="fas fa-level-up-alt"></i> Efeitos Aprimorados</div>
-          {{#if heightenedEntries.length}}
-            <div class="heightened-list">
-              {{#each heightenedEntries}}
-                <div class="heightened-row">
-                  <span class="heightened-badge"><span class="heightened-label">Aprimorado</span><span class="heightened-level-pill">{{this.level}}</span></span>
-                  <div class="heightened-text">{{{or this.effects this.effect}}}</div>
-                </div>
-              {{/each}}
-            </div>
-          {{else}}
-            <div class="heightened-empty" style="padding:8px 0;color:#666;font-size:13px">Nenhum aprimoramento definido.</div>
-          {{/if}}
+      <div class="effect-section effect-heightened">
+        <div class="effect-section-header"><i class="fas fa-level-up-alt"></i> Efeitos Aprimorados</div>
+        {{#if heightenedEntries.length}}
+          <div class="heightened-list">
+            {{#each heightenedEntries}}
+              <div class="heightened-row">
+                <span class="heightened-badge"><span class="heightened-label">Aprimorado</span><span class="heightened-level-pill">{{this.level}}</span></span>
+                <div class="heightened-text">{{{or this.effects this.effect}}}</div>
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="heightened-empty" style="padding:8px 0;color:#666;font-size:13px">Nenhum aprimoramento definido.</div>
+        {{/if}}
+      </div>
+
+      {{!-- Roll button for attack effects (shows when expanded) --}}
+      {{#if (or effect.system.isAttack effect.isAttack)}}
+        <div class="form-row" style="margin-top:8px;padding:8px">
+          <div class="form-group">
+            <button type="button" class="effect-roll-btn" data-effect-id="{{effectId}}">
+              <i class="fas fa-bullseye"></i> Rolar Ataque
+            </button>
+          </div>
         </div>
       {{/if}}
 

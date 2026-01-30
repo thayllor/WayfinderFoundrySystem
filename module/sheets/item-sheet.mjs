@@ -108,6 +108,25 @@ export class WayfinderItemSheet extends HandlebarsApplicationMixin(DocumentSheet
       } catch (err) {
         console.debug('Wayfinder | error normalizing embedded effects', err);
       }
+      // Helper to normalize color values for trait chips
+      const normalizeColor = (raw) => {
+        try {
+          if (!raw && raw !== '') return '#666666';
+          let c = raw;
+          if (typeof c === 'object' && c !== null) {
+            if (typeof c.value === 'string') c = c.value;
+            else return '#666666';
+          }
+          if (typeof c !== 'string') return '#666666';
+          c = c.trim();
+          if (/^[0-9A-Fa-f]{6}$/.test(c)) return `#${c}`;
+          if (/^[0-9A-Fa-f]{3}$/.test(c)) return `#${c}`;
+          return c || '#666666';
+        } catch (e) {
+          return '#666666';
+        }
+      };
+
       for (const e of embedded) {
         // Resolve trait UUIDs to objects with name and color so the partial can render correctly
         const traitsResolved = [];
@@ -117,12 +136,12 @@ export class WayfinderItemSheet extends HandlebarsApplicationMixin(DocumentSheet
             try {
               const tdoc = await fromUuid(tuuid);
               if (tdoc && tdoc.type === 'trait') {
-                traitsResolved.push({ uuid: tuuid, id: tdoc.id, name: tdoc.name, color: tdoc.system?.color || '#666666' });
+                traitsResolved.push({ uuid: tuuid, id: tdoc.id, name: tdoc.name, color: normalizeColor(tdoc.system?.color) });
               } else {
-                traitsResolved.push({ uuid: tuuid, name: String(tuuid), color: '#666666' });
+                traitsResolved.push({ uuid: tuuid, name: String(tuuid), color: normalizeColor(null) });
               }
             } catch (err) {
-              traitsResolved.push({ uuid: tuuid, name: String(tuuid), color: '#666666' });
+              traitsResolved.push({ uuid: tuuid, name: String(tuuid), color: normalizeColor(null) });
             }
           }
         } catch (err) {
@@ -370,13 +389,7 @@ export class WayfinderItemSheet extends HandlebarsApplicationMixin(DocumentSheet
         // Build list of packs and include World Items as an option
         const packs = Array.from(game.packs);
         const packOptions = [`<option value="WORLD">Itens do Mundo</option>`].concat(packs.map(p => `<option value="${p.collection}">${p.metadata.label || p.collection}</option>`)).join('');
-        const content = `
-          <form>
-            <div class="form-group">
-              <label>Escolha a origem</label>
-              <select name="pack">${packOptions}</select>
-            </div>
-          </form>`;
+        const content = await foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/select-form.hbs', { label: 'Escolha a origem', name: 'pack', options: packOptions });
         new Dialog({
           title: 'Importar efeito do compêndio',
           content,
@@ -400,7 +413,7 @@ export class WayfinderItemSheet extends HandlebarsApplicationMixin(DocumentSheet
                 const effects = docs.filter(d => (d.type === 'active-effect' || d.system?.itemType === 'active-effect' || d.system?.itemType === 'effect'));
                 if (!effects.length) return ui.notifications.warn('Nenhum efeito ativo encontrado no compêndio.');
                 const opts = effects.map(e => `<option value="${e.uuid}">${e.name}</option>`).join('');
-                const content2 = `<form><div class="form-group"><label>Escolha o Efeito</label><select name="effect">${opts}</select></div></form>`;
+                const content2 = await foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/select-form.hbs', { label: 'Escolha o Efeito', name: 'effect', options: opts });
                 new Dialog({
                   title: 'Escolha o efeito',
                   content: content2,
@@ -513,13 +526,7 @@ export class WayfinderItemSheet extends HandlebarsApplicationMixin(DocumentSheet
           return;
         }
         const options = weapons.map(w => `<option value="${w.id}">${w.name}</option>`).join('');
-        const content = `
-          <form>
-            <div class="form-group">
-              <label>Escolha a arma</label>
-              <select name="weaponId">${options}</select>
-            </div>
-          </form>`;
+        const content = await foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/select-form.hbs', { label: 'Escolha a arma', name: 'weaponId', options });
         new Dialog({
           title: 'Associar efeito a arma',
           content,
@@ -653,80 +660,79 @@ export class WayfinderItemSheet extends HandlebarsApplicationMixin(DocumentSheet
         console.debug('Wayfinder | modifier candidatePaths:', candidatePaths);
         const datalistOptions = candidatePaths.map(p => `<option value="${p}"></option>`).join('');
 
-        const html = `
-          <form>
-            <div class="form-group">
-              <label>Name</label>
-              <input name="name" type="text" value="${(mod.name||'').replace(/"/g,'&quot;')}" />
-            </div>
-            <!-- Pillar is inferred from the chosen target path (last segment) -->
-            <div class="form-group">
-              <label>Target path (attribute/skill/actor)</label>
-              <input list="wf-paths" name="targetPath" type="text" value="${(mod.targetPath||'').replace(/"/g,'&quot;')}" placeholder="e.g. system.skills.athletics.item or system.attributes.strength.item" />
-              <datalist id="wf-paths">
-                ${datalistOptions}
-              </datalist>
-              <div style="font-size:0.85rem;color:#666;margin-top:6px;">Start typing to see suggestions (attributes, skills, defenses)</div>
-            </div>
-            <div class="form-group">
-              <label>Value</label>
-              <input name="value" type="number" step="1" value="${Number(mod.value||0)}" />
-            </div>
-          </form>
-        `;
+        const html = await foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/modifier-edit-form.hbs', {
+          name: (mod.name||'').replace(/"/g,'&quot;'),
+          targetPath: (mod.targetPath||'').replace(/"/g,'&quot;'),
+          datalistOptions,
+          value: Number(mod.value||0)
+        });
 
-        new Dialog({
-          title: `Edit Modifier: ${mod.name}`,
-          content: html,
-          buttons: {
-            save: {
-                icon: '<i class="fas fa-check"></i>',
-                label: 'Save',
-                callback: async (htmlDlg) => {
-                  // `htmlDlg` may be a raw HTMLElement, a jQuery object, or a jQuery-like
-                  // wrapper depending on Foundry version. Normalize to an HTMLElement.
-                  let formEl = null;
-                  try {
-                    if (!htmlDlg) formEl = null;
-                    else if (htmlDlg instanceof HTMLElement) formEl = htmlDlg.querySelector('form');
-                    else if (htmlDlg.jquery && htmlDlg.length) formEl = htmlDlg[0].querySelector('form');
-                    else if (htmlDlg[0] && htmlDlg[0] instanceof HTMLElement) formEl = htmlDlg[0].querySelector('form');
-                    else if (typeof htmlDlg.find === 'function') {
-                      const found = htmlDlg.find('form');
-                      formEl = (found && found.length) ? found[0] : null;
-                    }
-                  } catch (err) {
-                    console.warn('Wayfinder | could not normalize dialog html', err, htmlDlg);
-                  }
+        // Handler to save modifier from dialog
+        const handleSave = async (htmlDlg) => {
+          let formEl = null;
+          try {
+            if (!htmlDlg) formEl = null;
+            else if (htmlDlg instanceof HTMLElement) formEl = htmlDlg.querySelector('form');
+            else if (htmlDlg.jquery && htmlDlg.length) formEl = htmlDlg[0].querySelector('form');
+            else if (htmlDlg[0] && htmlDlg[0] instanceof HTMLElement) formEl = htmlDlg[0].querySelector('form');
+            else if (typeof htmlDlg.find === 'function') {
+              const found = htmlDlg.find('form');
+              formEl = (found && found.length) ? found[0] : null;
+            }
+          } catch (err) {
+            console.warn('Wayfinder | could not normalize dialog html', err, htmlDlg);
+          }
+          if (!formEl) {
+            console.error('Wayfinder | edit-modifier dialog form not found', htmlDlg);
+            ui.notifications?.error?.('Erro interno: formulário não encontrado.');
+            return;
+          }
+          const fd = new FormData(formEl);
+          const values = {};
+          try { for (const [k, v] of fd.entries()) values[k] = v; } catch (e) { /* ignore */ }
+          const targetPath = values.targetPath ? String(values.targetPath).trim() : null;
+          mod.value = Number(values.value) || 0;
+          mod.targetPath = targetPath || mod.targetPath;
+          mods[idx] = mod;
+          try {
+            console.debug('Wayfinder | saving edited modifier', modId, mods[idx]);
+            await this.document.update({ 'system.modifiers': mods });
+            console.debug('Wayfinder | modifier saved');
+            this.render(true);
+          } catch (err) {
+            console.error('Error saving modifier', err);
+            ui.notifications?.error?.('Não foi possível salvar o modificador.');
+          }
+        };
 
-                  if (!formEl) {
-                    console.error('Wayfinder | edit-modifier dialog form not found', htmlDlg);
-                    ui.notifications?.error?.('Erro interno: formulário não encontrado.');
-                    return;
-                  }
-
-                  const fd = new FormData(formEl);
-                  const values = Object.fromEntries(fd);
-                  const targetPath = (values.targetPath || '').trim();
-                  mod.name = values.name || mod.name;
-                  mod.value = Number(values.value) || 0;
-                  mod.targetPath = targetPath || mod.targetPath;
-                  mods[idx] = mod;
-                  try {
-                    console.debug('Wayfinder | saving edited modifier', modId, mods[idx]);
-                    await this.document.update({ 'system.modifiers': mods });
-                    console.debug('Wayfinder | modifier saved');
-                    this.render(true);
-                  } catch (err) {
-                    console.error('Error saving modifier', err);
-                    ui.notifications?.error?.('Não foi possível salvar o modificador.');
-                  }
-                }
-              },
-            cancel: { label: 'Cancel' }
-          },
-          default: 'save'
-        }).render(true);
+        // Render icon partial then create dialog (avoid inline HTML literals)
+        Promise.all([
+          foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-check' })
+        ]).then(([saveIcon]) => {
+          new Dialog({
+            title: `Edit Modifier: ${mod.name}`,
+            content: html,
+            buttons: {
+              save: { icon: saveIcon, label: 'Save', callback: handleSave },
+              cancel: { label: 'Cancel' }
+            },
+            default: 'save'
+          }).render(true);
+        }).catch((ie) => {
+          console.warn('Wayfinder | failed to render icon partial for modifier dialog', ie);
+          // Fallback: create dialog with generated <i> from class name
+          let fallbackIcon = 'fas fa-check';
+          if (typeof fallbackIcon === 'string' && !fallbackIcon.includes('<')) fallbackIcon = `<i class="${fallbackIcon}"></i>`;
+          new Dialog({
+            title: `Edit Modifier: ${mod.name}`,
+            content: html,
+            buttons: {
+              save: { icon: fallbackIcon, label: 'Save', callback: handleSave },
+              cancel: { label: 'Cancel' }
+            },
+            default: 'save'
+          }).render(true);
+        });
       }
     };
     form.addEventListener('click', this._onModifierAction);

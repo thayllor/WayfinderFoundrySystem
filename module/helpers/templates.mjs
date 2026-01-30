@@ -158,7 +158,10 @@ export const preloadHandlebarsTemplates = async function() {
 
     const hasMetadata = (effect.range || effect.target || effect.duration || effect.isMagic || effect.focusCost > 0 || effect.actionCost || effect.magicCircle);
 
-    const context = { effect, idx, effectId, isActive, traits, heightenedEntries, hasMetadata };
+    const source = hash.source || (effect && (effect.sourceTalentId || effect.sourceItemId) ? 'talent-or-item' : 'effects-tab');
+    const context = { effect, idx, effectId, isActive, traits, heightenedEntries, hasMetadata, renderSource: source };
+    // Debug: log effect origins when rendering to assist CSS debugging
+    try { console.log('Wayfinder | collapsibleEffect render', { source, name: effect.name, uuid: effect.uuid || effect._id || null }); } catch(e) {}
 
     const renderPartial = (path, ctx) => {
       const tpl = (Handlebars.templates && Handlebars.templates[path]) || (Handlebars.partials && Handlebars.partials[path]);
@@ -188,7 +191,24 @@ export const preloadHandlebarsTemplates = async function() {
     "systems/wayfinder/templates/components/attributes-pentagon.hbs",
     "systems/wayfinder/templates/components/defenses-table.hbs",
     "systems/wayfinder/templates/components/trait-editor.hbs",
+    "systems/wayfinder/templates/components/trait-chip-row.hbs",
+    "systems/wayfinder/templates/components/talent-readonly.hbs",
+    "systems/wayfinder/templates/components/talent-readonly-error.hbs",
+    "systems/wayfinder/templates/components/select-form.hbs",
+    "systems/wayfinder/templates/components/modifier-edit-form.hbs",
+    "systems/wayfinder/templates/components/icon.hbs",
+    "systems/wayfinder/templates/components/effect-trait-chip.hbs",
+    "systems/wayfinder/templates/components/effect-item.hbs",
+    "systems/wayfinder/templates/components/effect-collapsible.hbs",
+    "systems/wayfinder/templates/components/effect-toggle.hbs",
+    "systems/wayfinder/templates/components/effect-activation.hbs",
     "systems/wayfinder/templates/components/collapsible-effect.hbs",
+    "systems/wayfinder/templates/components/roll-dialog.hbs",
+    "systems/wayfinder/templates/components/attack-roll-card.hbs",
+    "systems/wayfinder/templates/components/attack-roll-card-fallback.hbs",
+    "systems/wayfinder/templates/components/attack-form.hbs",
+    "systems/wayfinder/templates/components/attack-dialog.hbs",
+    "systems/wayfinder/templates/components/color-picker-dialog.hbs",
     "systems/wayfinder/templates/actor/parts/actor-modifiers-tab.hbs",
     "systems/wayfinder/templates/components/top-resources-row.hbs",
     "systems/wayfinder/templates/components/sheet-header.hbs",

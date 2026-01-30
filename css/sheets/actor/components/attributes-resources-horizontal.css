@@ -1,0 +1,17 @@
+/* Component: Attributes + Resources horizontal layout */
+.wayfinder.sheet.actor .attributes-resources-horizontal {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;
+  align-items: start;
+}
+
+.wayfinder.sheet.actor .attributes-resources-horizontal > * {
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .wayfinder.sheet.actor .attributes-resources-horizontal {
+    grid-template-columns: 1fr;
+  }
+}

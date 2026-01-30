@@ -1,0 +1,10 @@
+/* Tab: Spells */
+.wayfinder.sheet.actor .tab[data-tab="spells"] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spells-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}

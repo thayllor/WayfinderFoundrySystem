@@ -327,37 +327,71 @@ export class WayfinderTraitSheet extends HandlebarsApplicationMixin(DocumentShee
    * Open a color picker dialog
    * @private
    */
-  _openColorDialog(title, callback) {
-    const colorHtml = `
-      <div class="color-picker-dialog">
-        <input type="color" id="color-input" value="#000000" style="width: 100%; height: 200px; cursor: pointer;">
-      </div>
-    `;
-
+  async _openColorDialog(title, callback) {
     const DialogClass = (typeof ApplicationV2 !== 'undefined' && ApplicationV2?.Dialog) ? ApplicationV2.Dialog : Dialog;
-    const dialog = new DialogClass({
-      title: title,
-      content: colorHtml,
-      buttons: {
-        apply: {
-          icon: '<i class="fas fa-check"></i>',
-          label: 'Aplicar',
-          callback: (html) => {
-            const dom = (html && html[0]) ? html[0] : html;
-            const input = dom.querySelector('#color-input');
-            if (input && callback) {
-              callback(input.value);
+    // Render icon + color-picker partials and then create dialog to avoid inline HTML in JS
+    let iconCheck = 'fas fa-check';
+    let iconTimes = 'fas fa-times';
+
+    const makeDialog = (colorHtml) => {
+      const dialog = new DialogClass({
+        title: title,
+        content: colorHtml,
+        buttons: {
+          apply: {
+            icon: iconCheck,
+            label: 'Aplicar',
+            callback: (html) => {
+              const dom = (html && html[0]) ? html[0] : html;
+              const input = dom.querySelector('#color-input');
+              if (input && callback) {
+                callback(input.value);
+              }
             }
+          },
+          cancel: {
+            icon: iconTimes,
+            label: 'Cancelar'
           }
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: 'Cancelar'
-        }
-      },
-      default: 'apply'
-    });
+        default: 'apply'
+      });
+      dialog.render(true);
+    };
 
-    dialog.render(true);
+    try {
+      const [checkHtml, timesHtml, colorHtml] = await Promise.all([
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-check' }),
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-times' }),
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/color-picker-dialog.hbs', { value: '#000000' })
+      ]);
+      iconCheck = checkHtml;
+      iconTimes = timesHtml;
+      makeDialog(colorHtml);
+    } catch (ie) {
+      console.warn('Wayfinder | failed to render icon/color partials in color dialog', ie);
+      // keep class fallbacks wrapped as <i>
+      if (typeof iconCheck === 'string' && !iconCheck.includes('<')) iconCheck = `<i class="${iconCheck}"></i>`;
+      if (typeof iconTimes === 'string' && !iconTimes.includes('<')) iconTimes = `<i class="${iconTimes}"></i>`;
+
+      // Build fallback HTML programmatically to avoid large inline string literals
+      try {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'color-picker-dialog';
+        const input = document.createElement('input');
+        input.type = 'color';
+        input.id = 'color-input';
+        input.value = '#000000';
+        input.style.width = '100%';
+        input.style.height = '200px';
+        input.style.cursor = 'pointer';
+        wrapper.appendChild(input);
+        makeDialog(wrapper.outerHTML);
+      } catch (e) {
+        console.warn('Wayfinder | failed to construct fallback color dialog DOM', e);
+        // Fallback to empty dialog content if DOM creation is unavailable
+        makeDialog('');
+      }
+    }
   }
 }

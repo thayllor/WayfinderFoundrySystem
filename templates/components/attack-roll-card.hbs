@@ -1,0 +1,49 @@
+<article class="wf-attack-card wf-attack-card--compact {{#if both}}wf-attack-card--both{{/if}}" role="group" aria-label="Cartão de Ataque">
+  <header class="wf-attack-header wf-attack-header--center">
+    <h2 class="wf-attack-name">
+      {{#if effectName}}{{effectName}}{{else}}{{title}}{{/if}}
+      {{#if showItem}} <span class="wf-attack-item">- {{itemName}}</span>{{/if}}
+    </h2>
+    <div class="wf-attack-total wf-attack-total--center">{{attackTotal}}</div>
+  </header>
+
+  <main class="wf-attack-main wf-attack-main--compact">
+    {{#if effectDescription}}
+      <div class="wf-effect-desc">
+        {{{effectDescription}}}
+      </div>
+    {{/if}}
+    <div class="wf-attack-stats-row">
+      {{#each stats}}
+        <div class="wf-stat-chip" role="listitem">
+          <div class="wf-stat-chip__label">{{this.label}}</div>
+          <div class="wf-stat-chip__value {{#if this.small}}small{{/if}}">{{this.value}}</div>
+        </div>
+      {{/each}}
+    </div>
+
+    <div class="wf-attack-panels">
+      {{#if attackFormula}}
+        <div class="wf-panel wf-panel--attack compact">
+          <div class="wf-panel__title">Ataque</div>
+          <div class="wf-panel__inner"><code class="wf-panel__code">{{attackFormula}}</code></div>
+          <div class="wf-panel__dice">{{attackDice}}</div>
+        </div>
+      {{/if}}
+
+      {{#if damageFormula}}
+        <div class="wf-panel wf-panel--damage compact">
+          <div class="wf-panel__title">Dano<span class="wf-damage-type">{{damageType}}</span></div>
+          <div class="wf-panel__inner"><code class="wf-panel__code">{{damageFormula}}</code></div>
+          <div class="wf-panel__dice">{{damageDice}} · <span class="wf-total">{{damageTotal}}</span></div>
+        </div>
+      {{/if}}
+    </div>
+  </main>
+
+  {{#if flavor}}
+    <footer class="wf-attack-footer wf-attack-footer--compact">
+      <div class="wf-attack-flavor">{{{flavor}}}</div>
+    </footer>
+  {{/if}}
+</article>

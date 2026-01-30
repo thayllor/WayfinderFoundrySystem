@@ -36,6 +36,24 @@ export class WayfinderActiveEffectSheet extends foundry.applications.api.Handleb
 
     const traitsResolved = [];
 
+    const normalizeColor = (raw) => {
+      try {
+        if (!raw && raw !== '') return '#666666';
+        let c = raw;
+        if (typeof c === 'object' && c !== null) {
+          if (typeof c.value === 'string') c = c.value;
+          else return '#666666';
+        }
+        if (typeof c !== 'string') return '#666666';
+        c = c.trim();
+        if (/^[0-9A-Fa-f]{6}$/.test(c)) return `#${c}`;
+        if (/^[0-9A-Fa-f]{3}$/.test(c)) return `#${c}`;
+        return c || '#666666';
+      } catch (e) {
+        return '#666666';
+      }
+    };
+
     for (const uuid of traitUuids) {
       try {
         const doc = await fromUuid(uuid);
@@ -44,7 +62,7 @@ export class WayfinderActiveEffectSheet extends foundry.applications.api.Handleb
             uuid,
             id: doc.id,
             name: doc.name,
-            color: doc.system?.color || '#666666'
+            color: normalizeColor(doc.system?.color)
           });
         }
       } catch (err) {

@@ -1,0 +1,39 @@
+/* Component: Sheet Tabs (top navigation for actor sheet) */
+.wayfinder.sheet.actor .sheet-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  align-items: center;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.wayfinder.sheet.actor .sheet-tabs .item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  background: transparent;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.wayfinder.sheet.actor .sheet-tabs .item.active {
+  background: linear-gradient(90deg, var(--color-warm-2), var(--color-warm-3));
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 600px) {
+  .wayfinder.sheet.actor .sheet-tabs {
+    gap: 6px;
+    margin: 8px 0;
+  }
+  .wayfinder.sheet.actor .sheet-tabs .item {
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
+}

@@ -1,0 +1,10 @@
+/* Tab: Skills */
+.wayfinder.sheet.actor .tab[data-tab="skills"] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab="skills"] .skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}

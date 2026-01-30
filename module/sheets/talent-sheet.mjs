@@ -25,6 +25,27 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
     const traitUuids = Array.isArray(this.document.system?.traits) ? this.document.system.traits : [];
     const traitsResolved = [];
 
+    const normalizeColor = (raw) => {
+      try {
+        if (!raw && raw !== '') return '#666666';
+        let c = raw;
+        if (typeof c === 'object' && c !== null) {
+          if (typeof c.value === 'string') c = c.value;
+          else return '#666666';
+        }
+        if (typeof c !== 'string') return '#666666';
+        c = c.trim();
+        // If hex without leading #, add it
+        if (/^[0-9A-Fa-f]{6}$/.test(c)) return `#${c}`;
+        // If short hex like 'fff', expand
+        if (/^[0-9A-Fa-f]{3}$/.test(c)) return `#${c}`;
+        // Otherwise return as-is (lets CSS handle rgb(), named colors, etc.)
+        return c || '#666666';
+      } catch (e) {
+        return '#666666';
+      }
+    };
+
     for (const uuid of traitUuids) {
       try {
         const doc = await fromUuid(uuid);
@@ -33,7 +54,7 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
             uuid,
             id: doc.id,
             name: doc.name,
-            color: doc.system?.color || '#666666'
+            color: normalizeColor(doc.system?.color)
           });
         }
       } catch (err) {
@@ -58,8 +79,8 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
           for (const tuuid of traitUuidsEffect) {
             try {
               const tdoc = await fromUuid(tuuid);
-              if (tdoc && tdoc.type === 'trait') {
-                traitsResolvedEffect.push({ uuid: tuuid, id: tdoc.id, name: tdoc.name, color: tdoc.system?.color || '#666666' });
+                if (tdoc && tdoc.type === 'trait') {
+                traitsResolvedEffect.push({ uuid: tuuid, id: tdoc.id, name: tdoc.name, color: normalizeColor(tdoc.system?.color) });
               }
             } catch (err) {
               console.warn('Erro ao resolver trait de efeito:', tuuid, err);
@@ -101,8 +122,8 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
           for (const tuuid of traitUuidsEffect) {
             try {
               const tdoc = await fromUuid(tuuid);
-              if (tdoc && tdoc.type === 'trait') {
-                traitsResolvedEffect.push({ uuid: tuuid, id: tdoc.id, name: tdoc.name, color: tdoc.system?.color || '#666666' });
+                if (tdoc && tdoc.type === 'trait') {
+                traitsResolvedEffect.push({ uuid: tuuid, id: tdoc.id, name: tdoc.name, color: normalizeColor(tdoc.system?.color) });
               } else {
                 traitsResolvedEffect.push({ uuid: tuuid, name: String(tuuid), color: '#666666' });
               }
@@ -207,6 +228,28 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
 
       if (!toggleBtn || !content || !textarea) return;
 
+      // Pre-render icons used by the editor controls (non-blocking)
+      let iconTimes = 'fas fa-times';
+      let iconEdit = 'fas fa-edit';
+      let iconEye = 'fas fa-eye';
+      let iconEyeSlash = 'fas fa-eye-slash';
+      Promise.all([
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-times' }),
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-edit' }),
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-eye' }),
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-eye-slash' })
+      ]).then(([t, e, eye, eyeslash]) => {
+        iconTimes = t; iconEdit = e; iconEye = eye; iconEyeSlash = eyeslash;
+      }).catch((ie) => {
+        console.warn('Wayfinder | failed to render editor icon partials', ie);
+      });
+
+      // Wrap fallback class names into <i> tags so buttons get HTML immediately
+      if (typeof iconTimes === 'string' && !iconTimes.includes('<')) iconTimes = `<i class="${iconTimes}"></i>`;
+      if (typeof iconEdit === 'string' && !iconEdit.includes('<')) iconEdit = `<i class="${iconEdit}"></i>`;
+      if (typeof iconEye === 'string' && !iconEye.includes('<')) iconEye = `<i class="${iconEye}"></i>`;
+      if (typeof iconEyeSlash === 'string' && !iconEyeSlash.includes('<')) iconEyeSlash = `<i class="${iconEyeSlash}"></i>`;
+
       let isPreview = false;
 
       // Toggle editor mode
@@ -216,8 +259,8 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
         content.setAttribute('data-text-editable', !isEditing);
         toolbar.style.display = !isEditing ? 'flex' : 'none';
         toggleBtn.innerHTML = !isEditing
-          ? '<i class="fas fa-times"></i> Cancelar'
-          : '<i class="fas fa-edit"></i> Editar';
+          ? `${iconTimes} Cancelar`
+          : `${iconEdit} Editar`;
 
         if (!isEditing) {
           content.focus();
@@ -229,7 +272,7 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
         content.setAttribute('contenteditable', 'false');
         content.setAttribute('data-text-editable', 'false');
         toolbar.style.display = 'none';
-        toggleBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
+        toggleBtn.innerHTML = `${iconEdit} Editar`;
         textarea.value = content.innerHTML;
         textarea.dispatchEvent(new Event('change', { bubbles: true }));
       });
@@ -241,11 +284,11 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
           preview.innerHTML = content.innerHTML;
           preview.style.display = 'block';
           content.style.display = 'none';
-          previewBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Editar';
+          previewBtn.innerHTML = `${iconEyeSlash} Editar`;
         } else {
           preview.style.display = 'none';
           content.style.display = 'block';
-          previewBtn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+          previewBtn.innerHTML = `${iconEye} Preview`;
         }
       });
 

@@ -1,0 +1,33 @@
+<div
+  class="wf-roll-card"
+  style="border-radius:12px;padding:14px;background:linear-gradient(180deg,var(--wayfinder-accent-light),#fff);color:var(--wayfinder-text);max-width:560px;border:1px solid rgba(0,0,0,0.06);box-shadow:0 10px 24px rgba(0,0,0,0.12)"
+>
+  <div
+    style="display:flex;align-items:center;justify-content:space-between;gap:16px"
+  >
+    <div style="flex:1;min-width:0">
+      <div
+        style="background:var(--wayfinder-primary);color:#fff;padding:12px 14px;border-radius:10px;font-weight:800;font-size:18px;text-transform:capitalize"
+      >{{title}}</div>
+      <div
+        style="margin-top:10px;font-size:13px;display:flex;gap:12px;flex-wrap:wrap"
+      >
+        {{#if effectDescription}}<div
+            style="margin-top:8px;padding:8px 10px;border-radius:8px;background:rgba(0,0,0,0.02);font-size:13px"
+          >{{{effectDescription}}}</div>{{/if}}
+        <div
+          style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"
+        ><div style="font-size:11px;color:rgba(0,0,0,0.6)">Ataque</div><div
+            style="font-weight:800;font-size:16px"
+          >{{attackTotal}}</div></div>
+        {{#if damageTotal}}<div
+            style="background:rgba(0,0,0,0.04);padding:8px 10px;border-radius:8px"
+          ><div style="font-size:11px;color:rgba(0,0,0,0.6)">Dano{{#if
+                damageType
+              }} · {{damageType}}{{/if}}</div><div
+              style="font-weight:800;font-size:16px"
+            >{{damageTotal}}</div></div>{{/if}}
+      </div>
+    </div>
+  </div>
+</div>

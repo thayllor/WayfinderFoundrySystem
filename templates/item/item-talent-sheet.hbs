@@ -114,25 +114,19 @@
         {{#if activeEffects.length}}
           <div class="effects-list">
             {{#each activeEffects as |effect idx|}}
-              <div
-                class="effect-item active-effect-item"
-                data-uuid="{{effect.uuid}}"
-              >
-                {{collapsibleEffect effect=effect idx=idx}}
-
-                {{#if @root.editable}}
-                  <div class="effect-item-actions">
-                    <button
-                      type="button"
-                      class="remove-effect-btn"
-                      data-uuid="{{effect.uuid}}"
-                      title="Remover efeito"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                {{/if}}
-              </div>
+              {{{collapsibleEffect effect=effect idx=idx}}}
+              {{#if @root.editable}}
+                <div class="effect-item-actions">
+                  <button
+                    type="button"
+                    class="remove-effect-btn"
+                    data-uuid="{{effect.uuid}}"
+                    title="Remover efeito"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              {{/if}}
             {{/each}}
           </div>
         {{else}}
@@ -156,25 +150,19 @@
         {{#if passiveEffects.length}}
           <div class="effects-list">
             {{#each passiveEffects as |effect idx|}}
-              <div
-                class="effect-item passive-effect-item"
-                data-uuid="{{effect.uuid}}"
-              >
-                {{collapsibleEffect effect=effect idx=idx}}
-
-                {{#if @root.editable}}
-                  <div class="effect-item-actions">
-                    <button
-                      type="button"
-                      class="remove-effect-btn"
-                      data-uuid="{{effect.uuid}}"
-                      title="Remover efeito"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                {{/if}}
-              </div>
+              {{{collapsibleEffect effect=effect idx=idx}}}
+              {{#if @root.editable}}
+                <div class="effect-item-actions">
+                  <button
+                    type="button"
+                    class="remove-effect-btn"
+                    data-uuid="{{effect.uuid}}"
+                    title="Remover efeito"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              {{/if}}
             {{/each}}
           </div>
         {{else}}

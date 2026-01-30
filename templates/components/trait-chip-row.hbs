@@ -1,0 +1,12 @@
+<div class="trait-chip-row">
+  <span class="trait-chip-label">Traits:</span>
+  {{#each traits}}
+    <div
+      class="trait-chip"
+      style="background-color: {{this.color}};"
+      title="{{this.name}}"
+    >
+      <span class="trait-chip-name">{{this.name}}</span>
+    </div>
+  {{/each}}
+</div>

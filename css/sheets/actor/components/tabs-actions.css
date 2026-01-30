@@ -1,0 +1,10 @@
+/* Tab: Actions */
+.wayfinder.sheet.actor .tab[data-tab="actions"] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab="actions"] .action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

@@ -12,7 +12,23 @@
             {{#if (gt itemActiveEffects.length 0)}}
               <div class="effects-collapsible-list">
                 {{#each itemActiveEffects as |effect index|}}
-                  {{{collapsibleEffect effect=effect idx=index}}}
+                  {{{collapsibleEffect
+                    effect=effect
+                    idx=index
+                    source="effects-tab"
+                  }}}
+                  {{#if @root.editable}}
+                    <div class="effect-item-actions">
+                      <button
+                        type="button"
+                        class="remove-effect-btn"
+                        data-uuid="{{effect.uuid}}"
+                        title="Remover efeito"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  {{/if}}
                 {{/each}}
               </div>
             {{else}}
@@ -27,7 +43,23 @@
             {{#if (gt itemPassiveEffects.length 0)}}
               <div class="effects-collapsible-list">
                 {{#each itemPassiveEffects as |effect index|}}
-                  {{{collapsibleEffect effect=effect idx=index}}}
+                  {{{collapsibleEffect
+                    effect=effect
+                    idx=index
+                    source="effects-tab"
+                  }}}
+                  {{#if @root.editable}}
+                    <div class="effect-item-actions">
+                      <button
+                        type="button"
+                        class="remove-effect-btn"
+                        data-uuid="{{effect.uuid}}"
+                        title="Remover efeito"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  {{/if}}
                 {{/each}}
               </div>
             {{else}}
@@ -50,7 +82,23 @@
             {{#if (gt talentActiveEffects.length 0)}}
               <div class="effects-collapsible-list">
                 {{#each talentActiveEffects as |effect index|}}
-                  {{{collapsibleEffect effect=effect idx=index}}}
+                  {{{collapsibleEffect
+                    effect=effect
+                    idx=index
+                    source="effects-tab"
+                  }}}
+                  {{#if @root.editable}}
+                    <div class="effect-item-actions">
+                      <button
+                        type="button"
+                        class="remove-effect-btn"
+                        data-uuid="{{effect.uuid}}"
+                        title="Remover efeito"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  {{/if}}
                 {{/each}}
               </div>
             {{else}}
@@ -65,7 +113,23 @@
             {{#if (gt talentPassiveEffects.length 0)}}
               <div class="effects-collapsible-list">
                 {{#each talentPassiveEffects as |effect index|}}
-                  {{{collapsibleEffect effect=effect idx=index}}}
+                  {{{collapsibleEffect
+                    effect=effect
+                    idx=index
+                    source="effects-tab"
+                  }}}
+                  {{#if @root.editable}}
+                    <div class="effect-item-actions">
+                      <button
+                        type="button"
+                        class="remove-effect-btn"
+                        data-uuid="{{effect.uuid}}"
+                        title="Remover efeito"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  {{/if}}
                 {{/each}}
               </div>
             {{else}}
@@ -88,7 +152,23 @@
             {{#if (gt talentSpellActiveEffects.length 0)}}
               <div class="effects-collapsible-list">
                 {{#each talentSpellActiveEffects as |effect index|}}
-                  {{{collapsibleEffect effect=effect idx=index}}}
+                  {{{collapsibleEffect
+                    effect=effect
+                    idx=index
+                    source="effects-tab"
+                  }}}
+                  {{#if @root.editable}}
+                    <div class="effect-item-actions">
+                      <button
+                        type="button"
+                        class="remove-effect-btn"
+                        data-uuid="{{effect.uuid}}"
+                        title="Remover efeito"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  {{/if}}
                 {{/each}}
               </div>
             {{else}}
@@ -104,7 +184,23 @@
             {{#if (gt talentSpellPassiveEffects.length 0)}}
               <div class="effects-collapsible-list">
                 {{#each talentSpellPassiveEffects as |effect index|}}
-                  {{{collapsibleEffect effect=effect idx=index}}}
+                  {{{collapsibleEffect
+                    effect=effect
+                    idx=index
+                    source="effects-tab"
+                  }}}
+                  {{#if @root.editable}}
+                    <div class="effect-item-actions">
+                      <button
+                        type="button"
+                        class="remove-effect-btn"
+                        data-uuid="{{effect.uuid}}"
+                        title="Remover efeito"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  {{/if}}
                 {{/each}}
               </div>
             {{else}}
