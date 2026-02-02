@@ -1,0 +1,325 @@
+/* Tab: Inventory */
+.wayfinder.sheet.actor .tab[data-tab=inventory] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-cards {
+  display: grid;
+  /* stack cards vertically and let them take full available width */
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: start;
+  margin: 6px 0;
+  width: 100%;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-card {
+  /* Use the sheet card look for visual consistency */
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  color: var(--color-text-primary);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-card-header {
+  padding: 10px 14px;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-text-primary, #eee);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.12), transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-card-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: transparent;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-empty {
+  padding: 18px;
+  color: var(--wf-text-muted, #6b7280);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.03), transparent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--wf-accent, #2b6cb0);
+  font-size: 14px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-name-text {
+  font-weight: 700;
+  font-size: 1rem;
+  /* allow up to two lines, then ellipsis */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-meta {
+  font-size: 0.85rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.65));
+  margin-top: 4px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-description {
+  font-size: 0.9rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.6));
+  margin-top: 8px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls select,
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls input[type=checkbox] {
+  margin: 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--wf-accent, #2b6cb0);
+  padding: 6px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .item-edit,
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .item-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .item-edit:hover {
+  background: rgba(43, 108, 176, 0.08);
+  color: #fff;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .item-delete:hover {
+  background: rgba(220, 38, 38, 0.08);
+  color: #fff;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .inventory-item-hand-select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 6px 28px 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  font-size: 0.92rem;
+  min-width: 110px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .inventory-item-tuned {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--wf-text-muted, #6b7280);
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .inventory-item-tuned-checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 700px) {
+  .wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-cards {
+    grid-template-columns: 1fr;
+  }
+  .wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    gap: 8px;
+    align-items: start;
+  }
+  .wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls {
+    justify-content: flex-end;
+  }
+}
+/* Fallback selectors (no .wayfinder.sheet.actor prefix) to match different DOM contexts */
+.tab[data-tab=inventory] .inventory-cards,
+.tab[data-tab=resources] .inventory-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: start;
+  margin: 6px 0;
+  width: 100%;
+}
+
+.tab[data-tab=inventory] .inventory-card,
+.tab[data-tab=resources] .inventory-card {
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  color: var(--color-text-primary);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+}
+
+.tab[data-tab=inventory] .inventory-card-header,
+.tab[data-tab=resources] .inventory-card-header {
+  padding: 10px 14px;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-text-primary, #eee);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.12), transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.tab[data-tab=inventory] .inventory-card-body,
+.tab[data-tab=resources] .inventory-card-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: transparent;
+}
+
+.tab[data-tab=inventory] .inventory-item,
+.tab[data-tab=resources] .inventory-item {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.tab[data-tab=inventory] .inventory-item:hover,
+.tab[data-tab=resources] .inventory-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.tab[data-tab=inventory] .inventory-item-name,
+.tab[data-tab=resources] .inventory-item-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.tab[data-tab=inventory] .inventory-item-name-text,
+.tab[data-tab=resources] .inventory-item-name-text {
+  font-weight: 700;
+  font-size: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.tab[data-tab=inventory] .inventory-item-meta,
+.tab[data-tab=resources] .inventory-item-meta {
+  font-size: 0.85rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.65));
+  margin-top: 4px;
+}
+
+.tab[data-tab=inventory] .inventory-item-controls,
+.tab[data-tab=resources] .inventory-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Also apply the same inventory styles when the markup is placed under the `resources` tab */
+.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-cards {
+  display: grid;
+  /* stack cards vertically and let them take full available width */
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: start;
+  margin: 6px 0;
+  width: 100%;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-card {
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  color: var(--color-text-primary);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-card-header {
+  padding: 10px 14px;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-text-primary, #eee);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.12), transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-card-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: transparent;
+}

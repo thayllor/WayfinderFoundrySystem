@@ -1,12 +1,10 @@
 /* Wayfinder common utilities and base styles
-	 - Fonts and third-party imports
-	 - Generic typography (labels, h2/h3)
-	 - Global utilities used across components and sheets
+ 	 - Fonts and third-party imports
+ 	 - Generic typography (labels, h2/h3)
+ 	 - Global utilities used across components and sheets
 */
-
 /* Example font import - replace with your preferred font stack if needed */
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;700&display=swap");
-
 :root {
   /* small set of design tokens used across the system */
   --wf-font-sans:
@@ -40,6 +38,7 @@
   font-size: var(--wf-h3-size);
   margin: 0 0 6px 0;
 }
+
 .wayfinder h4 {
   font-size: var(--wf-h4-size);
 }
@@ -50,11 +49,13 @@
   gap: 12px;
   align-items: center;
 }
+
 .wf-col {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
+
 .wf-hidden {
   display: none;
 }
@@ -67,7 +68,6 @@
 }
 
 /* End of common utilities */
-
 /* Responsive helpers */
 :root {
   --wf-break-sm: 600px;
@@ -78,10 +78,6 @@
    - Ensure new windows open with a practical minimum width
    - Constrain the window content/body to a maximum width for readable layout
 */
-.window-content {
-  max-width: 1200px;
-}
-
 /* Prefer targeting both .window-app and .app.window-app to catch different contexts */
 .window-app,
 .app.window-app {
@@ -106,7 +102,6 @@
     min-width: auto;
   }
 }
-
 @media (max-width: 900px) {
   .wayfinder {
     font-size: 14px;
@@ -115,7 +110,6 @@
     gap: 8px;
   }
 }
-
 @media (max-width: 600px) {
   .wayfinder {
     font-size: 13px;
@@ -125,9 +119,7 @@
     align-items: stretch;
   }
 }
-
 /* (Reverted recent centering/scroll rules) */
-
 /* Wayfinder: center window content and allow internal scrolling without breaking outer UI
    - Scoped to `.wayfinder` to avoid impacting other modules/layouts
    - Uses `max-height` + `overflow-y:auto` on `.window-content` so the content area scrolls
@@ -142,19 +134,17 @@
 }
 
 .wayfinder .window-header {
-  flex: 0 0 auto; /* keep header at top */
+  flex: 0 0 auto;
 }
 
 .wayfinder .window-content {
-  flex: 1 1 auto; /* fill remaining space */
+  flex: 1 1 auto;
   width: 100%;
-  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: auto;
 }
 
 /* Center only the inner Wayfinder form horizontally and vertically inside the content area */
@@ -166,7 +156,6 @@
   width: 100%;
 }
 
-/* Mobile: revert to standard stacked behavior to avoid overlay/centering issues */
 @media (max-width: 920px) {
   .wayfinder .window-app,
   .wayfinder .app.window-app {

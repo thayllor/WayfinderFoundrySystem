@@ -34,7 +34,7 @@
         <div class="effect-traits-row">
           {{#if traits.length}}
             {{#each traits}}
-              <span class="trait-chip trait-chip-small" style="background-color: {{color}};" title="{{name}}">
+              <span class="trait-chip trait-chip-small" style="background: {{color}}; color: {{textColor}};" title="{{name}}">
                 <span class="trait-chip-name">{{name}}</span>
               </span>
             {{/each}}
@@ -109,7 +109,7 @@
             {{/each}}
           </div>
         {{else}}
-          <div class="heightened-empty" style="padding:8px 0;color:#666;font-size:13px">Nenhum aprimoramento definido.</div>
+          <div class="heightened-empty" >Nenhum aprimoramento definido.</div>
         {{/if}}
       </div>
 

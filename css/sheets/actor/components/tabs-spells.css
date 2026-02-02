@@ -1,10 +1,129 @@
 /* Tab: Spells */
-.wayfinder.sheet.actor .tab[data-tab="spells"] {
+.wayfinder.sheet.actor .tab[data-tab=spells] {
   padding: 8px 0;
 }
 
-.wayfinder.sheet.actor .tab[data-tab="spells"] .spells-grid {
+.wayfinder.sheet.actor .tab[data-tab=spells] .spells-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
+}
+
+/* Controls row */
+.wayfinder.sheet.actor .tab[data-tab=spells] .spells-controls-card {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spells-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spells-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 0;
+  min-width: 160px;
+  flex: 1 1 220px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spells-card .description-card-body {
+  padding: 10px;
+}
+
+/* Spell levels list */
+.wayfinder.sheet.actor .tab[data-tab=spells] .spells-levels {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-category {
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.06), transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-icon {
+  width: 20px;
+  text-align: center;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-badge {
+  font-weight: 800;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-count {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-content {
+  padding: 10px 12px;
+  display: grid;
+  gap: 8px;
+}
+
+/* Spell entry and talent styles */
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-entry,
+.wayfinder.sheet.actor .tab[data-tab=spells] .talent-item {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-item-header,
+.wayfinder.sheet.actor .tab[data-tab=spells] .talent-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-item-name,
+.wayfinder.sheet.actor .tab[data-tab=spells] .talent-item-name {
+  font-weight: 700;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .talent-level-badge {
+  margin-left: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .talent-item-content {
+  padding: 8px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+@media (max-width: 800px) {
+  .wayfinder.sheet.actor .tab[data-tab=spells] .spells-row {
+    flex-direction: column;
+  }
 }

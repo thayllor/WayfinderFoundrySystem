@@ -1,9 +1,9 @@
 /* Tab: Resources/Inventory */
-.wayfinder.sheet.actor .tab[data-tab="resources"] {
+.wayfinder.sheet.actor .tab[data-tab=resources] {
   padding: 8px 0;
 }
 
-.wayfinder.sheet.actor .tab[data-tab="resources"] .inventory-list {
+.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-list {
   display: flex;
   flex-direction: column;
   gap: 8px;

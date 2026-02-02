@@ -1,9 +1,11 @@
 /* Component: Attributes + Resources horizontal layout */
 .wayfinder.sheet.actor .attributes-resources-horizontal {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  /* Two equal columns (50% / 50%) so each child fills half the window */
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
   align-items: start;
+  height: 800px;
 }
 
 .wayfinder.sheet.actor .attributes-resources-horizontal > * {
@@ -14,4 +16,300 @@
   .wayfinder.sheet.actor .attributes-resources-horizontal {
     grid-template-columns: 1fr;
   }
+}
+
+/* --------------------------------------------------
+   Attributes Pentagram (watermark + manual points)
+
+   - `.attributes-pentagon` is the left column container that holds
+     an image used as watermark/background and a container where
+     the author can place 5 manually positioned divs.
+   - Use `.pentagon-attributes-container` to add the 5 child divs
+     (each with class `.pentagon-attribute` and optional utility
+     classes `.pos-1` .. `.pos-5` for quick positioning).
+   - These positions are approximate and intended as a starting
+     point — the author can override with inline styles or change
+     the `left/top` values to align precisely with the image.
+-------------------------------------------------- */
+
+.wayfinder.sheet.actor .attributes-pentagon {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  display: block;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-background-img {
+  /* If the template injects an <img>, position it as a low-opacity watermark */
+  position: absolute;
+  inset: 0 0 0 0;
+  width: 100%;
+  object-fit: contain;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attributes-container {
+  /* Relative stacking context for absolute-positioned attributes */
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute {
+  position: absolute;
+  /* default size for each attribute block — adjust as needed */
+  width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  text-align: center;
+  /* keep centering behavior but allow explicit positions via .pos-* */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Legacy triangle class mapping: if templates still render
+   `.triangle-up` / `.triangle-down` (or mis-spelled variants),
+   make them behave like the new attribute containers so templates
+   don't need editing. */
+
+/* Attribute title (same visual weight as an h4 from the sheet header) */
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #e6e6e6);
+  margin: 0;
+  padding: 0 4px;
+  line-height: 1.1;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* Two stacked containers under the title. Background images provide the visual.
+   The content can be a numeric/text value inside each box. */
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-value-container,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-defence-container {
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  box-sizing: border-box;
+}
+
+/* Background images (relative path from this CSS file to the images folder) */
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-value-container {
+  background-image: url("../../../../images/atributo.png");
+}
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-defence-container {
+  background-image: url("../../../../images/shield.png");
+}
+
+/* Map legacy triangle classes to the visual containers */
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .triangle-up,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .Atribute-value-container,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .Atribute_value_container {
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  box-sizing: border-box;
+  background-image: url("../../../../images/atributo.png");
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .triangle-down,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .Atribute-Defence-Container,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .Atribute_Defence_Container {
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  box-sizing: border-box;
+  background-image: url("../../../../images/shield.png");
+}
+
+/* Inner text styling for the numeric/value text */
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .value-text,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .defence-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* New selectors for updated template markup: nested boxes */
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-pentagon-box {
+  position: relative;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  display: flex;
+}
+
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-value-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-value-box,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-defence-box {
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  box-sizing: border-box;
+}
+
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-value-box {
+  background-image: url("../../../../images/atributo.png");
+}
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-defence-box {
+  background-image: url("../../../../images/shield.png");
+}
+
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-value {
+  width: 48px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary, #ffffff);
+  text-align: center;
+  font-weight: 700;
+}
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-defence {
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+}
+
+/* Named positions for attributes (class and data-attribute-key selectors).
+   These match the names you provided so you can rely on either adding
+   the class to the `.pentagon-attribute` or relying on the template's
+   `data-attribute-key` value. */
+
+/* Presence: left 89% (uses current top unless overridden) */
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.presence,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="presence"] {
+  left: 89%;
+}
+
+/* Wisdom: left 13% (support both correct spelling and common typo 'wisdow') */
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.wisdom,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.wisdow,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="wisdom"],
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="wisdow"] {
+  left: 13%;
+}
+
+/* Intelligence: top 27% (keeps left unless overridden) */
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.intelligence,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="intelligence"] {
+  top: 27%;
+}
+
+/* Strength: top 74%; left 30% (also accept common typo 'strenth') */
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.strength,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.strenth,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="strength"],
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="strenth"] {
+  top: 74%;
+  left: 30%;
+}
+
+/* Dexterity: top 74%; left 70% */
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.dexterity,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="dexterity"] {
+  top: 74%;
+  left: 70%;
+}
+
+/* Make sure the right column (defenses / resources) flows correctly */
+.wayfinder.sheet.actor .attributes-resources-horizontal > .defenses-table,
+.wayfinder.sheet.actor .attributes-resources-horizontal > .resources-column {
+  width: 100%;
 }

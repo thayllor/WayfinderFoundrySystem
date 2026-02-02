@@ -1,0 +1,11 @@
+{
+  "name": "wayfinder-styles",
+  "private": true,
+  "devDependencies": {
+    "sass": "^1.70.0"
+  },
+  "scripts": {
+    "build:css": "sass css:css --no-source-map",
+    "watch:css": "sass --watch css:css --no-source-map"
+  }
+}

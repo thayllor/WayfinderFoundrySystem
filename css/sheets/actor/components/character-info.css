@@ -1,18 +1,13 @@
 /* Component: Character Info Row (actor sheet)
    Scoped to actor sheets only. New styling created from scratch.
 */
-
 .wayfinder.sheet.actor .character-info-row {
   display: flex;
   gap: 12px;
   align-items: flex-start;
   padding: 12px;
   border-radius: 8px;
-  background: linear-gradient(
-    180deg,
-    rgba(25, 25, 25, 0.98),
-    var(--color-light-6)
-  );
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
   border: 1px solid var(--color-dark-4);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
@@ -86,7 +81,6 @@
     flex: 0 0 120px;
   }
 }
-
 @media (max-width: 600px) {
   .wayfinder.sheet.actor .character-info-row {
     flex-direction: column;

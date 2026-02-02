@@ -54,15 +54,33 @@ export class WayfinderActiveEffectSheet extends foundry.applications.api.Handleb
       }
     };
 
+    const getContrastColor = (color) => {
+      try {
+        if (!color || typeof color !== 'string') return '#fff';
+        const c = color.trim();
+        if (c.startsWith('#')) {
+          const h = c.substring(1);
+          const r = parseInt(h.length === 3 ? h[0]+h[0] : h.substring(0,2), 16);
+          const g = parseInt(h.length === 3 ? h[1]+h[1] : h.substring(2,4), 16);
+          const b = parseInt(h.length === 3 ? h[2]+h[2] : h.substring(4,6), 16);
+          const yiq = (r*299 + g*587 + b*114) / 1000;
+          return yiq >= 128 ? '#000' : '#fff';
+        }
+      } catch (e) {}
+      return '#fff';
+    };
+
     for (const uuid of traitUuids) {
       try {
         const doc = await fromUuid(uuid);
         if (doc && doc.type === 'trait') {
+          const c = normalizeColor(doc.system?.color);
           traitsResolved.push({
             uuid,
             id: doc.id,
             name: doc.name,
-            color: normalizeColor(doc.system?.color)
+            color: c,
+            textColor: getContrastColor(c)
           });
         }
       } catch (err) {

@@ -1,0 +1,1086 @@
+/* Talent sheet styles
+	 - Card-like talents with header, actions and collapsible content
+	 - Responsive: header elements wrap on narrow screens
+	 - Effects list and trait chips styled for clarity
+*/
+
+.talent-item {
+  border: 1px solid var(--color-dark-4, rgba(255, 255, 255, 0.03));
+  background: linear-gradient(
+    180deg,
+    rgba(20, 20, 20, 0.95),
+    var(--color-light-6)
+  );
+  border-radius: 8px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+  margin: 8px 0;
+  overflow: hidden;
+  font-size: 13px;
+
+  &-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    user-select: none;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), transparent);
+  }
+
+  .talent-item-icon {
+    width: 16px;
+    height: 16px;
+    color: rgba(255, 255, 255, 0.6);
+    transition: transform 160ms ease;
+    flex: 0 0 18px;
+  }
+
+  .talent-item-name {
+    font-weight: 600;
+    color: var(--color-text-primary, #111827);
+    flex: 1 1 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .talent-level-badge {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-text-primary, #3730a3);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    margin-left: 8px;
+    flex: 0 0 auto;
+  }
+
+  .talent-edit-btn,
+  .talent-delete-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-primary, #374151);
+    padding: 6px;
+    margin-left: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .talent-edit-btn:hover,
+  .talent-delete-btn:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  &-content {
+    padding: 10px 12px 14px 12px;
+    background: transparent;
+  }
+
+  /* COLLAPSIBLE EFFECTS */
+  .talent-effects-section {
+    .effects-category {
+      margin-bottom: 5px;
+    }
+
+    .effects-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      margin: 0 0 8px 0;
+      color: var(--color-text-primary, #0f172a);
+    }
+
+    .effect-count {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--color-text-primary, #0b5394);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+
+    .effects-list {
+      display: block;
+    }
+
+    .effect-item {
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 6px;
+      margin: 6px 0;
+      overflow: hidden;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.02),
+        transparent
+      );
+
+      &.effect-collapsible {
+        .effect-collapsible-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 10px;
+          background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), transparent);
+          cursor: pointer;
+        }
+
+        .effect-collapsible-icon {
+          color: rgba(255, 255, 255, 0.6);
+          transition: transform 160ms ease;
+        }
+
+        .effect-collapsible-title {
+          font-weight: 600;
+          color: var(--color-text-primary, #111827);
+          flex: 1 1 auto;
+        }
+
+        .effect-badge {
+          flex: 0 0 auto;
+          margin-left: 8px;
+          font-size: 12px;
+          padding: 4px 8px;
+          border-radius: 6px;
+          background: rgba(255, 255, 255, 0.02);
+          color: var(--color-text-primary, #92400e);
+          border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .effect-collapsible-content {
+          padding: 10px;
+        }
+      }
+
+      .effect-details {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .effect-section {
+        border-top: 1px dashed rgba(0, 0, 0, 0.03);
+        padding-top: 8px;
+        &.effect-description {
+          margin-top: 6px;
+          padding: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          border-radius: 6px;
+          background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.02),
+            rgba(255, 255, 255, 0.01)
+          );
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+        }
+        &.effect-heightened {
+          margin-top: 6px;
+          padding: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 6px;
+          background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.01),
+            rgba(0, 0, 0, 0.02)
+          );
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+        }
+      }
+
+      .effect-section-header {
+        font-weight: 600;
+        font-size: 12px;
+        color: var(--color-text-primary, #374151);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .effect-traits-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .traits-empty {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 13px;
+        padding: 6px 0;
+      }
+
+      /* Heightened empty state text should be white */
+      .heightened-empty {
+        color: #ffffff;
+        padding: 8px 0;
+        font-size: 13px;
+      }
+
+      .effect-meta-flex {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .effect-meta-chip {
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--color-text-primary, #111827);
+        padding: 6px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .effect-text {
+        font-size: 13px;
+        color: var(--color-text-primary, #111827);
+        line-height: 1.35;
+      }
+
+      /* Readonly talent description area styling */
+      .talent-description-readonly {
+        margin-top: 8px;
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 6px;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        color: #ffffff;
+      }
+
+      .talent-type-category {
+        margin-top: 8px;
+        padding: 10px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 6px;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+
+        /* left: icon + name + meta, right: actions/badges */
+        .type-left {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-width: 0;
+        }
+
+        .type-right {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex: 0 0 auto;
+        }
+
+        .type-name {
+          font-weight: 700;
+          color: #ffffff;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .type-meta {
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.75);
+        }
+
+        .type-actions button {
+          background: transparent;
+          border: none;
+          color: rgba(255, 255, 255, 0.9);
+          padding: 6px;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+        .type-actions button:hover {
+          background: rgba(255, 255, 255, 0.03);
+        }
+
+        @media (max-width: 680px) {
+          flex-wrap: wrap;
+          & > .type-right {
+            width: 100%;
+            justify-content: flex-start;
+          }
+        }
+        /* keep flex layout; do not override with display:block */
+      }
+    }
+  }
+
+  /* small-screen adjustments */
+  @media (max-width: 520px) {
+    &-header {
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+    .talent-item-name {
+      min-width: 0;
+    }
+    .talent-level-badge {
+      margin-left: 0;
+    }
+    .talent-edit-btn,
+    .talent-delete-btn {
+      padding: 5px;
+    }
+  }
+}
+
+/* Utility: collapsed state rotates icon and hides content (scripts toggle) */
+.talent-item.collapsed .talent-item-icon {
+  transform: rotate(0deg);
+}
+.talent-item:not(.collapsed) .talent-item-icon {
+  transform: rotate(90deg);
+}
+.talent-item.collapsed .talent-item-content {
+  display: none !important;
+}
+
+/* Provide global rules so `.talent-type-category` applies outside nested effect contexts */
+.talent-type-category {
+  flex-direction: column;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  .type-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .type-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+  }
+
+  .type-name {
+    font-weight: 700;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .type-meta {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  /* Talent sheet edit/create layout (two-column with quick panel) */
+  .wayfinder-talent-sheet {
+    .sheet-header {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px;
+    }
+
+    .profile-img {
+      width: 110px;
+      height: 110px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 2px solid var(--color-warm-2);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+    }
+
+    .header-fields {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .charname input[name="name"] {
+      font-size: 1.2rem;
+      font-weight: 800;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      color: var(--color-text-primary, #eee);
+      width: 100%;
+    }
+
+    .sheet-body {
+      display: flex;
+      gap: 14px;
+      padding: 12px;
+    }
+
+    .sheet-main {
+      display: block;
+    }
+
+    aside.quick-actions-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .quick-actions-panel .description-card {
+      background: linear-gradient(
+        180deg,
+        rgba(25, 25, 25, 0.98),
+        var(--color-light-6)
+      );
+      border: 1px solid var(--color-dark-4);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .quick-actions-panel .description-card .description-card-body {
+      padding: 10px;
+    }
+
+    .quick-actions-panel .metadata-item {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 6px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .quick-actions-panel .metadata-icon {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .btn {
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.03),
+        rgba(0, 0, 0, 0.06)
+      );
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      color: var(--color-text-primary, #eee);
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+    }
+
+    @media (max-width: 1000px) {
+      .profile-img {
+        width: 96px;
+        height: 96px;
+      }
+    }
+  }
+
+  .type-actions button {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .type-actions button:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  @media (max-width: 680px) {
+    flex-wrap: wrap;
+    & > .type-right {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+}
+
+/* Show listed talents as a single horizontal row under the header */
+.talent-type-category .talent-type-content {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-top: 8px;
+  margin: 0;
+}
+
+/* Compact trait chips inside a small card container */
+.wayfinder-talent-sheet .trait-chip-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 8px;
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 18, 0.95),
+    rgba(32, 32, 32, 0.92)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+.wayfinder-talent-sheet .trait-chip-row .trait-chip-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-right: 6px;
+}
+
+.wayfinder-talent-sheet .trait-chip-row .trait-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--color-text-primary, #ffffff);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  min-height: 20px;
+  height: auto;
+}
+
+.wayfinder-talent-sheet .trait-chip-row .trait-chip .trait-chip-name {
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0;
+}
+
+.wayfinder-talent-sheet .trait-chip-row .trait-chip .trait-chip-remove {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0 4px;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Ensure the talent description section has compact margin */
+.wayfinder-talent-sheet .talent-description-section {
+  margin: 5px;
+}
+
+/* Active effects as their own card with a slightly warmer tone */
+.wayfinder-talent-sheet .effects-category.active-effects-category {
+  padding: 10px;
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    rgba(34, 20, 18, 0.95),
+    rgba(40, 24, 20, 0.92)
+  );
+  border: 1px solid rgba(120, 60, 40, 0.06);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  margin: 5px;
+}
+
+.wayfinder-talent-sheet
+  .effects-category.active-effects-category
+  .effects-title {
+  color: var(--color-warm-2, #eab308);
+}
+
+.wayfinder-talent-sheet
+  .effects-category.active-effects-category
+  .effects-list
+  .effect-item {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Mirror active effects styling for passive effects */
+.wayfinder-talent-sheet .effects-category.passive-effects-category {
+  padding: 10px;
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    rgba(34, 20, 18, 0.95),
+    rgba(40, 24, 20, 0.92)
+  );
+  border: 1px solid rgba(120, 60, 40, 0.06);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  margin: 5px;
+}
+
+.wayfinder-talent-sheet
+  .effects-category.passive-effects-category
+  .effects-title {
+  color: var(--color-warm-2, #eab308);
+}
+
+.wayfinder-talent-sheet
+  .effects-category.passive-effects-category
+  .effects-list
+  .effect-item {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.talent-type-category .talent-type-content .talent-item {
+  flex: 0 0 auto;
+  min-width: 220px;
+  margin: 0;
+}
+
+@media (max-width: 680px) {
+  .talent-type-category .talent-type-content {
+    flex-wrap: wrap;
+  }
+  .talent-type-category .talent-type-content .talent-item {
+    min-width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Apply global effect card styling from effects.css to talent sheet effects */
+.wayfinder-talent-sheet .effects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible {
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 20, 20, 0.98),
+    rgba(12, 12, 12, 0.96)
+  );
+  border: 1px solid var(--color-dark-4);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  user-select: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  transition:
+    background 0.12s ease,
+    box-shadow 0.12s ease;
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header
+  .effect-collapsible-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.16s ease;
+  color: var(--color-text-primary, #eee);
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible.active-effect-item
+  .effect-collapsible-header,
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header.active-header {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.02),
+    rgba(255, 255, 255, 0.02)
+  );
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header.active-header
+  .effect-collapsible-icon {
+  transform: rotate(90deg);
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-title {
+  font-weight: 800;
+  color: var(--color-text-primary, #fff);
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--color-text-primary, #f2f2f2);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-badge.action-badge {
+  background: linear-gradient(
+    180deg,
+    rgba(40, 20, 10, 0.04),
+    rgba(30, 10, 0, 0.03)
+  );
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-badge.magic-badge {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 20, 40, 0.04),
+    rgba(5, 10, 30, 0.03)
+  );
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-content {
+  padding: 10px 12px 14px 12px;
+  display: block;
+  background: transparent;
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-traits
+  .effect-section-header {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-traits
+  .effect-traits-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-traits
+  .trait-chip {
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-meta-block
+  .description-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  padding: 6px;
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-meta-block
+  .effect-meta-flex {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-meta-block
+  .effect-meta-chip {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  font-weight: 700;
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-description
+  .effect-section-header {
+  font-weight: 700;
+}
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-description
+  .effect-text {
+  color: var(--color-text-primary);
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+
+/* Also apply those same effect card styles when effects are rendered inside actor talent items */
+.talent-item .effects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.talent-item .effects-list .effect-item.effect-collapsible {
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 20, 20, 0.98),
+    rgba(12, 12, 12, 0.96)
+  );
+  border: 1px solid var(--color-dark-4);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  user-select: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  transition:
+    background 0.12s ease,
+    box-shadow 0.12s ease;
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header
+  .effect-collapsible-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.16s ease;
+  color: var(--color-text-primary, #eee);
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible.active-effect-item
+  .effect-collapsible-header,
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header.active-header {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.02),
+    rgba(255, 255, 255, 0.02)
+  );
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header.active-header
+  .effect-collapsible-icon {
+  transform: rotate(90deg);
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-title {
+  font-weight: 800;
+  color: var(--color-text-primary, #fff);
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.talent-item .effects-list .effect-item.effect-collapsible .effect-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--color-text-primary, #f2f2f2);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-badge.action-badge {
+  background: linear-gradient(
+    180deg,
+    rgba(40, 20, 10, 0.04),
+    rgba(30, 10, 0, 0.03)
+  );
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-badge.magic-badge {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 20, 40, 0.04),
+    rgba(5, 10, 30, 0.03)
+  );
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-content {
+  padding: 10px 12px 14px 12px;
+  display: block;
+  background: transparent;
+}
+.talent-item .effects-list .effect-item.effect-collapsible .effect-details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-traits
+  .effect-section-header {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-traits
+  .effect-traits-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-traits
+  .trait-chip {
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-meta-block
+  .description-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  padding: 6px;
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-meta-block
+  .effect-meta-flex {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-meta-block
+  .effect-meta-chip {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  font-weight: 700;
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-description
+  .effect-section-header {
+  font-weight: 700;
+}
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-description
+  .effect-text {
+  color: var(--color-text-primary);
+  font-size: 0.92rem;
+  line-height: 1.3;
+}

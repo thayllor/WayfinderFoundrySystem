@@ -16,7 +16,8 @@
   border-radius: 8px;
   cursor: pointer;
   color: var(--color-text-primary);
-  background: transparent;
+  /* Use Foundry sheet background at 20% opacity for tab cards. */
+  background: color-mix(in srgb, var(--color-light-1) 20%, transparent);
   font-weight: 700;
   flex: 0 0 auto;
 }
@@ -25,6 +26,113 @@
   background: linear-gradient(90deg, var(--color-warm-2), var(--color-warm-3));
   color: #fff;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.sheet-tabs.wayfinder {
+  gap: 0 !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 70px;
+  padding: 6px 0;
+}
+.sheet-tabs.wayfinder .item {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0; /* remove inter-card gap */
+  padding: 6px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+  box-shadow: none;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: transform 0.12s ease, background 0.12s ease;
+  font-size: 0; /* hide inline label text while keeping icon pseudo-element */
+  overflow: visible;
+}
+.sheet-tabs.wayfinder {
+  /* Ensure no gaps between items */
+}
+.sheet-tabs.wayfinder .item + .item {
+  margin-top: 0;
+}
+.sheet-tabs.wayfinder {
+  /* Active tab nudges left slightly */
+}
+.sheet-tabs.wayfinder .item.active {
+  transform: translateX(-6px);
+  margin-left: -6px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.sheet-tabs.wayfinder {
+  /* Restore icon size for Foundry's data-icon pseudo-element */
+}
+.sheet-tabs.wayfinder .item[data-icon]::before {
+  font-size: 20px;
+  line-height: 1;
+  color: var(--color-text-primary, #e6e6e6);
+  display: block;
+}
+.sheet-tabs.wayfinder {
+  /* If an icon element exists, ensure it's visible and not scaled to 0 */
+}
+.sheet-tabs.wayfinder .item i,
+.sheet-tabs.wayfinder .item .icon {
+  font-size: 20px;
+}
+.sheet-tabs.wayfinder {
+  /* Prevent the original label text from showing for accessibility it remains in the DOM */
+}
+.sheet-tabs.wayfinder .item {
+  text-indent: -9999px;
+  white-space: nowrap;
+}
+.sheet-tabs.wayfinder {
+  /* Use specific background images for each tab from images/icons/ */
+}
+.sheet-tabs.wayfinder .item[data-tab=skills] {
+  background-image: url("../images/icons/pericias.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+.sheet-tabs.wayfinder .item[data-tab=actions] {
+  background-image: url("../images/icons/efeitos.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+.sheet-tabs.wayfinder .item[data-tab=modifiers] {
+  background-image: url("../images/icons/modificadores.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+.sheet-tabs.wayfinder .item[data-tab=talents] {
+  background-image: url("../images/icons/talento.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+.sheet-tabs.wayfinder .item[data-tab=spells] {
+  background-image: url("../images/icons/magia.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+.sheet-tabs.wayfinder .item[data-tab=notes] {
+  background-image: url("../images/icons/notas.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+.sheet-tabs.wayfinder .item[data-tab=resources] {
+  background-image: url("../images/icons/inventario.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
 }
 
 @media (max-width: 600px) {

@@ -1,0 +1,276 @@
+/* SCSS partial: attributes-resources-horizontal
+   Converted from attributes-resources-horizontal.css with nesting under
+   `.wayfinder.sheet.actor` to reduce repetition. */
+
+/* Load local Canterbury Regular if present; fallback to system names. Place woff/woff2 in `fonts/` */
+@font-face {
+  font-family: "Canterbury Regular";
+  src:
+    local("Canterbury Regular"),
+    local("Canterbury-Regular"),
+    local("Canterbury"),
+    /* Prefer the locally-present TTF, then fall back to woff2/woff if available */
+      url("../fonts/canterbury/Canterbury.ttf") format("truetype"),
+    url("../fonts/Canterbury-Regular.woff2") format("woff2"),
+    url("../fonts/Canterbury-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Style vertical external sheet tabs when the 'wayfinder' class is present.
+   - compact stacked cards (no gaps)
+   - icon-only (hide label text)
+   - active tab nudges slightly left
+*/
+
+.wayfinder.sheet.actor {
+  .attributes-resources-horizontal {
+    display: grid;
+    max-width: min-content;
+
+    /* Two equal columns (50% / 50%) so each child fills half the window */
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+    height: 800px;
+
+    > * {
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* --------------------------------------------------
+     Attributes Pentagram (watermark + manual points)
+  -------------------------------------------------- */
+  .resources-section {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .attributes-pentagon {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 420px;
+    display: block;
+    padding: 12px;
+    box-sizing: border-box;
+
+    /* Arc controls via CSS variables: tweak these to adjust curved-label size/position */
+    --wf-arc-font-size: 25px;
+    --wf-arc-dy: 30px;
+    --wf-arc-offset: 30px;
+
+    .pentagon-background-img {
+      /* If the template injects an <img>, position it as a low-opacity watermark */
+      position: absolute;
+      inset: 0 0 0 0;
+      width: 100%;
+      min-width: 571px;
+      object-fit: contain;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+
+    .pentagon-attributes-container {
+      /* Relative stacking context for absolute-positioned attributes */
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-width: 571px;
+    }
+
+    .pentagon-attribute {
+      position: absolute;
+      /* default size for each attribute block — adjust as needed */
+      width: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      box-sizing: border-box;
+      text-align: center;
+      /* keep centering behavior but allow explicit positions via .pos-* */
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+
+      .attribute-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-text-primary, #e6e6e6);
+        margin: 0;
+        padding: 0 4px;
+        line-height: 1.1;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+      }
+
+      .attribute-roll-badge {
+        width: 120px;
+        height: 40px;
+        display: block;
+        transform: translateY(var(--wf-arc-offset));
+      }
+
+      /* Apply font and sizing to the curved text — target textPath first (preferred), fallback to text */
+      .attribute-roll-badge textPath,
+      .attribute-roll-badge text {
+        fill: var(--color-text-primary, #e6e6e6);
+        /* Prefer local Canterbury Regular; fallback to common system fonts */
+        font-family:
+          "Canterbury Regular",
+          "Montserrat",
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          Arial;
+        font-weight: 700;
+        font-size: var(--wf-arc-font-size);
+        transform: translateY(var(--wf-arc-dy));
+        transform-box: fill-box;
+        transform-origin: 50% 50%;
+        text-transform: capitalize;
+      }
+
+      /* Hide the visual path used for textPath so only the curved text remains visible */
+      .attribute-roll-badge .wf-arc-path {
+        stroke: none;
+        fill: none;
+        pointer-events: none;
+        visibility: hidden;
+      }
+
+      .value-text,
+      .defence-text {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--color-text-primary, #ffffff);
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+      }
+
+      /* New nested markup boxes */
+      .attribute-pentagon-box {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .attribute-value-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .attribute-value-box,
+      .attribute-defence-box {
+        width: 64px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        box-sizing: border-box;
+      }
+
+      .attribute-value-box {
+        background-image: url("../images/atributo.png");
+      }
+      .attribute-defence-box {
+        background-image: url("../images/shield.png");
+      }
+
+      .attribute-value {
+        width: 56px;
+        border: none;
+        background: transparent;
+        color: var(--color-text-primary, #ffffff);
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.5rem;
+        line-height: 1;
+      }
+
+      .attribute-defence {
+        font-weight: 700;
+        color: var(--color-text-primary, #ffffff);
+        font-size: 1.5rem;
+        line-height: 1;
+      }
+    }
+
+    /* Utility position classes: approximate points of a pentagram. */
+    .pos-1 {
+      left: 50%;
+      top: 8%;
+    }
+    .pos-2 {
+      left: 83%;
+      top: 35%;
+    }
+    .pos-3 {
+      left: 66%;
+      top: 78%;
+    }
+    .pos-4 {
+      left: 34%;
+      top: 78%;
+    }
+    .pos-5 {
+      left: 17%;
+      top: 35%;
+    }
+
+    /* Named positions for attributes (class and data-attribute-key selectors). */
+    .pentagon-attribute.presence,
+    .pentagon-attribute[data-attribute-key="presence"] {
+      left: 87%;
+      top: 46%;
+    }
+
+    .pentagon-attribute.wisdom,
+    .pentagon-attribute.wisdow,
+    .pentagon-attribute[data-attribute-key="wisdom"],
+    .pentagon-attribute[data-attribute-key="wisdow"] {
+      left: 13%;
+      top: 46%;
+    }
+
+    .pentagon-attribute.intelligence,
+    .pentagon-attribute[data-attribute-key="intelligence"] {
+      top: 27%;
+    }
+
+    .pentagon-attribute.strength,
+    .pentagon-attribute.strenth,
+    .pentagon-attribute[data-attribute-key="strength"],
+    .pentagon-attribute[data-attribute-key="strenth"] {
+      top: 77%;
+      left: 29.5%;
+    }
+
+    .pentagon-attribute.dexterity,
+    .pentagon-attribute[data-attribute-key="dexterity"] {
+      top: 77%;
+      left: 71%;
+    }
+  }
+
+  .attributes-resources-horizontal > .defenses-table,
+  .attributes-resources-horizontal > .resources-column {
+    width: 100%;
+  }
+}

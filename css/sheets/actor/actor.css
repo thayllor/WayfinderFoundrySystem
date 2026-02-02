@@ -1,16 +1,1652 @@
-/* Actor sheet entrypoint - imports component styles scoped to actor sheets */
-@import "./components/character-info.css";
-@import "./components/resources-row.css";
-@import "./components/attributes-resources-horizontal.css";
-@import "./components/sheet-tabs.css";
+@charset "UTF-8";
+/* Actor sheet entrypoint - import the components bundle */
+/* Main SCSS entry for actor components — imports component SCSS files. */
+/* Component: Character Info Row (actor sheet)
+   Scoped to actor sheets only. New styling created from scratch.
+*/
+.wayfinder.sheet.actor .character-info-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
 
-@import "./components/tabs-skills.css";
-@import "./components/tabs-actions.css";
-@import "./components/tabs-modifiers.css";
-@import "./components/tabs-talents.css";
-@import "./components/tabs-spells.css";
-@import "./components/tabs-notes.css";
-@import "./components/tabs-resources.css";
+.wayfinder.sheet.actor .character-portrait {
+  flex: 0 0 150px;
+  width: 150px;
+  height: 150px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-light-1);
+  border: 3px solid var(--color-warm-2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.wayfinder.sheet.actor .character-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.wayfinder.sheet.actor .character-info-fields {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.wayfinder.sheet.actor .info-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wayfinder.sheet.actor .info-field label {
+  font-family: var(--wf-font-serif);
+  font-size: var(--wf-label-size);
+  color: var(--color-text-secondary, var(--color-dark-3));
+}
+
+.wayfinder.sheet.actor .info-field input,
+.wayfinder.sheet.actor .info-field select {
+  padding: 8px 10px;
+  border: 1px solid var(--color-dark-4);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.wayfinder.sheet.actor .info-field input:focus,
+.wayfinder.sheet.actor .info-field select:focus {
+  outline: none;
+  border-color: var(--color-warm-2);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .wayfinder.sheet.actor .character-info-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .wayfinder.sheet.actor .character-portrait {
+    width: 120px;
+    height: 120px;
+    flex: 0 0 120px;
+  }
+}
+@media (max-width: 600px) {
+  .wayfinder.sheet.actor .character-info-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .wayfinder.sheet.actor .character-info-fields {
+    grid-template-columns: 1fr;
+  }
+  .wayfinder.sheet.actor .character-portrait {
+    width: 100px;
+    height: 100px;
+  }
+}
+/* Component: Resources Row (actor sheet) */
+.wayfinder.sheet.actor .top-resources-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .resource-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  border-radius: 10px;
+  padding: 8px 10px;
+  min-width: 120px;
+  min-height: 200px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+
+.wayfinder.sheet.actor .resource-block .label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 600px) {
+  .wayfinder.sheet.actor .top-resources-row {
+    flex-wrap: wrap;
+  }
+  .wayfinder.sheet.actor .resource-block {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+}
+/* SCSS partial: attributes-resources-horizontal
+   Converted from attributes-resources-horizontal.css with nesting under
+   `.wayfinder.sheet.actor` to reduce repetition. */
+/* Load local Canterbury Regular if present; fallback to system names. Place woff/woff2 in `fonts/` */
+@font-face {
+  font-family: "Canterbury Regular";
+  src: local("Canterbury Regular"), local("Canterbury-Regular"), local("Canterbury"), url("../fonts/canterbury/Canterbury.ttf") format("truetype"), url("../fonts/Canterbury-Regular.woff2") format("woff2"), url("../fonts/Canterbury-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+/* Style vertical external sheet tabs when the 'wayfinder' class is present.
+   - compact stacked cards (no gaps)
+   - icon-only (hide label text)
+   - active tab nudges slightly left
+*/
+.wayfinder.sheet.actor .attributes-resources-horizontal {
+  display: grid;
+  max-width: min-content;
+  /* Two equal columns (50% / 50%) so each child fills half the window */
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+  height: 800px;
+}
+.wayfinder.sheet.actor .attributes-resources-horizontal > * {
+  box-sizing: border-box;
+}
+@media (max-width: 900px) {
+  .wayfinder.sheet.actor .attributes-resources-horizontal {
+    grid-template-columns: 1fr;
+  }
+}
+.wayfinder.sheet.actor {
+  /* --------------------------------------------------
+     Attributes Pentagram (watermark + manual points)
+  -------------------------------------------------- */
+}
+.wayfinder.sheet.actor .resources-section {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.wayfinder.sheet.actor .attributes-pentagon {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  display: block;
+  padding: 12px;
+  box-sizing: border-box;
+  /* Arc controls via CSS variables: tweak these to adjust curved-label size/position */
+  --wf-arc-font-size: 25px;
+  --wf-arc-dy: 30px;
+  --wf-arc-offset: 30px;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-background-img {
+  /* If the template injects an <img>, position it as a low-opacity watermark */
+  position: absolute;
+  inset: 0 0 0 0;
+  width: 100%;
+  min-width: 571px;
+  object-fit: contain;
+  opacity: 0.08;
+  pointer-events: none;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attributes-container {
+  /* Relative stacking context for absolute-positioned attributes */
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 571px;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute {
+  position: absolute;
+  /* default size for each attribute block — adjust as needed */
+  width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  text-align: center;
+  /* keep centering behavior but allow explicit positions via .pos-* */
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #e6e6e6);
+  margin: 0;
+  padding: 0 4px;
+  line-height: 1.1;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-roll-badge {
+  width: 120px;
+  height: 40px;
+  display: block;
+  transform: translateY(var(--wf-arc-offset));
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute {
+  /* Apply font and sizing to the curved text — target textPath first (preferred), fallback to text */
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-roll-badge textPath,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-roll-badge text {
+  fill: var(--color-text-primary, #e6e6e6);
+  /* Prefer local Canterbury Regular; fallback to common system fonts */
+  font-family: "Canterbury Regular", "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-weight: 700;
+  font-size: var(--wf-arc-font-size);
+  transform: translateY(var(--wf-arc-dy));
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  text-transform: capitalize;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute {
+  /* Hide the visual path used for textPath so only the curved text remains visible */
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-roll-badge .wf-arc-path {
+  stroke: none;
+  fill: none;
+  pointer-events: none;
+  visibility: hidden;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .value-text,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .defence-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute {
+  /* New nested markup boxes */
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-pentagon-box {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-value-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-value-box,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-defence-box {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  box-sizing: border-box;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-value-box {
+  background-image: url("../images/atributo.png");
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-defence-box {
+  background-image: url("../images/shield.png");
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-value {
+  width: 56px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary, #ffffff);
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-defence {
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.wayfinder.sheet.actor .attributes-pentagon {
+  /* Utility position classes: approximate points of a pentagram. */
+}
+.wayfinder.sheet.actor .attributes-pentagon .pos-1 {
+  left: 50%;
+  top: 8%;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pos-2 {
+  left: 83%;
+  top: 35%;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pos-3 {
+  left: 66%;
+  top: 78%;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pos-4 {
+  left: 34%;
+  top: 78%;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pos-5 {
+  left: 17%;
+  top: 35%;
+}
+.wayfinder.sheet.actor .attributes-pentagon {
+  /* Named positions for attributes (class and data-attribute-key selectors). */
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.presence,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=presence] {
+  left: 87%;
+  top: 46%;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.wisdom,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.wisdow,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=wisdom],
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=wisdow] {
+  left: 13%;
+  top: 46%;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.intelligence,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=intelligence] {
+  top: 27%;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.strength,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.strenth,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=strength],
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=strenth] {
+  top: 77%;
+  left: 29.5%;
+}
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.dexterity,
+.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=dexterity] {
+  top: 77%;
+  left: 71%;
+}
+.wayfinder.sheet.actor .attributes-resources-horizontal > .defenses-table,
+.wayfinder.sheet.actor .attributes-resources-horizontal > .resources-column {
+  width: 100%;
+}
+
+/* Component: Sheet Tabs (top navigation for actor sheet) */
+.wayfinder.sheet.actor .sheet-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  align-items: center;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.wayfinder.sheet.actor .sheet-tabs .item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  /* Use Foundry sheet background at 20% opacity for tab cards. */
+  background: color-mix(in srgb, var(--color-light-1) 20%, transparent);
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.wayfinder.sheet.actor .sheet-tabs .item.active {
+  background: linear-gradient(90deg, var(--color-warm-2), var(--color-warm-3));
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.sheet-tabs.wayfinder {
+  gap: 0 !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 70px;
+  padding: 6px 0;
+}
+.sheet-tabs.wayfinder .item {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0; /* remove inter-card gap */
+  padding: 6px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.12);
+  box-shadow: none;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: transform 0.12s ease, background 0.12s ease;
+  font-size: 0; /* hide inline label text while keeping icon pseudo-element */
+  overflow: visible;
+}
+.sheet-tabs.wayfinder {
+  /* Ensure no gaps between items */
+}
+.sheet-tabs.wayfinder .item + .item {
+  margin-top: 0;
+}
+.sheet-tabs.wayfinder {
+  /* Active tab nudges left slightly */
+}
+.sheet-tabs.wayfinder .item.active {
+  transform: translateX(-6px);
+  margin-left: -6px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.sheet-tabs.wayfinder {
+  /* Restore icon size for Foundry's data-icon pseudo-element */
+}
+.sheet-tabs.wayfinder .item[data-icon]::before {
+  font-size: 20px;
+  line-height: 1;
+  color: var(--color-text-primary, #e6e6e6);
+  display: block;
+}
+.sheet-tabs.wayfinder {
+  /* If an icon element exists, ensure it's visible and not scaled to 0 */
+}
+.sheet-tabs.wayfinder .item i,
+.sheet-tabs.wayfinder .item .icon {
+  font-size: 20px;
+}
+.sheet-tabs.wayfinder {
+  /* Prevent the original label text from showing for accessibility it remains in the DOM */
+}
+.sheet-tabs.wayfinder .item {
+  text-indent: -9999px;
+  white-space: nowrap;
+}
+.sheet-tabs.wayfinder {
+  /* Use specific background images for each tab from images/icons/ */
+}
+.sheet-tabs.wayfinder .item[data-tab=skills] {
+  background-image: url("../images/icons/pericias.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+.sheet-tabs.wayfinder .item[data-tab=actions] {
+  background-image: url("../images/icons/efeitos.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+.sheet-tabs.wayfinder .item[data-tab=modifiers] {
+  background-image: url("../images/icons/modificadores.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+.sheet-tabs.wayfinder .item[data-tab=talents] {
+  background-image: url("../images/icons/talento.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+.sheet-tabs.wayfinder .item[data-tab=spells] {
+  background-image: url("../images/icons/magia.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+.sheet-tabs.wayfinder .item[data-tab=notes] {
+  background-image: url("../images/icons/notas.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+.sheet-tabs.wayfinder .item[data-tab=resources] {
+  background-image: url("../images/icons/inventario.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 28px 28px;
+}
+
+@media (max-width: 600px) {
+  .wayfinder.sheet.actor .sheet-tabs {
+    gap: 6px;
+    margin: 8px 0;
+  }
+  .wayfinder.sheet.actor .sheet-tabs .item {
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
+}
+/* Tab: Skills */
+.wayfinder.sheet.actor .tab[data-tab=skills] {
+  padding: 8px 0;
+}
+
+/* Apply a card style to any active tab content and highlight the active tab button */
+.wayfinder.sheet.actor .sheet-body .tab {
+  background: transparent;
+  border-radius: 10px;
+  padding: 8px;
+  transition: box-shadow 0.18s ease, transform 0.12s ease, background-color 0.12s ease;
+}
+
+.wayfinder.sheet.actor .sheet-body .tab.active {
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35) inset;
+  transform: translateY(-2px);
+  padding: 10px;
+  margin: 10px;
+  min-width: 1000px;
+}
+
+.wayfinder.sheet.actor .sheet-tabs .item {
+  transition: box-shadow 0.12s ease, background 0.12s ease;
+  border-radius: 8px;
+}
+
+.wayfinder.sheet.actor .sheet-tabs .item.active {
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.025);
+}
+
+.wayfinder.sheet.actor .tab[data-tab=skills] .skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+/* Description card used as the outer wrapper for the skills tab */
+.wayfinder.sheet.actor .skills-card.description-card {
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wayfinder.sheet.actor .skills-card .description-card-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background: transparent;
+}
+
+.wayfinder.sheet.actor .skills-card .description-card-title {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-text-primary, #e6e6e6);
+}
+
+.wayfinder.sheet.actor .skills-card .description-card-body.three-column-card {
+  display: grid;
+  grid-template-columns: 300px 1fr 1fr;
+  gap: 12px;
+  padding: 12px;
+  align-items: start;
+}
+
+.wayfinder.sheet.actor .skills-controls-card {
+  background: transparent;
+  padding: 0;
+}
+
+.wayfinder.sheet.actor .skills-table-container {
+  display: flex;
+  gap: 8px;
+  overflow: auto;
+}
+
+@media (max-width: 1000px) {
+  .wayfinder.sheet.actor .skills-card .description-card-body.three-column-card {
+    grid-template-columns: 1fr;
+  }
+}
+/* Polished design for Skills tab */
+.wayfinder.sheet.actor .skills-card {
+  /* Styling for original skills-section structure (non-wrapped template) */
+}
+.wayfinder.sheet.actor .skills-card .skills-section {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 14px;
+  align-items: start;
+  background: linear-gradient(180deg, rgba(20, 20, 20, 0.95), var(--color-light-6));
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 14px;
+  position: relative;
+  /* Card-like shadow: deep ambient shadow + subtle colored rim using theme light color */
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35) inset;
+}
+.wayfinder.sheet.actor .skills-card {
+  /* Subtle rim/highlight that picks up the sheet's light color for cohesion */
+}
+.wayfinder.sheet.actor .skills-card .skills-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  pointer-events: none;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.01), 0 8px 20px rgba(0, 0, 0, 0.25) inset;
+}
+.wayfinder.sheet.actor .skills-card .tab-title-skills {
+  grid-column: 1/-1;
+  margin: 0 0 8px 0;
+  padding: 8px 12px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-text-primary, #eee);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+.wayfinder.sheet.actor .skills-card .skills-controls-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.wayfinder.sheet.actor .skills-card .skills-controls-card .description-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 8px;
+  border-radius: 6px;
+}
+.wayfinder.sheet.actor .skills-card .skills-table-container {
+  display: flex;
+  gap: 12px;
+  align-items: start;
+}
+.wayfinder.sheet.actor .skills-card .skills-table-left, .wayfinder.sheet.actor .skills-card .skills-table-right {
+  width: 50%;
+  overflow: auto;
+  background: transparent;
+  border-radius: 6px;
+}
+@media (max-width: 1000px) {
+  .wayfinder.sheet.actor .skills-card .skills-section {
+    grid-template-columns: 1fr;
+  }
+  .wayfinder.sheet.actor .skills-card .skills-table-left, .wayfinder.sheet.actor .skills-card .skills-table-right {
+    width: 100%;
+  }
+  .wayfinder.sheet.actor .skills-card .tab-title-skills {
+    border-radius: 6px;
+  }
+}
+.wayfinder.sheet.actor .skills-card {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+}
+
+.wayfinder.sheet.actor .skills-card .description-card-header {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+}
+
+.wayfinder.sheet.actor .skills-card .description-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  letter-spacing: 0.2px;
+}
+
+.wayfinder.sheet.actor .three-column-card .skills-controls-card,
+.wayfinder.sheet.actor .three-column-card .proficiencies-card,
+.wayfinder.sheet.actor .three-column-card .languages-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.wayfinder.sheet.actor .languages-card .description-card-title,
+.wayfinder.sheet.actor .proficiencies-card .description-card-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.wayfinder.sheet.actor .skills-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+}
+
+.wayfinder.sheet.actor .skills-table th,
+.wayfinder.sheet.actor .skills-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  text-align: left;
+}
+
+.wayfinder.sheet.actor .skills-table thead th {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.05));
+  font-size: 0.86rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.wayfinder.sheet.actor .skills-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.wayfinder.sheet.actor .skill-name {
+  font-weight: 800;
+  color: var(--color-text-primary, #f0f0f0);
+}
+
+.wayfinder.sheet.actor .attribute-total {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.06));
+  padding: 6px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  min-width: 48px;
+  text-align: center;
+  font-weight: 800;
+}
+
+/* Compact inputs/selects styling inside tables */
+.wayfinder.sheet.actor .skills-table .short-input {
+  padding: 4px 6px;
+  font-size: 0.9rem;
+  width: 72px;
+}
+
+@media (max-width: 900px) {
+  .wayfinder.sheet.actor .three-column-card .skills-controls-card,
+  .wayfinder.sheet.actor .three-column-card .proficiencies-card,
+  .wayfinder.sheet.actor .three-column-card .languages-card {
+    padding: 8px;
+  }
+  .wayfinder.sheet.actor .attribute-total {
+    min-width: 40px;
+  }
+}
+/* Controls: Languages & Proficiencies styling */
+.wayfinder.sheet.actor .skills-controls-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 12px;
+}
+
+.wayfinder.sheet.actor .skills-controls-wrapper .description-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.wayfinder.sheet.actor .skills-controls-wrapper .description-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  padding: 8px 10px;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.wayfinder.sheet.actor .description-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.wayfinder.sheet.actor .languages-body,
+.wayfinder.sheet.actor .weapons-body,
+.wayfinder.sheet.actor .armors-body {
+  padding: 10px;
+}
+
+.wayfinder.sheet.actor .languages-list,
+.wayfinder.sheet.actor .weapons-list,
+.wayfinder.sheet.actor .armors-list {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  min-height: 36px;
+}
+
+.wayfinder.sheet.actor .languages-list .empty-message,
+.wayfinder.sheet.actor .weapons-list .empty-message,
+.wayfinder.sheet.actor .armors-list .empty-message {
+  color: rgba(255, 255, 255, 0.45);
+  font-style: italic;
+  padding: 6px 8px;
+}
+
+.wayfinder.sheet.actor .languages-add-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.wayfinder.sheet.actor .languages-input.short-input {
+  flex: 1 1 auto;
+  min-width: 120px;
+}
+
+.wayfinder.sheet.actor .skills-controls-card .btn,
+.wayfinder.sheet.actor .description-card-actions .btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.08));
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  color: var(--color-text-primary, #eee);
+  cursor: pointer;
+}
+
+.wayfinder.sheet.actor .description-card-actions select.short-input,
+.wayfinder.sheet.actor .description-card-actions .short-input {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  color: var(--color-text-primary, #eee);
+}
+
+@media (max-width: 700px) {
+  .wayfinder.sheet.actor .languages-add-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+/* Weapon chips styling */
+.wayfinder.sheet.actor .trait-chip.weapon-chip,
+.wayfinder.sheet.actor .trait-chip-small.weapon-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--color-text-primary, #f2f2f2);
+  border-radius: 999px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.wayfinder.sheet.actor .trait-chip.weapon-chip .weapon-remove,
+.wayfinder.sheet.actor .trait-chip-small.weapon-chip .weapon-remove {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  padding: 0 6px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.wayfinder.sheet.actor .trait-chip.weapon-chip:hover,
+.wayfinder.sheet.actor .trait-chip-small.weapon-chip:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 500px) {
+  .wayfinder.sheet.actor .trait-chip.weapon-chip,
+  .wayfinder.sheet.actor .trait-chip-small.weapon-chip {
+    padding: 6px 8px;
+    gap: 6px;
+    font-size: 0.92rem;
+  }
+}
+/* Thin right-side columns (last 3 columns) for skills tables
+   Keep visual styling identical to other columns — only restrict width/padding/alignment. */
+.wayfinder.sheet.actor .skills-table th:nth-last-child(-n+4),
+.wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4),
+.wayfinder.sheet.actor .skills-table tfoot td:nth-last-child(-n+4),
+.wayfinder.sheet.actor .skills-table tfoot th:nth-last-child(-n+4) {
+  width: 64px;
+  max-width: 64px;
+  padding: 6px 8px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  /* Do not override color, background or borders here — keep base table styles. */
+}
+
+.wayfinder.sheet.actor .skills-table thead th:nth-last-child(-n+4) {
+  font-size: 0.82rem;
+  text-transform: none;
+  letter-spacing: 0.4px;
+  opacity: 0.95;
+}
+
+/* Make the final column slightly narrower for compact controls (including footer) */
+.wayfinder.sheet.actor .skills-table th:nth-last-child(1),
+.wayfinder.sheet.actor .skills-table td:nth-last-child(1),
+.wayfinder.sheet.actor .skills-table tfoot td:nth-last-child(1),
+.wayfinder.sheet.actor .skills-table tfoot th:nth-last-child(1) {
+  width: 48px;
+  max-width: 48px;
+  padding: 6px 6px;
+}
+
+@media (max-width: 900px) {
+  .wayfinder.sheet.actor .skills-table th:nth-last-child(-n+4),
+  .wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) {
+    width: 56px;
+    max-width: 56px;
+    padding: 5px 6px;
+    font-size: 0.92rem;
+  }
+  .wayfinder.sheet.actor .skills-table th:nth-last-child(1),
+  .wayfinder.sheet.actor .skills-table td:nth-last-child(1) {
+    width: 40px;
+    max-width: 40px;
+  }
+}
+/* Inputs / selects inside the thin columns should scale down to fit */
+.wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) input.short-input,
+.wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) select.short-input,
+.wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) .short-input {
+  width: 100%;
+  max-width: 64px;
+  padding: 4px 6px;
+  font-size: 0.88rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Last column slightly smaller inputs */
+.wayfinder.sheet.actor .skills-table td:nth-last-child(1) input.short-input,
+.wayfinder.sheet.actor .skills-table td:nth-last-child(1) select.short-input,
+.wayfinder.sheet.actor .skills-table td:nth-last-child(1) .short-input {
+  max-width: 48px;
+  padding: 4px 4px;
+}
+
+@media (max-width: 900px) {
+  .wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) input.short-input,
+  .wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) select.short-input,
+  .wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) .short-input {
+    max-width: 56px;
+    font-size: 0.86rem;
+  }
+  .wayfinder.sheet.actor .skills-table td:nth-last-child(1) input.short-input,
+  .wayfinder.sheet.actor .skills-table td:nth-last-child(1) select.short-input,
+  .wayfinder.sheet.actor .skills-table td:nth-last-child(1) .short-input {
+    max-width: 40px;
+  }
+}
+/* Apply same chip look to languages and armors */
+.wayfinder.sheet.actor .languages-list .trait-chip,
+.wayfinder.sheet.actor .languages-list .trait-chip-small,
+.wayfinder.sheet.actor .armors-list .trait-chip,
+.wayfinder.sheet.actor .armors-list .trait-chip-small {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--color-text-primary, #f2f2f2);
+  border-radius: 999px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.wayfinder.sheet.actor .languages-list .trait-chip button,
+.wayfinder.sheet.actor .languages-list .trait-chip-small button,
+.wayfinder.sheet.actor .armors-list .trait-chip button,
+.wayfinder.sheet.actor .armors-list .trait-chip-small button {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  padding: 0 6px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.wayfinder.sheet.actor .languages-list .trait-chip:hover,
+.wayfinder.sheet.actor .languages-list .trait-chip-small:hover,
+.wayfinder.sheet.actor .armors-list .trait-chip:hover,
+.wayfinder.sheet.actor .armors-list .trait-chip-small:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 500px) {
+  .wayfinder.sheet.actor .languages-list .trait-chip,
+  .wayfinder.sheet.actor .languages-list .trait-chip-small,
+  .wayfinder.sheet.actor .armors-list .trait-chip,
+  .wayfinder.sheet.actor .armors-list .trait-chip-small {
+    padding: 6px 8px;
+    gap: 6px;
+    font-size: 0.92rem;
+  }
+}
+/* Actor tab titles: use Canterbury medieval font, centered and large */
+.wayfinder.sheet.actor .tab [class^=tab-title],
+.wayfinder.sheet.actor .tab .tab-title,
+.wayfinder.sheet.actor .tab h2 {
+  font-family: "Canterbury Regular", "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  text-align: center;
+  display: block;
+  width: 100%;
+  font-size: 1.8rem;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin: 8px 0 12px 0;
+}
+
+@media (min-width: 1200px) {
+  .wayfinder.sheet.actor .tab [class^=tab-title],
+  .wayfinder.sheet.actor .tab .tab-title,
+  .wayfinder.sheet.actor .tab h2 {
+    font-size: 2.2rem;
+  }
+}
+/* Tab: Actions */
+.wayfinder.sheet.actor .tab[data-tab=actions] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=actions] .action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Mirror the card layout used for the skills tab for Actions */
+.wayfinder.sheet.actor .actions-card.description-card {
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wayfinder.sheet.actor .actions-card .description-card-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background: transparent;
+}
+
+.wayfinder.sheet.actor .actions-card .description-card-title {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-text-primary, #e6e6e6);
+}
+
+.wayfinder.sheet.actor .actions-card .description-card-body.three-column-card {
+  display: grid;
+  grid-template-columns: 300px 1fr 1fr;
+  gap: 12px;
+  padding: 12px;
+  align-items: start;
+}
+
+.wayfinder.sheet.actor .actions-controls-card {
+  background: transparent;
+  padding: 0;
+}
+
+.wayfinder.sheet.actor .actions-table-container {
+  overflow: auto;
+}
+
+/* Effects source card: general card styling used inside Actions/Effects lists */
+.wayfinder.sheet.actor .effects-source-card {
+  /* Effects section card: wrapper for Active/Passive lists inside each source */
+}
+.wayfinder.sheet.actor .effects-source-card .effects-section {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(0, 0, 0, 0.04));
+  border: 1px solid var(--color-dark-4);
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) inset;
+  max-width: 450px;
+}
+.wayfinder.sheet.actor .effects-source-card .effects-subtitle {
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #f2f2f2);
+}
+.wayfinder.sheet.actor .effects-source-card .effects-list-wrapper {
+  padding: 6px 4px;
+  /* Allow expanded effect items to increase window content height instead of scrolling locally */
+  max-height: none;
+  overflow: visible;
+}
+.wayfinder.sheet.actor .effects-source-card .effects-empty {
+  color: rgba(255, 255, 255, 0.45);
+  font-style: italic;
+  padding: 8px;
+}
+.wayfinder.sheet.actor .effects-source-card .effects-collapsible-list > .collapsible-effect {
+  margin-bottom: 8px;
+}
+.wayfinder.sheet.actor .effects-source-card {
+  margin: 10px;
+  padding: 10px;
+  background: linear-gradient(180deg, rgba(18, 18, 18, 0.96), rgba(28, 28, 28, 0.92));
+  border: 1px solid var(--color-dark-4);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  color: var(--color-text-primary, #eee);
+}
+
+.wayfinder.sheet.actor .type-effects {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  justify-content: space-around;
+}
+
+@media (max-width: 1000px) {
+  .wayfinder.sheet.actor .actions-card .description-card-body.three-column-card {
+    grid-template-columns: 1fr;
+  }
+}
+/* Tab: Modifiers */
+.wayfinder.sheet.actor .tab[data-tab=modifiers] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=modifiers] .modifier-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Tab: Talents */
+.wayfinder.sheet.actor .tab[data-tab=talents] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=talents] .talent-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+/* Tab: Spells */
+.wayfinder.sheet.actor .tab[data-tab=spells] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spells-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+/* Controls row */
+.wayfinder.sheet.actor .tab[data-tab=spells] .spells-controls-card {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spells-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spells-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 0;
+  min-width: 160px;
+  flex: 1 1 220px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spells-card .description-card-body {
+  padding: 10px;
+}
+
+/* Spell levels list */
+.wayfinder.sheet.actor .tab[data-tab=spells] .spells-levels {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-category {
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.06), transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-icon {
+  width: 20px;
+  text-align: center;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-badge {
+  font-weight: 800;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-count {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-content {
+  padding: 10px 12px;
+  display: grid;
+  gap: 8px;
+}
+
+/* Spell entry and talent styles */
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-entry,
+.wayfinder.sheet.actor .tab[data-tab=spells] .talent-item {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-direction: column;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-item-header,
+.wayfinder.sheet.actor .tab[data-tab=spells] .talent-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .spell-item-name,
+.wayfinder.sheet.actor .tab[data-tab=spells] .talent-item-name {
+  font-weight: 700;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .talent-level-badge {
+  margin-left: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=spells] .talent-item-content {
+  padding: 8px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+@media (max-width: 800px) {
+  .wayfinder.sheet.actor .tab[data-tab=spells] .spells-row {
+    flex-direction: column;
+  }
+}
+/* Tab: Notes */
+.wayfinder.sheet.actor .tab[data-tab=notes] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=notes] .notes-editor {
+  min-height: 120px;
+}
+
+/* Tab: Resources/Inventory */
+.wayfinder.sheet.actor .tab[data-tab=resources] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Tab: Inventory */
+.wayfinder.sheet.actor .tab[data-tab=inventory] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-cards {
+  display: grid;
+  /* stack cards vertically and let them take full available width */
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: start;
+  margin: 6px 0;
+  width: 100%;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-card {
+  /* Use the sheet card look for visual consistency */
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  color: var(--color-text-primary);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-card-header {
+  padding: 10px 14px;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-text-primary, #eee);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.12), transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-card-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: transparent;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-empty {
+  padding: 18px;
+  color: var(--wf-text-muted, #6b7280);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.03), transparent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--wf-accent, #2b6cb0);
+  font-size: 14px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-name-text {
+  font-weight: 700;
+  font-size: 1rem;
+  /* allow up to two lines, then ellipsis */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-meta {
+  font-size: 0.85rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.65));
+  margin-top: 4px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-description {
+  font-size: 0.9rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.6));
+  margin-top: 8px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls select,
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls input[type=checkbox] {
+  margin: 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--wf-accent, #2b6cb0);
+  padding: 6px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .item-edit,
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .item-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .item-edit:hover {
+  background: rgba(43, 108, 176, 0.08);
+  color: #fff;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .item-delete:hover {
+  background: rgba(220, 38, 38, 0.08);
+  color: #fff;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .inventory-item-hand-select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 6px 28px 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  font-size: 0.92rem;
+  min-width: 110px;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .inventory-item-tuned {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--wf-text-muted, #6b7280);
+}
+
+.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .inventory-item-tuned-checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 700px) {
+  .wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-cards {
+    grid-template-columns: 1fr;
+  }
+  .wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    gap: 8px;
+    align-items: start;
+  }
+  .wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls {
+    justify-content: flex-end;
+  }
+}
+/* Fallback selectors (no .wayfinder.sheet.actor prefix) to match different DOM contexts */
+.tab[data-tab=inventory] .inventory-cards,
+.tab[data-tab=resources] .inventory-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: start;
+  margin: 6px 0;
+  width: 100%;
+}
+
+.tab[data-tab=inventory] .inventory-card,
+.tab[data-tab=resources] .inventory-card {
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  color: var(--color-text-primary);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+}
+
+.tab[data-tab=inventory] .inventory-card-header,
+.tab[data-tab=resources] .inventory-card-header {
+  padding: 10px 14px;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-text-primary, #eee);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.12), transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.tab[data-tab=inventory] .inventory-card-body,
+.tab[data-tab=resources] .inventory-card-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: transparent;
+}
+
+.tab[data-tab=inventory] .inventory-item,
+.tab[data-tab=resources] .inventory-item {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.tab[data-tab=inventory] .inventory-item:hover,
+.tab[data-tab=resources] .inventory-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.tab[data-tab=inventory] .inventory-item-name,
+.tab[data-tab=resources] .inventory-item-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.tab[data-tab=inventory] .inventory-item-name-text,
+.tab[data-tab=resources] .inventory-item-name-text {
+  font-weight: 700;
+  font-size: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.tab[data-tab=inventory] .inventory-item-meta,
+.tab[data-tab=resources] .inventory-item-meta {
+  font-size: 0.85rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.65));
+  margin-top: 4px;
+}
+
+.tab[data-tab=inventory] .inventory-item-controls,
+.tab[data-tab=resources] .inventory-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Also apply the same inventory styles when the markup is placed under the `resources` tab */
+.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-cards {
+  display: grid;
+  /* stack cards vertically and let them take full available width */
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: start;
+  margin: 6px 0;
+  width: 100%;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-card {
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  color: var(--color-text-primary);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-card-header {
+  padding: 10px 14px;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-text-primary, #eee);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.12), transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-card-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: transparent;
+}
 
 /* Add any actor-scoped utility rules below */
 .wayfinder.sheet.actor {

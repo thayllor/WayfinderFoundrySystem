@@ -1,0 +1,169 @@
+/* Effects stylesheet (migrated to SCSS). Keep this file for future effect-specific rules. */
+
+/* Reusable effect card design used across actor sheets (active/passive lists)
+	 Targets the collapsible effect structure and inner detail blocks. */
+.wayfinder.sheet.actor {
+  .effects-section {
+    .effects-collapsible-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .effect-item.effect-collapsible {
+      border-radius: 8px;
+      overflow: hidden;
+      background: linear-gradient(
+        180deg,
+        rgba(20, 20, 20, 0.98),
+        rgba(12, 12, 12, 0.96)
+      );
+      border: 1px solid var(--color-dark-4);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+
+      .effect-collapsible-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        cursor: pointer;
+        user-select: none;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        transition:
+          background 0.12s ease,
+          box-shadow 0.12s ease;
+      }
+
+      .effect-collapsible-header .effect-collapsible-icon {
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.16s ease;
+        color: var(--color-text-primary, #eee);
+      }
+
+      &.active-effect-item .effect-collapsible-header,
+      .effect-collapsible-header.active-header {
+        background: linear-gradient(
+          180deg,
+          rgba(10, 10, 10, 0.02),
+          rgba(255, 255, 255, 0.02)
+        );
+      }
+
+      .effect-collapsible-header.active-header .effect-collapsible-icon {
+        transform: rotate(90deg);
+      }
+
+      .effect-collapsible-title {
+        font-weight: 800;
+        color: var(--color-text-primary, #fff);
+        flex: 1 1 auto;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Badges (action/magic/etc) */
+      .effect-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.82rem;
+        color: var(--color-text-primary, #f2f2f2);
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+      }
+      .effect-badge.action-badge {
+        background: linear-gradient(
+          180deg,
+          rgba(40, 20, 10, 0.04),
+          rgba(30, 10, 0, 0.03)
+        );
+      }
+      .effect-badge.magic-badge {
+        background: linear-gradient(
+          180deg,
+          rgba(10, 20, 40, 0.04),
+          rgba(5, 10, 30, 0.03)
+        );
+      }
+
+      .effect-collapsible-content {
+        padding: 10px 12px 14px 12px;
+        display: block;
+        background: transparent;
+      }
+
+      .effect-details {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .effect-section {
+        &.effect-traits {
+          .effect-section-header {
+            font-weight: 700;
+            color: var(--color-text-primary);
+          }
+          .effect-traits-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+          }
+          .trait-chip {
+            box-shadow: none;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+          }
+        }
+
+        &.effect-meta-block {
+          .description-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            padding: 6px;
+          }
+          .effect-meta-flex {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+          }
+          .effect-meta-chip {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            padding: 6px 8px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            font-weight: 700;
+          }
+        }
+
+        &.effect-description {
+          .effect-section-header {
+            font-weight: 700;
+          }
+          .effect-text {
+            color: var(--color-text-primary);
+            font-size: 0.92rem;
+            line-height: 1.3;
+          }
+        }
+      }
+    }
+  }
+}

@@ -127,6 +127,22 @@ export class WayfinderItemSheet extends HandlebarsApplicationMixin(DocumentSheet
         }
       };
 
+        const getContrastColor = (color) => {
+          try {
+            if (!color || typeof color !== 'string') return '#fff';
+            const c = color.trim();
+            if (c.startsWith('#')) {
+              const h = c.substring(1);
+              const r = parseInt(h.length === 3 ? h[0]+h[0] : h.substring(0,2), 16);
+              const g = parseInt(h.length === 3 ? h[1]+h[1] : h.substring(2,4), 16);
+              const b = parseInt(h.length === 3 ? h[2]+h[2] : h.substring(4,6), 16);
+              const yiq = (r*299 + g*587 + b*114) / 1000;
+              return yiq >= 128 ? '#000' : '#fff';
+            }
+          } catch (e) {}
+          return '#fff';
+        };
+
       for (const e of embedded) {
         // Resolve trait UUIDs to objects with name and color so the partial can render correctly
         const traitsResolved = [];
@@ -136,12 +152,15 @@ export class WayfinderItemSheet extends HandlebarsApplicationMixin(DocumentSheet
             try {
               const tdoc = await fromUuid(tuuid);
               if (tdoc && tdoc.type === 'trait') {
-                traitsResolved.push({ uuid: tuuid, id: tdoc.id, name: tdoc.name, color: normalizeColor(tdoc.system?.color) });
+                const c = normalizeColor(tdoc.system?.color);
+                traitsResolved.push({ uuid: tuuid, id: tdoc.id, name: tdoc.name, color: c, textColor: getContrastColor(c) });
               } else {
-                traitsResolved.push({ uuid: tuuid, name: String(tuuid), color: normalizeColor(null) });
+                const c = normalizeColor(null);
+                traitsResolved.push({ uuid: tuuid, name: String(tuuid), color: c, textColor: getContrastColor(c) });
               }
             } catch (err) {
-              traitsResolved.push({ uuid: tuuid, name: String(tuuid), color: normalizeColor(null) });
+              const c = normalizeColor(null);
+              traitsResolved.push({ uuid: tuuid, name: String(tuuid), color: c, textColor: getContrastColor(c) });
             }
           }
         } catch (err) {

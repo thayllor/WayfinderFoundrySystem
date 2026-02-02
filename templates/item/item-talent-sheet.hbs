@@ -1,4 +1,4 @@
-<form class="{{cssClasses}}" autocomplete="off">
+<form class="{{cssClasses}} wayfinder-talent-sheet" autocomplete="off">
   <header class="sheet-header">
     <img
       class="profile-img"
@@ -59,119 +59,139 @@
 
   {{! Sheet Body }}
   <section class="sheet-body">
-    {{! Traits Section }}
-    {{#if traitsResolved.length}}
-      <div class="trait-chip-row">
-        <span class="trait-chip-label">Traits:</span>
-        {{#each traitsResolved as |trait|}}
-          <div
-            class="trait-chip"
-            style="background-color: {{trait.color}};"
-            title="{{trait.name}}"
-          >
-            <span class="trait-chip-name">{{trait.name}}</span>
-            {{#if @root.editable}}
-              <button
-                type="button"
-                class="trait-chip-remove"
-                data-uuid="{{trait.uuid}}"
-                title="Remover trait"
-              >×</button>
+    <div class="sheet-grid">
+      <div class="sheet-main">
+        {{! Traits Section }}
+        {{#if traitsResolved.length}}
+          <div class="trait-chip-row">
+            <span class="trait-chip-label">Traits:</span>
+            {{#each traitsResolved as |trait|}}
+              <div
+                class="trait-chip"
+                style="background: {{trait.color}}; color: {{trait.textColor}};"
+                title="{{trait.name}}"
+              >
+                <span class="trait-chip-name">{{trait.name}}</span>
+                {{#if @root.editable}}
+                  <button
+                    type="button"
+                    class="trait-chip-remove"
+                    data-uuid="{{trait.uuid}}"
+                    title="Remover trait"
+                  >×</button>
+                {{/if}}
+              </div>
+            {{/each}}
+          </div>
+        {{/if}}
+
+        {{! Description Section }}
+        <div class="talent-description-section">
+          <div class="description-card">
+            <div class="description-card-header">
+              <div class="description-card-title"><i class="fas fa-file-alt"></i> Descrição do Talent</div>
+            </div>
+            {{textoEstilizado
+              name="system.description"
+              value=system.description
+              label=""
+              editable=editable
+            }}
+          </div>
+        </div>
+
+        {{! Effects Section }}
+        <div class="talent-effects-section effects-section">
+          {{! Active Effects }}
+          <div class="effects-category active-effects-category">
+            <h3 class="effects-title active-title" style="color: var(--wayfinder-primary-dark);">
+              <i class="fas fa-bolt"></i>
+              Efeitos Ativos
+              {{#if activeEffects.length}}
+                <span class="effect-count">{{activeEffects.length}}</span>
+              {{/if}}
+            </h3>
+
+            {{#if activeEffects.length}}
+              <div class="effects-list effects-collapsible-list">
+                {{#each activeEffects as |effect idx|}}
+                  {{{collapsibleEffect effect=effect idx=idx}}}
+                  {{#if @root.editable}}
+                    <div class="effect-item-actions">
+                      <button
+                        type="button"
+                        class="remove-effect-btn"
+                        data-uuid="{{effect.uuid}}"
+                        title="Remover efeito"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                       <button
+                          type="button"
+                          class="edit-effect-btn"
+                          data-uuid="{{effect.uuid}}"
+                          title="Editar efeito"
+                        >
+                          <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                  {{/if}}
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="empty-message">
+                <i class="fas fa-info-circle"></i>
+                Nenhum efeito ativo. Arraste efeitos ativos aqui para adicionar.
+              </p>
             {{/if}}
           </div>
-        {{/each}}
-      </div>
-    {{/if}}
 
-    {{! Description Section }}
-    <div class="talent-description-section">
-      <div class="description-card">
-        <div class="description-card-header">
-          <div class="description-card-title"><i class="fas fa-file-alt"></i> Descrição do Talent</div>
-          <div class="description-card-hint">Use formatação rica para narrar o talento.</div>
+          {{! Passive Effects }}
+          <div class="effects-category passive-effects-category">
+            <h3 class="effects-title passive-title" style="color: var(--wayfinder-primary-dark);">
+              <i class="fas fa-shield-alt"></i>
+              Efeitos Passivos
+              {{#if passiveEffects.length}}
+                <span class="effect-count">{{passiveEffects.length}}</span>
+              {{/if}}
+            </h3>
+
+            {{#if passiveEffects.length}}
+              <div class="effects-list effects-collapsible-list">
+                {{#each passiveEffects as |effect idx|}}
+                  {{{collapsibleEffect effect=effect idx=idx}}}
+                  {{#if @root.editable}}
+                    <div class="effect-item-actions">
+                      <button
+                        type="button"
+                        class="remove-effect-btn"
+                        data-uuid="{{effect.uuid}}"
+                        title="Remover efeito"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                       <button
+                          type="button"
+                          class="edit-effect-btn"
+                          data-uuid="{{effect.uuid}}"
+                          title="Editar efeito"
+                        >
+                          <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                  {{/if}}
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="empty-message">
+                <i class="fas fa-info-circle"></i>
+                Nenhum efeito passivo. Arraste efeitos passivos aqui para adicionar.
+              </p>
+            {{/if}}
+          </div>
         </div>
-        {{textoEstilizado
-          name="system.description"
-          value=system.description
-          label=""
-          editable=editable
-        }}
-      </div>
-    </div>
-
-    {{! Effects Section }}
-    <div class="talent-effects-section">
-      {{! Active Effects }}
-      <div class="effects-category active-effects-category">
-        <h3 class="effects-title active-title" style="color: var(--wayfinder-primary-dark);">
-          <i class="fas fa-bolt"></i>
-          Efeitos Ativos
-          {{#if activeEffects.length}}
-            <span class="effect-count">{{activeEffects.length}}</span>
-          {{/if}}
-        </h3>
-
-        {{#if activeEffects.length}}
-          <div class="effects-list">
-            {{#each activeEffects as |effect idx|}}
-              {{{collapsibleEffect effect=effect idx=idx}}}
-              {{#if @root.editable}}
-                <div class="effect-item-actions">
-                  <button
-                    type="button"
-                    class="remove-effect-btn"
-                    data-uuid="{{effect.uuid}}"
-                    title="Remover efeito"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              {{/if}}
-            {{/each}}
-          </div>
-        {{else}}
-          <p class="empty-message">
-            <i class="fas fa-info-circle"></i>
-            Nenhum efeito ativo. Arraste efeitos ativos aqui para adicionar.
-          </p>
-        {{/if}}
       </div>
 
-      {{! Passive Effects }}
-      <div class="effects-category passive-effects-category">
-        <h3 class="effects-title passive-title" style="color: var(--wayfinder-primary-dark);">
-          <i class="fas fa-shield-alt"></i>
-          Efeitos Passivos
-          {{#if passiveEffects.length}}
-            <span class="effect-count">{{passiveEffects.length}}</span>
-          {{/if}}
-        </h3>
-
-        {{#if passiveEffects.length}}
-          <div class="effects-list">
-            {{#each passiveEffects as |effect idx|}}
-              {{{collapsibleEffect effect=effect idx=idx}}}
-              {{#if @root.editable}}
-                <div class="effect-item-actions">
-                  <button
-                    type="button"
-                    class="remove-effect-btn"
-                    data-uuid="{{effect.uuid}}"
-                    title="Remover efeito"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              {{/if}}
-            {{/each}}
-          </div>
-        {{else}}
-          <p class="empty-message">
-            <i class="fas fa-info-circle"></i>
-            Nenhum efeito passivo. Arraste efeitos passivos aqui para adicionar.
-          </p>
-        {{/if}}
-      </div>
     </div>
   </section>
 </form>

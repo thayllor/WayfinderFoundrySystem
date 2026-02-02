@@ -1,0 +1,7 @@
+/* Actor sheet entrypoint - import the components bundle */
+@use "./components/main.scss" as *;
+
+/* Add any actor-scoped utility rules below */
+.wayfinder.sheet.actor {
+  box-sizing: border-box;
+}

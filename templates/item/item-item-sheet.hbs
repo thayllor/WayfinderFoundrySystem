@@ -64,7 +64,7 @@
         {{#each traitsResolved as |trait|}}
           <div
             class="trait-chip"
-            style="background-color: {{trait.color}};"
+            style="background: {{trait.color}}; color: {{trait.textColor}};"
             title="{{trait.name}}"
           >
             <span class="trait-chip-name">{{trait.name}}</span>
@@ -340,7 +340,6 @@
                   </button>
                 </div>
               {{/if}}
-            {{/each}}
             {{/each}}
           </div>
         {{else}}

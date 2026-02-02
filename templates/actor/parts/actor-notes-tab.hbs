@@ -3,11 +3,12 @@
   <h2 class="tab-title tab-title-notes">Anotações</h2>
   <div class="notes-card description-card">
     <div class="description-card-body">
-      <textarea
+      {{textoEstilizado
         name="system.notes"
-        class="notes-textarea"
-        placeholder="Escreva suas anotações aqui..."
-      >{{system.notes}}</textarea>
+        value=system.notes
+        label="Anotações"
+        editable=@root.editable
+      }}
     </div>
   </div>
 </div>

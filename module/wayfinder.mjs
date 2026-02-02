@@ -15,7 +15,7 @@ import { WayfinderTraitSheet } from "./sheets/trait-sheet.mjs";
 import { WayfinderTalentSheet } from "./sheets/talent-sheet.mjs";
 
 // Import helper/utility classes and constants
-import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
+import { preloadHandlebarsTemplates, buildCompendiumTraitMap } from "./helpers/templates.mjs";
 import { WAYFINDER } from "./helpers/config.mjs";
 
 // Expose sheet classes globally for system.json
@@ -120,6 +120,12 @@ Hooks.once('init', async function() {
 
 Hooks.once("ready", async function() {
   console.log('Wayfinder | System Ready');
+  try {
+    await buildCompendiumTraitMap();
+    console.log('Wayfinder | Compendium trait map built on Ready');
+  } catch (e) {
+    console.warn('Wayfinder | error building compendium trait map on Ready', e);
+  }
 });
 
 /* -------------------------------------------- */

@@ -4,14 +4,18 @@
   {{! Basic Talents }}
   <div class="talent-type-category">
     <div class="talent-type-header" data-talent-type="Basic">
-      <i class="fas fa-chevron-right talent-type-icon"></i>
-      <div class="talent-type-badge Basic">
-        <i class="fas fa-circle"></i>
-        <span>Basic Talents</span>
+      <div class="type-left">
+        <i class="fas fa-chevron-right talent-type-icon"></i>
+        <div class="talent-type-badge Basic">
+          <i class="fas fa-circle"></i>
+          <span>Basic Talents</span>
+        </div>
+        <div class="type-right">
+          {{#if talents.Basic.length}}
+            <span class="talent-count">{{talents.Basic.length}}</span>
+          {{/if}}
+        </div>
       </div>
-      {{#if talents.Basic.length}}
-        <span class="talent-count">{{talents.Basic.length}}</span>
-      {{/if}}
     </div>
     <div class="talent-type-content" style="display: block;">
       {{#if talents.Basic.length}}
@@ -53,14 +57,18 @@
   {{! General Talents }}
   <div class="talent-type-category">
     <div class="talent-type-header" data-talent-type="General">
-      <i class="fas fa-chevron-right talent-type-icon"></i>
-      <div class="talent-type-badge General">
-        <i class="fas fa-star"></i>
-        <span>General Talents</span>
+      <div class="type-left">
+        <i class="fas fa-chevron-right talent-type-icon"></i>
+        <div class="talent-type-badge General">
+          <i class="fas fa-star"></i>
+          <span>General Talents</span>
+        </div>
+        <div class="type-right">
+          {{#if talents.General.length}}
+            <span class="talent-count">{{talents.General.length}}</span>
+          {{/if}}
+        </div>
       </div>
-      {{#if talents.General.length}}
-        <span class="talent-count">{{talents.General.length}}</span>
-      {{/if}}
     </div>
     <div class="talent-type-content" style="display: block;">
       {{#if talents.General.length}}
@@ -102,14 +110,18 @@
   {{! Ancestry Talents }}
   <div class="talent-type-category">
     <div class="talent-type-header" data-talent-type="Ancestry">
-      <i class="fas fa-chevron-right talent-type-icon"></i>
-      <div class="talent-type-badge Ancestry">
-        <i class="fas fa-dna"></i>
-        <span>Ancestry Talents</span>
+      <div class="type-left">
+        <i class="fas fa-chevron-right talent-type-icon"></i>
+        <div class="talent-type-badge Ancestry">
+          <i class="fas fa-dna"></i>
+          <span>Ancestry Talents</span>
+        </div>
+        <div class="type-right">
+          {{#if talents.Ancestry.length}}
+            <span class="talent-count">{{talents.Ancestry.length}}</span>
+          {{/if}}
+        </div>
       </div>
-      {{#if talents.Ancestry.length}}
-        <span class="talent-count">{{talents.Ancestry.length}}</span>
-      {{/if}}
     </div>
     <div class="talent-type-content" style="display: block;">
       {{#if talents.Ancestry.length}}
@@ -151,14 +163,18 @@
   {{! Class Talents }}
   <div class="talent-type-category">
     <div class="talent-type-header" data-talent-type="Class">
-      <i class="fas fa-chevron-right talent-type-icon"></i>
-      <div class="talent-type-badge Class">
-        <i class="fas fa-shield-alt"></i>
-        <span>Class Talents</span>
+      <div class="type-left">
+        <i class="fas fa-chevron-right talent-type-icon"></i>
+        <div class="talent-type-badge Class">
+          <i class="fas fa-shield-alt"></i>
+          <span>Class Talents</span>
+        </div>
+        <div class="type-right">
+          {{#if talents.Class.length}}
+            <span class="talent-count">{{talents.Class.length}}</span>
+          {{/if}}
+        </div>
       </div>
-      {{#if talents.Class.length}}
-        <span class="talent-count">{{talents.Class.length}}</span>
-      {{/if}}
     </div>
     <div class="talent-type-content" style="display: block;">
       {{#if talents.Class.length}}
@@ -199,14 +215,18 @@
   {{! Spell Talents }}
   <div class="talent-type-category">
     <div class="talent-type-header" data-talent-type="Spell">
-      <i class="fas fa-chevron-right talent-type-icon"></i>
-      <div class="talent-type-badge Spell">
-        <i class="fas fa-hat-wizard"></i>
-        <span>Spell Talents</span>
+      <div class="type-left">
+        <i class="fas fa-chevron-right talent-type-icon"></i>
+        <div class="talent-type-badge Spell">
+          <i class="fas fa-hat-wizard"></i>
+          <span>Spell Talents</span>
+        </div>
+        <div class="type-right">
+          {{#if talents.Spell.length}}
+            <span class="talent-count">{{talents.Spell.length}}</span>
+          {{/if}}
+        </div>
       </div>
-      {{#if talents.Spell.length}}
-        <span class="talent-count">{{talents.Spell.length}}</span>
-      {{/if}}
     </div>
     <div class="talent-type-content" style="display: block;">
       {{#if talents.Spell.length}}

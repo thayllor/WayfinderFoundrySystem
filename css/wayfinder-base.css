@@ -1,12 +1,11 @@
+@charset "UTF-8";
 /* Base styles: variables, resets, fonts, and global rules */
 :root {
   /* Map Wayfinder variables to Foundry palette variables so theme changes follow Foundry's dark/light modes.
      These use Foundry's palette names (example: --color-warm-1, --color-light-1, --color-dark-2, etc.)
      with fallbacks to the previous Wayfinder hard-coded colors.
   */
-
   /* Wayfinder-specific variables removed — use Foundry palette variables directly */
-
   /* Keep any other Wayfinder-specific variables here; prefer Foundry equivalents when present */
 }
 

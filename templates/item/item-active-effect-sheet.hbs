@@ -15,7 +15,7 @@
       <div class="trait-chip-row">
         <span class="trait-chip-label">Traits:</span>
         {{#each traitsResolved as |trait|}}
-          <div class="trait-chip" style="background-color: {{trait.color}};" title="{{trait.name}}">
+          <div class="trait-chip" style="background: {{trait.color}}; color: {{trait.textColor}};" title="{{trait.name}}">
             <span class="trait-chip-name">{{trait.name}}</span>
           </div>
         {{/each}}

@@ -13,7 +13,7 @@
           <div class="languages-list">
             {{#if system.languages.length}}
               {{#each system.languages as |lang idx|}}
-                <span class="trait-chip trait-chip-small language-chip" data-lang-index="{{idx}}">{{lang}} <button type="button" class="language-remove">×</button></span>
+                <span class="trait-chip trait-chip-small language-chip" data-lang-index="{{idx}}" style="{{traitStyle lang}}">{{lang}} <button type="button" class="language-remove">×</button></span>
               {{/each}}
             {{else}}
               <div class="empty-message">Nenhuma língua adicionada.</div>
@@ -44,7 +44,7 @@
           <div class="weapons-list">
             {{#if system.proficiencies.weapons.length}}
               {{#each system.proficiencies.weapons as |wp idx|}}
-                <span class="trait-chip trait-chip-small weapon-chip" data-weapon-index="{{idx}}">{{wp}} <button type="button" class="weapon-remove">×</button></span>
+                <span class="trait-chip trait-chip-small weapon-chip" data-weapon-index="{{idx}}" style="{{traitStyle wp}}">{{wp}} <button type="button" class="weapon-remove">×</button></span>
               {{/each}}
             {{else}}
               <div class="empty-message">Nenhuma proficiência de arma.</div>
@@ -70,7 +70,7 @@
           <div class="armors-list">
             {{#if system.proficiencies.armors.length}}
               {{#each system.proficiencies.armors as |ap idx|}}
-                <span class="trait-chip trait-chip-small armor-chip" data-armor-index="{{idx}}">{{ap}} <button type="button" class="armor-remove">×</button></span>
+                <span class="trait-chip trait-chip-small armor-chip" data-armor-index="{{idx}}" style="{{traitStyle ap}}">{{ap}} <button type="button" class="armor-remove">×</button></span>
               {{/each}}
             {{else}}
               <div class="empty-message">Nenhuma proficiência de armadura.</div>
@@ -96,7 +96,7 @@
         <tbody>
           {{#each skillsLeft as |entry|}}
           <tr>
-            <td><strong class="skill-name">{{entry.key}}</strong></td>
+            <td><strong class="skill-name">{{titleCase entry.key}}</strong></td>
             <td>
               <select name="system.skills.{{entry.key}}.attribute" class="short-input">
                 <option value="STR" {{#if (eq entry.skill.attribute 'STR')}}selected{{/if}}>STR</option>
@@ -139,7 +139,7 @@
         <tbody>
           {{#each skillsRight as |entry|}}
           <tr>
-            <td><strong class="skill-name">{{entry.key}}</strong></td>
+            <td><strong class="skill-name">{{titleCase entry.key}}</strong></td>
             <td>
               <select name="system.skills.{{entry.key}}.attribute" class="short-input">
                 <option value="STR" {{#if (eq entry.skill.attribute 'STR')}}selected{{/if}}>STR</option>

@@ -46,15 +46,34 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
       }
     };
 
+    const getContrastColor = (color) => {
+      try {
+        if (!color || typeof color !== 'string') return '#fff';
+        const hex = color.trim();
+        // simple hex parser
+        if (hex.startsWith('#')) {
+          const h = hex.substring(1);
+          const r = parseInt(h.length === 3 ? h[0]+h[0] : h.substring(0,2), 16);
+          const g = parseInt(h.length === 3 ? h[1]+h[1] : h.substring(2,4), 16);
+          const b = parseInt(h.length === 3 ? h[2]+h[2] : h.substring(4,6), 16);
+          const yiq = (r*299 + g*587 + b*114) / 1000;
+          return yiq >= 128 ? '#000' : '#fff';
+        }
+      } catch (e) {}
+      return '#fff';
+    };
+
     for (const uuid of traitUuids) {
       try {
         const doc = await fromUuid(uuid);
         if (doc && doc.type === 'trait') {
+          const c = normalizeColor(doc.system?.color);
           traitsResolved.push({
             uuid,
             id: doc.id,
             name: doc.name,
-            color: normalizeColor(doc.system?.color)
+            color: c,
+            textColor: getContrastColor(c)
           });
         }
       } catch (err) {
@@ -191,6 +210,12 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
           ev.preventDefault();
           ev.stopPropagation();
           return this._onRemoveEffect(ev);
+        }
+        const editEffectBtn = ev.target.closest('.edit-effect-btn');
+        if (editEffectBtn) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          return this._onEditEffect(ev);
         }
         const removeTraitBtn = ev.target.closest('.trait-chip-remove');
         if (removeTraitBtn) {
@@ -459,6 +484,29 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
       current.splice(idx, 1);
       await this.document.update({ 'system.effects': current });
       ui.notifications?.info('Efeito removido do talent.');
+    }
+  }
+
+  /**
+   * Handle editing an effect (open effect item sheet)
+   */
+  async _onEditEffect(event) {
+    const btn = event.target.closest('.edit-effect-btn');
+    if (!btn) return;
+
+    const uuid = btn.dataset.uuid;
+    if (!uuid) return ui.notifications?.warn('UUID do efeito não encontrado.');
+
+    try {
+      const doc = await fromUuid(uuid);
+      if (!doc) return ui.notifications?.warn('Documento do efeito não encontrado.');
+      // If this is a CompendiumDocument, resolve to its document or open its sheet
+      if (doc.sheet) return doc.sheet.render(true);
+      // Fallback: try to open Item sheet via ItemSheet
+      if (doc instanceof foundry.documents.BaseDocument && doc.sheet) return doc.sheet.render(true);
+    } catch (err) {
+      console.error('Erro ao abrir editor de efeito:', err);
+      ui.notifications?.error('Não foi possível abrir o editor do efeito. Veja o console.');
     }
   }
 }

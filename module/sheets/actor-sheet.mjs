@@ -97,6 +97,23 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
       effects: this._prepareEffects(),
       editable: this.isEditable
     };
+    // NOTE: DOM-related setup is performed in _onRender; do not access `html` here.
+
+    const getContrastColor = (color) => {
+      try {
+        if (!color || typeof color !== 'string') return '#fff';
+        const c = color.trim();
+        if (c.startsWith('#')) {
+          const h = c.substring(1);
+          const r = parseInt(h.length === 3 ? h[0]+h[0] : h.substring(0,2), 16);
+          const g = parseInt(h.length === 3 ? h[1]+h[1] : h.substring(2,4), 16);
+          const b = parseInt(h.length === 3 ? h[2]+h[2] : h.substring(4,6), 16);
+          const yiq = (r*299 + g*587 + b*114) / 1000;
+          return yiq >= 128 ? '#000' : '#fff';
+        }
+      } catch (e) {}
+      return '#fff';
+    };
 
     // Ensure language / proficiency arrays exist to avoid template errors
     context.system.languages = Array.isArray(context.system.languages) ? context.system.languages : [];
@@ -136,6 +153,8 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     // Prepare character data and items
     this._prepareCharacterData(context);
     await this._prepareItems(context);
+
+    // Attribute totals are computed at document prepare stage (WayfinderActor). Do not duplicate here.
 
     // Calculate midpoint for skills division
     const skillsArray = Object.keys(context.system.skills || {});
@@ -984,9 +1003,16 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
           const key = el.dataset.attributeKey;
           if (!key) return;
           const attr = attributes[key] || {};
-          const total = (typeof attr.total === 'number') ? attr.total : (attr.value || 0);
-          const span = el.querySelector('.triangle-down .attribute-value');
-          if (span) span.textContent = String(total);
+          const total = (typeof attr.total === 'number') ? attr.total : (parseInt(attr.value) || 0);
+          const bonus = Math.round((Number(total) || 0) - 10);
+
+          // Old structure used a .triangle-down .attribute-value span
+          const triangleSpan = el.querySelector('.triangle-down .attribute-value');
+          if (triangleSpan) triangleSpan.textContent = String(total);
+
+          // Template now shows only the total; update that element
+          const defenceTotalSpan = el.querySelector('.defense-total');
+          if (defenceTotalSpan) defenceTotalSpan.textContent = Number.isNaN(Number(total)) ? '' : String(total);
         });
       } catch (err) {
         console.warn('Error updating pentagon totals', err);
@@ -995,6 +1021,8 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
 
     // Initial populate
     this._updatePentagonTotals();
+
+    // (rich text setup will be attached later in this method)
 
     // Listen for actor document updates so the UI updates live (use global Hook)
     if (this._boundAttributeUpdate) Hooks.off('updateActor', this._boundAttributeUpdate);
@@ -1125,6 +1153,39 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
 
+    // Initialize rich-text editors for any existing trait-description groups
+    try {
+      if (typeof this._setupRichTextEditor === 'function') this._setupRichTextEditor(html);
+    } catch (e) {
+      console.warn('Wayfinder | failed to initialize rich text editors on render', e);
+    }
+
+    // Delegated handler for editor toggle buttons so it survives re-renders
+    try {
+      if (this._boundTraitToggle) html.removeEventListener('click', this._boundTraitToggle);
+      this._boundTraitToggle = (ev) => {
+        const btn = ev.target.closest('.trait-editor-toggle-btn');
+        if (!btn) return;
+        ev.preventDefault();
+        const group = btn.closest('.trait-description-group');
+        const content = group?.querySelector('.trait-editor-content');
+        const toolbar = group?.querySelector('.trait-editor-toolbar');
+        if (!content) return;
+        const isEditing = content.getAttribute('contenteditable') === 'true';
+        content.setAttribute('contenteditable', !isEditing);
+        content.setAttribute('data-text-editable', !isEditing);
+        if (toolbar) toolbar.style.display = !isEditing ? 'flex' : 'none';
+        // Use simple icon fallbacks to avoid relying on per-group icon rendering
+        const iconTimes = `<i class="fas fa-times"></i>`;
+        const iconEdit = `<i class="fas fa-edit"></i>`;
+        btn.innerHTML = !isEditing ? `${iconTimes} Cancelar` : `${iconEdit} Editar`;
+        if (!isEditing) content.focus();
+      };
+      html.addEventListener('click', this._boundTraitToggle);
+    } catch (e) {
+      console.warn('Wayfinder | failed to attach delegated trait toggle handler', e);
+    }
+
     // Auto-save on change (match other sheets) - avoids blur/keydown loops
     // Special-case resource fields (stamina, surges, focus, heroPoints, exp)
     // to perform focused, dotted-key updates. This helps avoid races where
@@ -1221,18 +1282,159 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
 
         const langToggle = skillsTab.querySelector('.languages-toggle-add');
         const langAddBtn = skillsTab.querySelector('.languages-add-btn');
-        const langInput = skillsTab.querySelector('.languages-input');
-        const langCancel = skillsTab.querySelector('.languages-cancel');
-        if (langToggle) langToggle.addEventListener('click', (ev) => { ev.preventDefault(); showLangAdd(true); langInput?.focus(); });
-        if (langCancel) langCancel.addEventListener('click', (ev) => { ev.preventDefault(); showLangAdd(false); });
-        if (langAddBtn) langAddBtn.addEventListener('click', async (ev) => {
-          ev.preventDefault();
-          const val = (langInput?.value || '').trim();
-          if (!val) return ui.notifications?.warn?.('Digite o nome da língua');
-          const existing = Array.isArray(this.document.system.languages) ? Array.from(this.document.system.languages) : [];
-          if (!existing.includes(val)) existing.push(val);
-          try { await this.document.update({ 'system.languages': existing }); this.render(true); } catch (err) { console.error('Failed to add language', err); }
+      }
+
+
+
+
+    /**
+     * Setup rich text editor groups on actor sheet (reuses trait-editor component)
+     */
+    this._setupRichTextEditor = (html) => {
+      const groups = html.querySelectorAll('.trait-description-group');
+      console.log('Wayfinder | actor _setupRichTextEditor groups found:', groups.length);
+      groups.forEach(group => {
+        const toggleBtn = group.querySelector('.trait-editor-toggle-btn');
+        const content = group.querySelector('.trait-editor-content');
+        const toolbar = group.querySelector('.trait-editor-toolbar');
+        const textarea = group.querySelector('textarea[name]');
+        const closeBtn = group.querySelector('.editor-close-btn');
+        const preview = group.querySelector('.trait-editor-preview');
+        const previewBtn = group.querySelector('.editor-preview-btn');
+
+        if (!toggleBtn || !content || !textarea) {
+          console.log('Wayfinder | editor group missing element', { toggleBtn: !!toggleBtn, content: !!content, textarea: !!textarea });
+          return;
+        }
+        console.log('Wayfinder | editor group ready', { toggleBtn: !!toggleBtn, textareaName: textarea.name });
+
+        // Diagnostic click log to ensure handler runs
+        toggleBtn.addEventListener('click', (ev) => {
+          console.log('Wayfinder | actor trait toggleBtn clicked for textarea', textarea.name);
         });
+
+        // Pre-render icons used by the editor controls (non-blocking)
+        let iconTimes = 'fas fa-times';
+        let iconEdit = 'fas fa-edit';
+        let iconEye = 'fas fa-eye';
+        let iconEyeSlash = 'fas fa-eye-slash';
+        Promise.all([
+          foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-times' }),
+          foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-edit' }),
+          foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-eye' }),
+          foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-eye-slash' })
+        ]).then(([t, e, eye, eyeslash]) => {
+          iconTimes = t; iconEdit = e; iconEye = eye; iconEyeSlash = eyeslash;
+        }).catch((ie) => {
+          console.warn('Wayfinder | failed to render editor icon partials', ie);
+        });
+
+        if (typeof iconTimes === 'string' && !iconTimes.includes('<')) iconTimes = `<i class="${iconTimes}"></i>`;
+        if (typeof iconEdit === 'string' && !iconEdit.includes('<')) iconEdit = `<i class="${iconEdit}"></i>`;
+        if (typeof iconEye === 'string' && !iconEye.includes('<')) iconEye = `<i class="${iconEye}"></i>`;
+        if (typeof iconEyeSlash === 'string' && !iconEyeSlash.includes('<')) iconEyeSlash = `<i class="${iconEyeSlash}"></i>`;
+
+        let isPreview = false;
+
+        // Toggle handler is provided via delegated listener on the sheet
+        // to survive re-renders; leave only diagnostic logging here.
+
+        closeBtn?.addEventListener('click', () => {
+          content.setAttribute('contenteditable', 'false');
+          content.setAttribute('data-text-editable', 'false');
+          toolbar.style.display = 'none';
+          toggleBtn.innerHTML = `${iconEdit} Editar`;
+          textarea.value = content.innerHTML;
+          textarea.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+
+        previewBtn?.addEventListener('click', () => {
+          isPreview = !isPreview;
+          if (isPreview) {
+            preview.innerHTML = content.innerHTML;
+            preview.style.display = 'block';
+            content.style.display = 'none';
+            previewBtn.innerHTML = `${iconEyeSlash} Editar`;
+          } else {
+            preview.style.display = 'none';
+            content.style.display = 'block';
+            previewBtn.innerHTML = `${iconEye} Preview`;
+          }
+        });
+
+        // Format buttons: delegate to document.execCommand for simplicity
+        const formatBtns = toolbar?.querySelectorAll('.editor-fmt-btn') || [];
+        formatBtns.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const format = btn.dataset.format;
+            const value = btn.dataset.value;
+
+            if (format === 'createLink' || btn.classList.contains('editor-link-btn')) {
+              const url = prompt('URL do link:');
+              if (url) document.execCommand('createLink', false, url);
+            } else if (format === 'insertImage' || btn.classList.contains('editor-image-btn')) {
+              const url = prompt('URL da imagem:');
+              if (url) document.execCommand('insertImage', false, url);
+            } else if (btn.classList.contains('editor-text-color-btn')) {
+              const color = prompt('Cor (ex: #ff0000):');
+              if (color) document.execCommand('foreColor', false, color);
+            } else if (btn.classList.contains('editor-bg-color-btn')) {
+              const color = prompt('Cor de fundo (ex: #ffff00):');
+              if (color) document.execCommand('backColor', false, color);
+            } else if (btn.classList.contains('editor-table-btn')) {
+              const rows = prompt('Número de linhas:', '3');
+              const cols = prompt('Número de colunas:', '3');
+              if (rows && cols) {
+                let table = '<table border="1"><tbody>';
+                for (let i = 0; i < parseInt(rows); i++) {
+                  table += '<tr>';
+                  for (let j = 0; j < parseInt(cols); j++) {
+                    table += '<td>&nbsp;</td>';
+                  }
+                  table += '</tr>';
+                }
+                table += '</tbody></table>';
+                document.execCommand('insertHTML', false, table);
+              }
+            } else if (value) {
+              document.execCommand(format, false, value);
+            } else {
+              document.execCommand(format, false, null);
+            }
+
+            content.focus();
+          });
+        });
+
+        // Sync and preserve on paste
+        content.addEventListener('input', () => { textarea.value = content.innerHTML; });
+        content.addEventListener('blur', () => { textarea.value = content.innerHTML; });
+        content.addEventListener('paste', (e) => { e.preventDefault(); const text = e.clipboardData.getData('text/html') || e.clipboardData.getData('text/plain'); document.execCommand('insertHTML', false, text); });
+      });
+
+        // Attach language add/remove handlers if the skills tab exists (query locally)
+        try {
+          const _skillsTab = html.querySelector('.tab[data-tab="skills"]');
+          if (_skillsTab) {
+            const _langInput = _skillsTab.querySelector('.languages-input');
+            const _langCancel = _skillsTab.querySelector('.languages-cancel');
+            const _langToggle = _skillsTab.querySelector('.languages-toggle-add');
+            const _langAddBtn = _skillsTab.querySelector('.languages-add-btn');
+            if (_langToggle) _langToggle.addEventListener('click', (ev) => { ev.preventDefault(); showLangAdd(true); _langInput?.focus(); });
+            if (_langCancel) _langCancel.addEventListener('click', (ev) => { ev.preventDefault(); showLangAdd(false); });
+            if (_langAddBtn) _langAddBtn.addEventListener('click', async (ev) => {
+              ev.preventDefault();
+              const val = (_langInput?.value || '').trim();
+              if (!val) return ui.notifications?.warn?.('Digite o nome da língua');
+              const existing = Array.isArray(this.document.system.languages) ? Array.from(this.document.system.languages) : [];
+              if (!existing.includes(val)) existing.push(val);
+              try { await this.document.update({ 'system.languages': existing }); this.render(true); } catch (err) { console.error('Failed to add language', err); }
+            });
+          }
+        } catch (e) {
+          // Non-fatal: skills tab may not exist in this render
+        }
 
         // Delegate remove/add for weapons and armors
         skillsTab.addEventListener('click', async (ev) => {
@@ -1603,8 +1805,15 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
         li.setAttribute("draggable", true);
         li.addEventListener("dragstart", handler, false);
       });
-    }
+    };
 
+    // If the sheet is editable, initialize rich-text editors now that the
+    // `_setupRichTextEditor` function is defined (ensure the DOM is passed).
+    try {
+      if (this.isEditable && typeof this._setupRichTextEditor === 'function') this._setupRichTextEditor(html);
+    } catch (e) {
+      console.warn('Wayfinder | failed to auto-init rich text editors after definition', e);
+    }
     // Setup collapsible talents
     this._setupTalentsCollapsible(html);
     // Setup collapsible spells sections
@@ -1906,7 +2115,6 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
               const talentHtml = await this._renderTalentContent(item);
               console.log('Rendered HTML length:', talentHtml.length);
               content.innerHTML = talentHtml;
-
               // Setup collapsible effect headers in the newly rendered content
               const effectHeaders = content.querySelectorAll('.effect-collapsible-header');
               console.log('Found effect headers:', effectHeaders.length);
@@ -1927,6 +2135,12 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
                   }
                 });
               });
+              // Initialize any rich-text editor groups inside the newly injected talent content
+              try {
+                if (typeof this._setupRichTextEditor === 'function') this._setupRichTextEditor(content);
+              } catch (ie) {
+                console.warn('Wayfinder | failed to init rich text editors inside talent content', ie);
+              }
             }
           }
           content.style.display = 'block';
@@ -2039,11 +2253,13 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
           for (const traitUuid of doc.system?.traits || []) {
             try {
               const trait = await fromUuid(traitUuid);
-              if (trait) {
+                if (trait) {
+                const c = normalizeColor(trait.system?.color);
                 traitsResolvedEffect.push({
                   uuid: traitUuid,
                   name: trait.name,
-                  color: normalizeColor(trait.system?.color)
+                  color: c,
+                  textColor: getContrastColor(c)
                 });
               }
             } catch (err) {
@@ -2097,10 +2313,12 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
       try {
         const trait = await fromUuid(traitUuid);
         if (trait) {
+          const c = normalizeColor(trait.system?.color);
           traitsResolved.push({
             uuid: traitUuid,
             name: trait.name,
-            color: normalizeColor(trait.system?.color)
+            color: c,
+            textColor: getContrastColor(c)
           });
         }
       } catch (err) {
