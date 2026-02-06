@@ -234,7 +234,10 @@ export const preloadHandlebarsTemplates = async function() {
     const hasMetadata = (effect.range || effect.target || effect.duration || effect.isMagic || effect.focusCost > 0 || effect.actionCost || effect.magicCircle);
 
     const source = hash.source || (effect && (effect.sourceTalentId || effect.sourceItemId) ? 'talent-or-item' : 'effects-tab');
-    const context = { effect, idx, effectId, isActive, traits, heightenedEntries, hasMetadata, renderSource: source };
+    // Editable: allow editing when the effect is a standalone effect created on the actor
+    // (renderSource === 'effects-tab') or when the current user is GM.
+    const editable = (source === 'effects-tab') || (typeof game !== 'undefined' && game?.user?.isGM);
+    const context = { effect, idx, effectId, isActive, traits, heightenedEntries, hasMetadata, renderSource: source, editable };
     // Debug: log effect origins when rendering to assist CSS debugging
     try { console.log('Wayfinder | collapsibleEffect render', { source, name: effect.name, uuid: effect.uuid || effect._id || null }); } catch(e) {}
 
@@ -274,6 +277,7 @@ export const preloadHandlebarsTemplates = async function() {
     "systems/wayfinder/templates/components/icon.hbs",
     "systems/wayfinder/templates/components/effect-trait-chip.hbs",
     "systems/wayfinder/templates/components/effect-item.hbs",
+    "systems/wayfinder/templates/components/effect-source-card.hbs",
     "systems/wayfinder/templates/components/effect-collapsible.hbs",
     "systems/wayfinder/templates/components/effect-toggle.hbs",
     "systems/wayfinder/templates/components/effect-activation.hbs",
@@ -314,7 +318,11 @@ export async function buildCompendiumTraitMap() {
               if (d.system?.color) { color = String(d.system.color).trim(); prop = 'color'; }
               else if (d.system?.hex) { color = String(d.system.hex).trim(); prop = 'hex'; }
               else if (d.system?.hue) { color = `hsl(${d.system.hue} 40% 45%)`; prop = 'hue'; }
-              if (color) compendiumTraitMap.set(name, { color, prop, pack: pack.collection });
+              if (color) {
+                const entry = { color, prop, pack: pack.collection };
+                compendiumTraitMap.set(name, entry);
+                try { compendiumTraitMap.set(name.toLowerCase(), entry); } catch (e) { /* ignore */ }
+              }
             }
           } catch (e) {
             // ignore
@@ -408,7 +416,9 @@ export function resolveTraitEntry(traitEntry) {
         const { color, prop } = getColorFromDocument(traitItem);
         if (color) { result.color = color; result.prop = prop; result.source = 'item'; }
       } else {
-        const entry = compendiumTraitMap.get(nameStr);
+        // Try exact then lowercase quick lookup
+        let entry = compendiumTraitMap.get(nameStr);
+        if ((!entry || !entry.color) && typeof nameStr === 'string') entry = compendiumTraitMap.get(nameStr.toLowerCase());
         if (entry && entry.color) { result.color = entry.color; result.prop = entry.prop || 'compendium'; result.source = 'compendium'; }
         else {
           // case-insensitive search in compendium map

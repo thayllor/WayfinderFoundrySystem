@@ -1,0 +1,17 @@
+<div class="effect-source-card-mini">
+  {{#if effect.sourceItemName}}
+    <div class="effect-source-line"><strong>Origem:</strong>
+      Item —
+      {{effect.sourceItemName}}</div>
+  {{else if effect.sourceTalentName}}
+    <div class="effect-source-line"><strong>Origem:</strong>
+      Talento —
+      {{effect.sourceTalentName}}</div>
+  {{else if effect.origin}}
+    <div class="effect-source-line"><strong>Origem:</strong>
+      {{effect.origin}}</div>
+  {{else}}
+    <div class="effect-source-line"><strong>Origem:</strong>
+      Ficha (criado manualmente)</div>
+  {{/if}}
+</div>

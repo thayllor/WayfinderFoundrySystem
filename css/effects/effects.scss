@@ -2,9 +2,10 @@
 
 /* Reusable effect card design used across actor sheets (active/passive lists)
 	 Targets the collapsible effect structure and inner detail blocks. */
-.wayfinder.sheet.actor {
+.wayfinder {
   .effects-section {
-    .effects-collapsible-list {
+    .effects-collapsible-list,
+    .effects-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -37,6 +38,7 @@
         transition:
           background 0.12s ease,
           box-shadow 0.12s ease;
+        position: relative;
       }
 
       .effect-collapsible-header .effect-collapsible-icon {
@@ -47,6 +49,33 @@
         justify-content: center;
         transition: transform 0.16s ease;
         color: var(--color-text-primary, #eee);
+      }
+
+      /* Place action buttons using normal flex flow so badges/title won't be overlapped.
+         Use margin-left:auto to push actions to the far right and allow title to shrink. */
+      .effect-collapsible-header .effect-item-actions {
+        position: static;
+        margin-left: auto;
+        display: inline-flex; /* always show actions when present */
+        gap: 6px;
+        align-items: center;
+        align-self: center;
+        flex: 0 0 auto;
+      }
+
+      .effect-item-actions .remove-effect-btn,
+      .effect-item-actions .edit-effect-btn {
+        background: transparent;
+        border: none;
+        color: var(--color-text-primary, #eee);
+        padding: 6px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .effect-item-actions .remove-effect-btn:hover,
+      .effect-item-actions .edit-effect-btn:hover {
+        background: rgba(255, 255, 255, 0.02);
       }
 
       &.active-effect-item .effect-collapsible-header,
@@ -66,12 +95,11 @@
         font-weight: 800;
         color: var(--color-text-primary, #fff);
         flex: 1 1 auto;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        min-width: 0;
+        white-space: normal; /* allow wrapping so long titles show */
+        overflow: visible;
       }
 
-      /* Badges (action/magic/etc) */
       .effect-badge {
         display: inline-flex;
         align-items: center;
@@ -83,19 +111,14 @@
         color: var(--color-text-primary, #f2f2f2);
         background: rgba(255, 255, 255, 0.02);
         border: 1px solid rgba(255, 255, 255, 0.03);
+        flex: 0 0 auto;
       }
+
       .effect-badge.action-badge {
         background: linear-gradient(
           180deg,
           rgba(40, 20, 10, 0.04),
           rgba(30, 10, 0, 0.03)
-        );
-      }
-      .effect-badge.magic-badge {
-        background: linear-gradient(
-          180deg,
-          rgba(10, 20, 40, 0.04),
-          rgba(5, 10, 30, 0.03)
         );
       }
 
@@ -167,3 +190,111 @@
     }
   }
 }
+
+/* Ensure action buttons in effect headers are visible across all sheet types (talent/item/etc)
+   Use normal flex flow and nudge actions slightly down so they sit visually lower than the title. */
+.effect-collapsible-header {
+  position: static;
+  padding-right: 12px;
+}
+
+.effect-collapsible-header .effect-item-actions {
+  position: static;
+  margin-left: auto;
+  display: none;
+  gap: 6px;
+  align-items: center;
+  align-self: center;
+  flex: 0 0 auto;
+  transform: translateY(3px);
+  z-index: 2;
+}
+
+.effect-collapsible-header.active-header .effect-item-actions {
+  display: inline-flex;
+}
+
+.effect-item-actions .remove-effect-btn,
+.effect-item-actions .edit-effect-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary, #eee);
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.effect-item-actions .remove-effect-btn:hover,
+.effect-item-actions .edit-effect-btn:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Restyle effect cards to match talent look: card background, radius, padding, shadow */
+.effect-item.effect-collapsible {
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 20, 20, 0.98),
+    rgba(12, 12, 12, 0.96)
+  );
+  border: 1px solid var(--color-dark-4, rgba(255, 255, 255, 0.03));
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  margin: 8px 0;
+}
+
+.effect-item.effect-collapsible .effect-collapsible-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  padding-right: 12px;
+  cursor: pointer;
+  user-select: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.effect-item.effect-collapsible .effect-collapsible-title {
+  font-weight: 800;
+  color: var(--color-text-primary, #fff);
+  flex: 1 1 auto;
+  white-space: nowrap;
+  max-width: calc(100% - 80px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.effect-item.effect-collapsible .effect-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--color-text-primary, #f2f2f2);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.effect-item.effect-collapsible .effect-badge.action-badge {
+  background: linear-gradient(
+    180deg,
+    rgba(40, 20, 10, 0.04),
+    rgba(30, 10, 0, 0.03)
+  );
+}
+
+.effect-item.effect-collapsible .effect-collapsible-content {
+  padding: 10px 12px 14px 12px;
+  display: block;
+  background: transparent;
+}
+
+/* Item-sheet specific styles moved to css/sheets/item/item.scss */
+/* See css/sheets/item/item.scss for standalone item/effect sheet rules */

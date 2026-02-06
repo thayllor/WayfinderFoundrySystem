@@ -1,7 +1,8 @@
-<span
+<div
   class="trait-chip trait-chip-small"
-  style="background: {{color}}; color: {{textColor}};"
+  style="--trait-bg: {{color}}; --trait-color: {{textColor}};"
   title="{{name}}"
+  {{#if uuid}}data-uuid="{{uuid}}"{{/if}}
 >
   <span class="trait-chip-name">{{name}}</span>
-</span>
+</div>

@@ -128,6 +128,31 @@ Hooks.once("ready", async function() {
   }
 });
 
+// Render-time chat enhancements: attach handlers for Wayfinder chat cards
+Hooks.on('renderChatMessage', (app, html, data) => {
+  try {
+    // Attach damage roll button handler
+    html.find('.wf-roll-damage-btn').each((i, btn) => {
+      const $btn = html.find(btn);
+      $btn.off('click.wayfinder').on('click.wayfinder', async (ev) => {
+        ev.preventDefault();
+        const formula = $btn.data('formula') || $btn.attr('data-formula');
+        if (!formula) return ui.notifications?.warn?.('Fórmula de dano não informada');
+        try {
+          const roll = await new Roll(formula).evaluate({async: true});
+          const title = $btn.closest('.wf-chat-card').find('.wf-card__title').text() || 'Dano';
+          await roll.toMessage({flavor: `${title} — Dano`});
+        } catch (err) {
+          console.error('Wayfinder | error rolling damage formula', err, formula);
+          ui.notifications?.error?.('Erro ao rolar dano');
+        }
+      });
+    });
+  } catch (e) {
+    console.error('Wayfinder | renderChatMessage handler error', e);
+  }
+});
+
 /* -------------------------------------------- */
 /*  Apply / Remove Item Modifiers on Actor     */
 /* -------------------------------------------- */

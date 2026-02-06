@@ -32,6 +32,9 @@ export class WayfinderActor extends Actor {
 
     // Make modifications to data here
     const systemData = actorData.system;
+    // Ensure attributes and skills objects exist to avoid crashing when undefined
+    systemData.attributes = systemData.attributes || {};
+    systemData.skills = systemData.skills || {};
 
     // Build a mapping of attribute contributions from ActiveEffects grouped by pillar.
     // For each attribute, we will collect all ActiveEffect changes that target
@@ -128,6 +131,36 @@ export class WayfinderActor extends Actor {
         10;
       // Store the computed item contribution for templates/rolls to read
       attribute.item = itemSum;
+    }
+
+    // Ensure default skills exist when creating a new actor from scratch
+    try {
+      const skillKeys = Object.keys(systemData.skills || {});
+      if (!skillKeys.length) {
+        const defaultSkills = {
+          arcana: { attribute: 'INT', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          acrobatics: { attribute: 'DEX', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          athletics: { attribute: 'STR', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          crafting: { attribute: 'INT', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          deception: { attribute: 'PRE', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          diplomacy: { attribute: 'PRE', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          intimidation: { attribute: 'PRE', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          medicine: { attribute: 'WIS', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          nature: { attribute: 'WIS', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          occultism: { attribute: 'INT', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          performance: { attribute: 'PRE', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          religion: { attribute: 'WIS', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          society: { attribute: 'INT', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          stealth: { attribute: 'DEX', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          survival: { attribute: 'WIS', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          tactics: { attribute: 'INT', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          thievery: { attribute: 'DEX', proficiency: 'untrained', item: 0, circun: 0, status: 0 },
+          lore: { attribute: 'INT', proficiency: 'untrained', item: 0, circun: 0, status: 0 }
+        };
+        systemData.skills = defaultSkills;
+      }
+    } catch (e) {
+      // ignore
     }
 
     // Apply computed skill contributions into the system.skills structure so that

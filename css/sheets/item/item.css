@@ -17,19 +17,17 @@
   border: 2px solid var(--color-warm-2);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
 }
-.wayfinder.sheet.item .header-fields {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.wayfinder.sheet.item {
+  /* header-fields moved to components/sheet-header.scss to avoid duplication */
 }
 .wayfinder.sheet.item .header-top {
   display: flex;
   gap: 12px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  flex-direction: column;
 }
-.wayfinder.sheet.item .charname input[name=name] {
+.wayfinder.sheet.item .charname input[name="name"] {
   font-size: 1.25rem;
   font-weight: 800;
   padding: 8px 10px;
@@ -44,6 +42,7 @@
   gap: 10px;
   margin-top: 6px;
   flex-wrap: wrap;
+  flex-direction: column;
 }
 .wayfinder.sheet.item .metadata-item {
   display: flex;
@@ -53,6 +52,7 @@
   border: 1px solid rgba(255, 255, 255, 0.03);
   padding: 8px 10px;
   border-radius: 8px;
+  margin: 10px;
 }
 .wayfinder.sheet.item .metadata-icon {
   width: 34px;
@@ -75,7 +75,11 @@
   padding: 12px;
 }
 .wayfinder.sheet.item .description-card {
-  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.98),
+    var(--color-light-6)
+  );
   border: 1px solid var(--color-dark-4);
   border-radius: 8px;
   overflow: hidden;
@@ -88,7 +92,11 @@
   align-items: center;
 }
 .wayfinder.sheet.item .description-card .description-card-body {
+  display: flex;
+  margin: 10px;
   padding: 12px;
+  justify-content: flex-start;
+  width: 100%;
 }
 .wayfinder.sheet.item {
   /* Right column: quick metadata and action buttons */
@@ -101,10 +109,30 @@
 .wayfinder.sheet.item .quick-actions-panel .btn {
   padding: 8px 10px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.06));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(0, 0, 0, 0.06)
+  );
   border: 1px solid rgba(255, 255, 255, 0.03);
   color: var(--color-text-primary, #eee);
   cursor: pointer;
+}
+.wayfinder.sheet.item {
+  /* Make the add-modifier button visible and match other quick action buttons */
+}
+.wayfinder.sheet.item .add-modifier-btn {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(0, 0, 0, 0.06)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  color: var(--color-text-primary, #eee);
+  cursor: pointer;
+  margin-top: 8px;
 }
 .wayfinder.sheet.item {
   /* Effects list reuse: keep compact rows */
@@ -116,9 +144,337 @@
   border: 1px solid rgba(255, 255, 255, 0.03);
   margin-bottom: 8px;
 }
+.wayfinder.sheet.item {
+  /* Ensure effect header actions behave like other sheets: right-aligned and vertically centered */
+}
+.wayfinder.sheet.item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.wayfinder.sheet.item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header
+  .effect-item-actions {
+  position: static;
+  margin-left: auto;
+  display: none;
+  gap: 6px;
+  align-items: center;
+  align-self: center;
+  flex: 0 0 auto;
+  transform: translateY(3px);
+}
+.wayfinder.sheet.item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header.active-header
+  .effect-item-actions {
+  display: inline-flex;
+}
 @media (max-width: 1000px) {
   .wayfinder.sheet.item .profile-img {
     width: 96px;
     height: 96px;
   }
+}
+
+/* --- Moved from css/effects/effects.scss --- */
+/* Trait chip row (standalone item/effect sheets) */
+.wayfinder.sheet.item .trait-chip-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 8px;
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 18, 0.95),
+    rgba(32, 32, 32, 0.92)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+.wayfinder.sheet.item .description-card {
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.98),
+    var(--color-light-6)
+  );
+  border: 1px solid var(--color-dark-4);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+.wayfinder.sheet.item {
+  /* Make each immediate child div in the details tab look like a card */
+}
+.wayfinder.sheet.item .tab[data-tab="details"] > div {
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 18, 0.95),
+    rgba(32, 32, 32, 0.92)
+  );
+  border: 1px solid var(--color-dark-4);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.wayfinder.sheet.item .form-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.wayfinder.sheet.item .nice-block.compact-effect-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.wayfinder.sheet.item .grid.grid-3 {
+  display: flex;
+  gap: 12px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+/* --- End moved block --- */
+/* Modifiers list: compact, inline layout for modifier rows */
+.wayfinder.sheet.item .item-modifiers-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: block;
+  gap: 8px;
+  width: 100%;
+}
+.wayfinder.sheet.item .item-modifier-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.95),
+    rgba(32, 32, 32, 0.92)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: nowrap;
+  max-width: 100%;
+}
+.wayfinder.sheet.item {
+  /* Ensure each modifier row occupies full width */
+}
+.wayfinder.sheet.item .item-modifiers-list > .item-modifier-row {
+  width: 100%;
+  margin: 5px 0;
+  box-sizing: border-box;
+}
+.wayfinder.sheet.item .item-modifier-row .modifier-left {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.wayfinder.sheet.item .item-modifier-row .modifier-right {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.wayfinder.sheet.item .modifier-name {
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wayfinder.sheet.item .modifier-meta {
+  font-size: 0.85rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.65));
+}
+.wayfinder.sheet.item .modifier-value {
+  flex: 0 0 48px;
+  min-width: 44px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  color: var(--color-text-primary, #fff);
+}
+.wayfinder.sheet.item .modifier-actions button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 6px;
+  border-radius: 6px;
+  color: var(--color-text-primary, #eee);
+  cursor: pointer;
+}
+.wayfinder.sheet.item {
+  /* Ensure modifier cards in effect sheets match the compact inline style
+     previously used for item modifier rows so the visual appearance
+     remains consistent across sheets. This restores the "old" style. */
+}
+.wayfinder.sheet.item .modifiers-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.wayfinder.sheet.item .modifiers-card .modifier-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.95),
+    rgba(32, 32, 32, 0.92)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: nowrap;
+  max-width: 100%;
+}
+.wayfinder.sheet.item .modifiers-card .modifier-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+.wayfinder.sheet.item .modifiers-card .modifier-origin {
+  flex: 0 0 auto;
+  font-size: 0.85rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.65));
+}
+.wayfinder.sheet.item .modifiers-card .modifier-info {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+.wayfinder.sheet.item .modifiers-card .modifier-name {
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wayfinder.sheet.item .modifiers-card .modifier-target {
+  font-size: 0.85rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.65));
+}
+.wayfinder.sheet.item .modifiers-card .modifier-value {
+  flex: 0 0 48px;
+  min-width: 44px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  color: var(--color-text-primary, #fff);
+}
+.wayfinder.sheet.item .modifiers-card .modifier-actions button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 6px;
+  border-radius: 6px;
+  color: var(--color-text-primary, #eee);
+}
+@media (max-width: 600px) {
+  .wayfinder.sheet.item .item-modifier-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .wayfinder.sheet.item .modifier-right {
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+/* Added override: present modifiers as a single card with row items */
+.wayfinder.sheet.item .modifiers-container,
+.wayfinder.sheet.item .modifiers-card-wrapper {
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 18, 0.96),
+    rgba(28, 28, 28, 0.94)
+  );
+  border: 1px solid var(--color-dark-4);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+.wayfinder.sheet.item .modifiers-card .modifier-card {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 18, 0.96),
+    rgba(30, 30, 30, 0.94)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition:
+    background 0.12s ease,
+    transform 0.08s ease;
+}
+
+.wayfinder.sheet.item .modifiers-card .modifier-card:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(
+    180deg,
+    rgba(22, 22, 22, 0.98),
+    rgba(34, 34, 34, 0.96)
+  );
+}
+
+.wayfinder.sheet.item .modifiers-card .modifier-origin {
+  font-size: 0.78rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.68));
+  background: rgba(255, 255, 255, 0.02);
+  padding: 6px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  max-width: 160px;
+}
+
+.wayfinder.sheet.item .modifiers-card .modifier-name {
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.wayfinder.sheet.item .modifiers-card .modifier-target {
+  font-size: 0.82rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.6));
+  white-space: normal;
+}
+
+.wayfinder.sheet.item .modifiers-card .modifier-value {
+  padding: 8px 12px;
+  font-weight: 900;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.wayfinder.sheet.item .modifiers-card .modifier-actions button {
+  background: transparent;
+  border: none;
+  width: 36px;
+  height: 36px;
 }

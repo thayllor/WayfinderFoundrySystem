@@ -1,6 +1,6 @@
 <div class="form-group trait-description-group">
   <div class="trait-description-header">
-    <label class="trait-description-label">{{label}}</label>
+    {{!-- <label class="trait-description-label">{{label}}</label> --}}
     {{#if editable}}
       <button
         type="button"
@@ -83,6 +83,25 @@
         data-value="p"
         title="Parágrafo Normal"
       ><strong>P</strong></button>
+      <span class="editor-separator"></span>
+
+      <!-- Removed title/paragraph buttons. Added font-size control -->
+      <label class="editor-font-label">Tamanho:</label>
+      <input
+        type="number"
+        min="8"
+        max="72"
+        step="1"
+        value="14"
+        class="editor-font-size-input"
+        style="width:60px;margin-right:4px;"
+        title="Tamanho da fonte (px)"
+      />
+      <button
+        type="button"
+        class="editor-fmt-btn editor-apply-font-btn"
+        title="Aplicar tamanho de fonte"
+      >Aplicar</button>
       <span class="editor-separator"></span>
 
       <button

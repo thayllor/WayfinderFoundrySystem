@@ -24,24 +24,37 @@
         </label>
       {{/unless}}
     {{/unless}}
+    {{!-- Action buttons inside the header so they appear at the end of the header row --}}
+      <div class="effect-item-actions">
+        {{#if editable}}
+          <button
+            type="button"
+            class="remove-effect-btn"
+            data-uuid="{{effect.uuid}}"
+            title="Remover efeito"
+          ><i class="fas fa-trash"></i></button>
+          <button
+            type="button"
+            class="edit-effect-btn"
+            data-uuid="{{effect.uuid}}"
+            title="Editar efeito"
+          ><i class="fas fa-edit"></i></button>
+        {{/if}}
+      </div>
   </div>
 
   <div class="effect-collapsible-content" id="{{effectId}}" style="display: none;">
     <div class="effect-details">
 
+      {{> "systems/wayfinder/templates/components/effect-source-card.hbs" effect=effect}}
+
       <div class="effect-section effect-traits">
         <div class="effect-section-header"><i class="fas fa-tags"></i> Traits</div>
-        <div class="effect-traits-row">
-          {{#if traits.length}}
-            {{#each traits}}
-              <span class="trait-chip trait-chip-small" style="background: {{color}}; color: {{textColor}};" title="{{name}}">
-                <span class="trait-chip-name">{{name}}</span>
-              </span>
-            {{/each}}
-          {{else}}
-            <div class="traits-empty" style="padding:6px 0;color:#666;font-size:13px">Nenhum trait definido.</div>
-          {{/if}}
-        </div>
+        {{#if traits.length}}
+          {{> "systems/wayfinder/templates/components/trait-chip-row.hbs" traits=traits}}
+        {{else}}
+          <div class="traits-empty" style="padding:6px 0;color:#666;font-size:13px">Nenhum trait definido.</div>
+        {{/if}}
       </div>
 
       <div class="effect-section effect-meta-block">

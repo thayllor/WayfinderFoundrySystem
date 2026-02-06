@@ -3,6 +3,7 @@
  * Para V2, deve estender HandlebarsApplicationMixin(DocumentSheetV2)
  */
 const { ApplicationV2, HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
+import { saveSelection, restoreSelection, applyFontSizeToSelection, pastePlain } from '../helpers/text-editor.mjs';
 
 export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
 
@@ -694,6 +695,11 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
    * @return {undefined}
    */
   _prepareCharacterData(context) {
+    // Ensure system structure exists and defaults for attributes/skills to avoid template crashes
+    context.system = context.system || {};
+    context.system.attributes = context.system.attributes || {};
+    context.system.skills = context.system.skills || {};
+
     // Handle ability scores e define default 0 para todos os campos de atributo
     for (let [k, v] of Object.entries(context.system.attributes)) {
       v.label = k;
@@ -1407,22 +1413,45 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
           });
         });
 
-        // Sync and preserve on paste
+          // Font size control for actor editor (use helper)
+          const fontInput = toolbar?.querySelector('.editor-font-size-input');
+          const applyFontBtn = toolbar?.querySelector('.editor-apply-font-btn');
+          let savedRangeForFont = null;
+          if (applyFontBtn) {
+            applyFontBtn.addEventListener('mousedown', () => { savedRangeForFont = saveSelection(); });
+            applyFontBtn.addEventListener('click', (ev) => {
+              ev.preventDefault();
+              const size = fontInput?.value || null;
+              if (!size) return;
+              if (savedRangeForFont) restoreSelection(savedRangeForFont);
+              applyFontSizeToSelection(size);
+              content.focus();
+              textarea.value = content.innerHTML;
+              savedRangeForFont = null;
+            });
+          }
+
+          // Sync and preserve on paste
         content.addEventListener('input', () => { textarea.value = content.innerHTML; });
         content.addEventListener('blur', () => { textarea.value = content.innerHTML; });
-        content.addEventListener('paste', (e) => { e.preventDefault(); const text = e.clipboardData.getData('text/html') || e.clipboardData.getData('text/plain'); document.execCommand('insertHTML', false, text); });
+        content.addEventListener('paste', (e) => pastePlain(e));
       });
 
         // Attach language add/remove handlers if the skills tab exists (query locally)
         try {
           const _skillsTab = html.querySelector('.tab[data-tab="skills"]');
           if (_skillsTab) {
-            const _langInput = _skillsTab.querySelector('.languages-input');
-            const _langCancel = _skillsTab.querySelector('.languages-cancel');
-            const _langToggle = _skillsTab.querySelector('.languages-toggle-add');
-            const _langAddBtn = _skillsTab.querySelector('.languages-add-btn');
-            if (_langToggle) _langToggle.addEventListener('click', (ev) => { ev.preventDefault(); showLangAdd(true); _langInput?.focus(); });
-            if (_langCancel) _langCancel.addEventListener('click', (ev) => { ev.preventDefault(); showLangAdd(false); });
+              const _langInput = _skillsTab.querySelector('.languages-input');
+              const _langCancel = _skillsTab.querySelector('.languages-cancel');
+              const _langToggle = _skillsTab.querySelector('.languages-toggle-add');
+              const _langAddBtn = _skillsTab.querySelector('.languages-add-btn');
+              const _showLangAdd = (show) => {
+                const row = _skillsTab.querySelector('.languages-add-row');
+                if (!row) return;
+                row.style.display = show ? 'flex' : 'none';
+              };
+              if (_langToggle) _langToggle.addEventListener('click', (ev) => { ev.preventDefault(); _showLangAdd(true); _langInput?.focus(); });
+              if (_langCancel) _langCancel.addEventListener('click', (ev) => { ev.preventDefault(); _showLangAdd(false); });
             if (_langAddBtn) _langAddBtn.addEventListener('click', async (ev) => {
               ev.preventDefault();
               const val = (_langInput?.value || '').trim();
@@ -1848,6 +1877,169 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
         const item = this.document.items.get(effectId);
         if (item) item.sheet.render(true);
       }
+      // Remove an actor effect (standalone embedded AE or stored embeddedEffects)
+      if (ev.target.closest('.remove-effect-btn')) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const btn = ev.target.closest('.remove-effect-btn');
+        const wrapper = btn.closest('[data-real-id]') || btn.closest('[data-uuid]') || btn.closest('[data-effect-id]') || btn.closest('[data-source-item-id]') || btn.closest('[data-item-id]') || btn.closest('.effect-item');
+        let resolved = wrapper?.dataset?.realId || wrapper?.dataset?.uuid || wrapper?.dataset?.effectId || wrapper?.dataset?.sourceItemId || wrapper?.dataset?.itemId || null;
+        // Fallback: prefer the explicit uuid stored on the button itself if wrapper had no useful ids
+        if (!resolved && btn && btn.dataset && btn.dataset.uuid) resolved = btn.dataset.uuid;
+
+        // If the wrapper contains a data-item-id or data-source-item-id that refers
+        // to an Item embedded on this Actor (forms like 'Actor.<aid>.Item.<iid>' or a plain id),
+        // prefer deleting the embedded Item to ensure persistent removal.
+        try {
+          const itemIdRaw = wrapper?.dataset?.itemId || wrapper?.dataset?.sourceItemId || null;
+          if (itemIdRaw) {
+            const candidateId = (typeof itemIdRaw === 'string' && itemIdRaw.includes('.Item.')) ? itemIdRaw.split('.').pop() : (typeof itemIdRaw === 'string' && itemIdRaw.includes('.') ? itemIdRaw.split('.').pop() : itemIdRaw);
+            if (candidateId && this.document.items.get(candidateId)) {
+              try {
+                if (typeof this.document.deleteEmbeddedDocuments === 'function') {
+                  await this.document.deleteEmbeddedDocuments('Item', [candidateId]);
+                } else {
+                  const it = this.document.items.get(candidateId);
+                  if (it) await it.delete();
+                }
+                ui.notifications?.info?.('Efeito removido. (Item embutido excluído)');
+                try { this.render(true); } catch (e) {}
+                return;
+              } catch (err) {
+                console.debug('Wayfinder | actor remove-effect: failed deleting embedded Item via data-item-id', err);
+              }
+            }
+          }
+        } catch (e) { console.debug('Wayfinder | actor remove-effect: data-item-id check failed', e); }
+        // Special-case: handle Scene.Token... UUIDs (effects embedded on a placed token)
+        try {
+          if (resolved && String(resolved).startsWith('Scene.')) {
+            try {
+              const parts = String(resolved).split('.');
+              const sceneId = parts[1];
+              const tokenIdx = parts.indexOf('Token');
+              const tokenId = tokenIdx !== -1 ? parts[tokenIdx + 1] : null;
+              if (sceneId && tokenId && typeof game !== 'undefined' && game.scenes) {
+                const scene = game.scenes.get(sceneId);
+                if (scene) {
+                  const tokenDoc = scene.tokens.get(tokenId) || (scene.tokens || new Map())[tokenId];
+                  // Try to delete an ActiveEffect on the token's actor if present
+                  const tokenActor = tokenDoc?.actor || null;
+                  if (tokenActor && tokenActor.effects) {
+                    const ae = tokenActor.effects.find(e => (e.id === resolved || e._id === resolved || e.uuid === resolved || e.origin === resolved || (e.flags && JSON.stringify(e.flags).includes(resolved))));
+                    if (ae) {
+                      await ae.delete();
+                      ui.notifications?.info?.('Efeito removido. (token actor AE)');
+                      try { this.render(true); } catch (e) {}
+                      return;
+                    }
+                  }
+                  // Try to remove from token actorData.flags.wayfinder.embeddedEffects
+                  const actorDataFlags = tokenDoc?.actorData?.flags || {};
+                  const embedded = Array.isArray(actorDataFlags?.wayfinder?.embeddedEffects) ? foundry.utils.deepClone(actorDataFlags.wayfinder.embeddedEffects) : null;
+                  if (Array.isArray(embedded)) {
+                    let i = embedded.findIndex(e => (e.uuid === resolved || e._id === resolved || e.id === resolved));
+                    if (i === -1) {
+                      const title = btn.closest('.effect-item')?.querySelector('.effect-collapsible-header .effect-collapsible-title')?.textContent?.trim();
+                      if (title) i = embedded.findIndex(e => (e.name === title));
+                    }
+                    if (i !== -1) {
+                      embedded.splice(i, 1);
+                      try {
+                        await scene.updateEmbeddedDocuments('Token', [{ _id: tokenId, actorData: { flags: { wayfinder: { embeddedEffects: embedded } } } }]);
+                        ui.notifications?.info?.('Efeito removido. (token embeddedEffects)');
+                        try { this.render(true); } catch (e) {}
+                        return;
+                      } catch (e) {
+                        console.debug('Wayfinder | failed to persist token embeddedEffects removal', e);
+                      }
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              console.debug('Wayfinder | error handling Scene.Token removal', e);
+            }
+          }
+
+          // Try to delete an actual ActiveEffect on the actor
+          if (resolved) {
+            const ae = this.document.effects.get(resolved) || this.document.effects.find(e => (e.id === resolved || e._id === resolved || e.uuid === resolved));
+            if (ae) {
+              await ae.delete();
+              ui.notifications?.info?.('Efeito removido.');
+              try { this.render(true); } catch (e) {}
+              return;
+            }
+          }
+            // If the resolved value is an embedded Item UUID (Actor.<aid>.Item.<iid>)
+            // and the Item exists on this actor, delete the embedded Item so the
+            // effect is removed persistently from the actor's inventory.
+            try {
+              if (resolved && typeof resolved === 'string' && resolved.startsWith('Actor.') && resolved.includes('.Item.')) {
+                const parts = String(resolved).split('.');
+                const actorId = parts[1];
+                const itemIdx = parts.indexOf('Item');
+                const itemId = itemIdx !== -1 ? parts[itemIdx + 1] : null;
+                if (itemId && (actorId === this.document.id || !actorId)) {
+                  try {
+                    if (typeof this.document.deleteEmbeddedDocuments === 'function') {
+                      await this.document.deleteEmbeddedDocuments('Item', [itemId]);
+                    } else if (typeof this.document.items?.get === 'function') {
+                      const it = this.document.items.get(itemId);
+                      if (it) {
+                        await it.delete();
+                      }
+                    }
+                    ui.notifications?.info?.('Efeito removido. (Item embutido excluído)');
+                    try { this.render(true); } catch (e) {}
+                    return;
+                  } catch (err) {
+                    console.debug('Wayfinder | failed to delete embedded Item on actor during remove-effect', err);
+                  }
+                }
+              }
+            } catch (e) { console.debug('Wayfinder | embedded Item delete check failed', e); }
+        } catch (e) {
+          console.error('Wayfinder: erro ao tentar deletar ActiveEffect', e);
+        }
+
+        // Fallback: remove from flags.wayfinder.embeddedEffects if present
+        const existing = Array.isArray(this.document.flags?.wayfinder?.embeddedEffects) ? foundry.utils.deepClone(this.document.flags.wayfinder.embeddedEffects) : [];
+        let idx = -1;
+        if (resolved) idx = existing.findIndex(e => (e.uuid === resolved || e._id === resolved || e.id === resolved));
+        if (idx === -1) {
+          const el = btn.closest('.effect-item');
+          const di = el?.dataset?.effectIndex;
+          if (di !== undefined && di !== null && di !== '') {
+            const parsed = Number(di);
+            if (!Number.isNaN(parsed)) idx = parsed;
+          }
+        }
+        if (idx === -1) {
+          const el = btn.closest('.effect-item');
+          const itemId = el?.dataset?.itemId;
+          if (itemId) idx = existing.findIndex(e => (e.uuid === itemId || e._id === itemId || e.id === itemId));
+        }
+        if (idx === -1) {
+          const title = btn.closest('.effect-item')?.querySelector('.effect-collapsible-header .effect-collapsible-title')?.textContent?.trim();
+          if (title) idx = existing.findIndex(e => (e.name === title));
+        }
+        if (idx === -1) {
+          ui.notifications?.warn?.('Efeito não encontrado para remoção.');
+          return;
+        }
+        existing.splice(idx, 1);
+        try {
+          await this.document.update({ ['flags.wayfinder.embeddedEffects']: existing });
+          try { this.render(true); } catch (e) {}
+          ui.notifications?.info?.('Efeito removido.');
+          return;
+        } catch (err) {
+          console.debug('Wayfinder | document.update failed on remove (actor)', err);
+        }
+        ui.notifications?.warn?.('Não foi possível remover o efeito persistentemente; verifique permissões.');
+      }
       // Delete effect
       if (ev.target.closest('.effect-delete')) {
         ev.preventDefault();
@@ -1888,14 +2080,20 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
         }
         if (domEffectId) candidates.push(domEffectId);
 
-        // Helper to normalize common prefixes like 'Item.X' or 'ActiveEffect.Y'
+        // Helper to normalize common prefixes like 'Item.X', 'ActiveEffect.Y' or
+        // fully-qualified UUIDs such as 'Compendium.world.pack.Item.X' by returning
+        // the most-significant id segment (the last token).
         const normalize = (s) => {
           if (!s || typeof s !== 'string') return s;
           let out = s;
           try {
             if (out.includes('::')) out = out.split('::').pop();
+            // If the value contains dot-separated namespaces (Actor./Item./Compendium...),
+            // prefer the last token which is usually the raw id we need to compare against.
+            if (out.includes('.')) out = out.split('.').pop();
+            // Also strip common leading prefixes like 'Item.' or 'ActiveEffect.' if still present
             if (out.startsWith('Item.') || out.startsWith('ActiveEffect.') || out.startsWith('Actor.')) {
-              out = out.split('.')[1] || out;
+              out = out.split('.').pop() || out;
             }
           } catch (e) {
             /* ignore */
@@ -1936,22 +2134,150 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
 
         // If still not found, search embedded ActiveEffects inside items (e.g., talents)
         if (!ae) {
+          // Attempt to resolve candidate RHS tokens against compendium packs.
           try {
+            if (typeof game !== 'undefined' && game.packs && game.packs.size) {
+              // Build a list of RHS tokens to try (tokens that look like short ids)
+              const rhsTokens = [];
+              for (const c of candidates) {
+                if (!c || typeof c !== 'string') continue;
+                const token = c.includes('::') ? c.split('::').pop() : (c.includes('.') ? c.split('.').pop() : c);
+                if (token) rhsTokens.push(token);
+              }
+              for (const token of rhsTokens) {
+                try {
+                  for (const pack of game.packs.values()) {
+                    try {
+                      // Only consider Item packs (collections like 'world.classes')
+                      const meta = pack.metadata || {};
+                      const docType = meta.type || meta.documentName || '';
+                      if (docType && docType !== 'Item' && docType !== 'Actor' && docType !== '') continue;
+                      const guess = `Compendium.${pack.collection}.Item.${token}`;
+                      console.log('Wayfinder | trying compendium guess', guess);
+                      const resolved = await fromUuid(guess).catch(() => null);
+                      if (resolved) {
+                        console.log('Wayfinder | compendium resolved', guess, resolved?.documentName || resolved?.type || resolved?.name);
+                        if (resolved.documentName === 'ActiveEffect' || (resolved.constructor && resolved.constructor.name === 'ActiveEffect')) {
+                            ae = resolved;
+                            resolvedCandidate = resolved.id || resolved._id || token;
+                            break;
+                        } else if (resolved.documentName === 'Item' || resolved.type) {
+                          // If it's an Item, attempt to find an embedded effect inside it matching token
+                          const innerList = (resolved.effects || resolved.system?.effects || []);
+                          // Add all embedded AE ids to forms so RHS AE ids are compared
+                          try {
+                            for (const e2 of innerList) {
+                              const e2id = (e2 && (e2._id || e2.id || e2.uuid)) ? (e2._id || e2.id || e2.uuid) : (typeof e2 === 'string' ? (e2.includes('::') ? e2.split('::').pop() : e2) : null);
+                              if (e2id) {
+                                forms.add(e2id);
+                                forms.add(normalize(e2id));
+                                forms.add(`${it.id}::${e2id}`);
+                                forms.add(`${resolved.id || resolved._id || token}::${e2id}`);
+                              }
+                            }
+                          } catch (e) { /* ignore */ }
+                          const inner = innerList.find(e => (e && ((e._id === token) || (e.id === token) || (e.uuid === token))) || (normalize((e && (e._id || e.id || e.uuid)) || e) === token));
+                          if (inner) {
+                            ae = inner;
+                            resolvedCandidate = `${token}::${inner._id || inner.id || token}`;
+                            break;
+                          }
+                        }
+                      }
+                    } catch (e) { /* ignore pack-level errors */ }
+                    if (ae) break;
+                  }
+                } catch (e) { /* ignore token-level errors */ }
+                if (ae) break;
+              }
+            }
+          } catch (e) {
+            /* ignore compendium lookup errors */
+          }
+          try {
+            // Precompute normalized candidate forms for robust matching
+            const candNorms = new Set();
+            for (const c of candidates) {
+              if (!c) continue;
+              candNorms.add(c);
+              try { candNorms.add(normalize(c)); } catch(e) {}
+              try { if (typeof c === 'string' && c.includes('::')) candNorms.add(c.split('::').pop()); } catch(e) {}
+            }
             for (const it of this.document.items) {
               try {
-                const effects = it.effects || it.system?.effects || [];
-                // effects may be an array of ActiveEffect documents or UUID strings
+                // Include any embedded effects stored in flags.wayfinder.embeddedEffects
+                const effects = it.effects || it.system?.effects || it.flags?.wayfinder?.embeddedEffects || [];
                 for (const ef of effects) {
-                  // ef may be an ActiveEffect document-like or an id string
-                  const efId = (ef && ef.id) ? ef.id : (ef && ef._id) ? ef._id : (typeof ef === 'string' ? ef.split('::').pop() : null);
+                  // ef may be an ActiveEffect-like object, a plain object stored in flags,
+                  // or a UUID string reference
+                  const efId = (ef && (ef.id || ef._id || ef.uuid)) ? (ef.id || ef._id || ef.uuid) : (typeof ef === 'string' ? (ef.includes('::') ? ef.split('::').pop() : ef) : null);
                   if (!efId) continue;
-                  const norm = normalize(efId);
-                  if (!norm) continue;
-                  // Compare against candidates
-                  if (candidates.includes(efId) || candidates.includes(norm) || candidates.includes(it.id) || candidates.includes(it.id + '::' + efId)) {
+                  const norm = normalize(efId) || efId;
+                  // Build comparison forms
+                  const forms = new Set([efId, norm, it.id, `${it.id}::${efId}`, `${it.id}::${norm}`]);
+                  // If the effect entry is a UUID string, attempt to resolve it to include
+                  // the referenced document's id (e.g., ActiveEffect id) in the comparison forms.
+                  try {
+                    if (typeof ef === 'string' && typeof fromUuid === 'function') {
+                      const looksLikeUuid = ef.includes('.') || ef.startsWith('Compendium') || ef.includes('Actor') || ef.includes('Item');
+                      if (looksLikeUuid) {
+                        try {
+                          const resolvedEfDoc = await fromUuid(ef).catch(() => null);
+                          if (resolvedEfDoc) {
+                            const rid = resolvedEfDoc.id || resolvedEfDoc._id || null;
+                            if (rid) {
+                              forms.add(rid);
+                              forms.add(normalize(rid));
+                              forms.add(`${it.id}::${rid}`);
+                            }
+                          }
+                        } catch (e) { /* ignore resolution errors */ }
+                      }
+                    }
+                  } catch (e) { /* ignore */ }
+                  // Also include possible item.uuid forms if available
+                  try { if (it.uuid) forms.add(`${it.uuid}::${efId}`); } catch(e) {}
+                  // Check for any overlap with candidate norms
+                  let matched = false;
+                  for (const f of forms) {
+                    if (!f) continue;
+                    if (candNorms.has(f) || candidates.includes(f)) { matched = true; break; }
+                  }
+                  if (matched) {
                     console.log('Wayfinder | matched embedded effect', { item: it.id, effect: efId, normalized: norm });
-                    ae = ef;
-                    resolvedCandidate = norm || efId;
+                    // If the embedded entry is an object (embedded ActiveEffect-like), use it directly
+                    if (ef && typeof ef === 'object') {
+                      ae = ef;
+                      parentItemForAe = it;
+                    } else if (typeof ef === 'string') {
+                      // If the effect is stored as a UUID/string reference, attempt to resolve it
+                      try {
+                        const resolved = (typeof fromUuid === 'function') ? await fromUuid(ef).catch(() => null) : null;
+                        if (resolved) {
+                          // resolved may be an ActiveEffect or an Item; prefer ActiveEffect
+                          if (resolved.documentName === 'ActiveEffect' || (resolved.constructor && resolved.constructor.name === 'ActiveEffect')) {
+                            ae = resolved;
+                            parentItemForAe = it;
+                          } else if (resolved.documentName === 'Item') {
+                            // If it resolves to an Item, try to find an embedded AE matching efId inside it
+                            const inner = (resolved.effects || resolved.system?.effects || []).find(e2 => (e2._id === efId) || (e2.id === efId) || (e2.uuid === ef) || (normalize(e2._id || e2.id || e2) === norm));
+                            if (inner) { ae = inner; parentItemForAe = resolved; }
+                            else {
+                              // treat the resolved Item as the effect source
+                              effect = resolved;
+                              parentItemForAe = it;
+                            }
+                          } else {
+                            // Fallback: keep the string id but expose the composite identifier
+                            ae = null;
+                          }
+                        }
+                      } catch (e) {
+                        /* ignore resolution errors */
+                      }
+                    }
+                    // Use a stable idToOpen form combining item and effect so downstream resolution can locate embedded effects
+                    resolvedCandidate = `${it.id}::${efId}`;
                     break;
                   }
                 }
@@ -2027,6 +2353,16 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
 
           if (!ae) {
             console.warn('Wayfinder | could not resolve an ActiveEffect to open attack dialog for', { domEffectId, resolvedUuid, idToOpen });
+            // Fallback: attempt to open the attack dialog anyway and let
+            // `_openAttackDialog` perform additional resolution (compendia, UUIDs, etc.).
+            try {
+              if (idToOpen && typeof this._openAttackDialog === 'function') {
+                console.log('Wayfinder | falling back to _openAttackDialog with', idToOpen);
+                this._openAttackDialog(idToOpen, btn);
+              }
+            } catch (e) {
+              console.warn('Wayfinder | fallback _openAttackDialog failed', e);
+            }
             return;
           }
         }
@@ -2696,9 +3032,40 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
         }
 
         const strike = (effect && effect.system && effect.system.strike) || (ae && ae.system && ae.system.strike) || {};
-        const circun = Number(strike.circun ?? (effect && effect.system && effect.system.circun) ?? 0) || 0;
-        const itemMod = Number(strike.item ?? (effect && effect.system && effect.system.item) ?? 0) || 0;
-        const status = Number(strike.status ?? (effect && effect.system && effect.system.status) ?? 0) || 0;
+        // Allow actor-level stored strike/spell defaults
+        const baseStrike = this.document.system?.strike || {};
+        const baseSpell = this.document.system?.spell || {};
+
+        // Attempt to resolve the source item for this effect (if any) to detect spell attacks
+        let srcItem = null;
+        try {
+          let sourceItemId = null;
+          if (effect && effect.flags?.wayfinder?.sourceItemId) sourceItemId = effect.flags.wayfinder.sourceItemId;
+          else if (ae && ae.flags?.wayfinder?.sourceItemId) sourceItemId = ae.flags.wayfinder.sourceItemId;
+          else if (effect && effect.origin && String(effect.origin).startsWith('Item.')) sourceItemId = String(effect.origin).split('.')[1];
+          else if (ae && ae.origin && String(ae.origin).startsWith('Item.')) sourceItemId = String(ae.origin).split('.')[1];
+          else if (effect && effect.system && effect.system.sourceItemId) sourceItemId = effect.system.sourceItemId;
+          if (sourceItemId) srcItem = this.document.items.get(sourceItemId) || null;
+        } catch (e) { srcItem = null; }
+
+        const isSpellAttack = !!(srcItem && srcItem.type === 'spell');
+
+        let circun = Number(strike.circun ?? (effect && effect.system && effect.system.circun) ?? 0) || 0;
+        let itemMod = Number(strike.item ?? (effect && effect.system && effect.system.item) ?? 0) || 0;
+        let status = Number(strike.status ?? (effect && effect.system && effect.system.status) ?? 0) || 0;
+
+        // Merge actor-level stored strike/spell values depending on attack type
+        try {
+          if (isSpellAttack) {
+            circun += Number(baseSpell.circun || 0) || 0;
+            itemMod += Number(baseSpell.item || 0) || 0;
+            status += Number(baseSpell.status || 0) || 0;
+          } else {
+            circun += Number(baseStrike.circun || 0) || 0;
+            itemMod += Number(baseStrike.item || 0) || 0;
+            status += Number(baseStrike.status || 0) || 0;
+          }
+        } catch (e) { /* ignore */ }
 
         const modsTotal = prof + attrValue + circun + itemMod + status;
         const attackFormula = `2d10 + ${modsTotal}`;
@@ -2750,18 +3117,19 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
         const attackPreview = `Formula de Ataque: ${attackFormula}`;
         const damagePreview = `Formula de Dano: ${damageFormula}${damageType ? ` (${damageType})` : ''}`;
 
-        // Show a dialog to the user to choose rolling behavior (use partial, fallback to inline)
-        let dialogContent = null;
+        // Build dialog content with editable fields via the richer attack-form partial
+        let content = null;
         try {
-          dialogContent = await foundry.applications.handlebars.renderTemplate(
-            'systems/wayfinder/templates/components/attack-dialog.hbs',
-            { attackFormula, damageFormula, damageType }
+          const initialMods = Number(prof || 0) + Number(attrValue || 0) + Number(circun || 0) + Number(itemMod || 0) + Number(status || 0);
+          content = await foundry.applications.handlebars.renderTemplate(
+            'systems/wayfinder/templates/components/attack-form.hbs',
+            { effectName: (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque', prof, attrKey, attrValue, circun, itemMod, status, initialMods, damageFormula, damageType }
           );
         } catch (e) {
-          console.warn('Wayfinder | failed to render attack-dialog partial, falling back to text', e);
-            dialogContent = `${attackPreview} | ${damagePreview}`;
+          console.warn('Wayfinder | failed to render attack-form partial, falling back to simple dialog', e);
+          content = `${attackPreview} | ${damagePreview}`;
         }
-        console.log('Wayfinder | Activating effect', effectId, { effect, ae });
+
         // Render icon partials so JS does not contain HTML literals
         let iconBull = '';
         let iconBolt = '';
@@ -2778,114 +3146,195 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
 
         const dlg = new Dialog({
           title: `Rolagem de Ataque: ${(ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque'}`,
-          content: dialogContent,
+          content: content,
+          render: (html) => {
+            const updatePreview = () => {
+              const p = Number(html.find('#wf-prof').val()) || 0;
+              const a = Number(html.find('#wf-attr').val()) || 0;
+              const c = Number(html.find('#wf-circun').val()) || 0;
+              const it = Number(html.find('#wf-itemmod').val()) || 0;
+              const st = Number(html.find('#wf-status').val()) || 0;
+              const total = p + a + c + it + st;
+              const rt = html.find('#wf-roll-type').val();
+              const previewFormula = (rt === 'normal') ? '2d10' : (rt === 'adv' ? '3d10 keep 2 (drop lowest)' : '3d10 keep 2 (drop highest)');
+              html.find('#wf-attack-preview').html(`${previewFormula} + ${total}`);
+            };
+            html.find('#wf-roll-type, #wf-prof, #wf-attr, #wf-circun, #wf-itemmod, #wf-status').on('change input', updatePreview);
+          },
           buttons: {
             attack: {
               icon: iconBull,
-              label: 'Roll Attack',
-              callback: async () => {
+              label: 'Rolar Ataque',
+              callback: async (html) => {
                 try {
-                  const attackRoll = new Roll(attackFormula, this.document.getRollData());
-                  await attackRoll.evaluate({ async: true });
-                    const effectDescription = this._collectEffectDescription(effect, ae, parentItemForAe);
-                    try {
-                      const templateData = {
-                        title: (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque',
-                        effectDescription: effectDescription || null,
-                        attackTotal: attackRoll.total,
-                        stats: [
-                          { label: 'Ataque', value: attackRoll.total, small: true }
-                        ],
-                        attackFormula: attackFormula,
-                        attackDice: (attackRoll.dice && attackRoll.dice[0] && Array.isArray(attackRoll.dice[0].results)) ? attackRoll.dice[0].results.map(r => r.result).join(', ') : '' ,
-                        damageFormula: null,
-                        damageDice: null,
-                        damageTotal: null,
-                        flavor: ''
-                      };
-                      const flavorHtml = await foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/attack-roll-card.hbs', templateData);
-                      await attackRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: this.document }), flavor: flavorHtml });
-                    } catch (e) {
-                      console.warn('Wayfinder | failed to render attack card partial for effect attack, falling back', e);
-                      let flavor = '';
-                      try {
-                        flavor = await foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/attack-roll-card-fallback.hbs', {
-                          title: (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque',
-                          effectDescription: effectDescription || null,
-                          attackTotal: attackRoll.total,
-                          damageTotal: null,
-                          damageType: null
-                        });
-                        } catch (e2) {
-                        console.warn('Wayfinder | failed to render attack-roll-card-fallback partial, using text fallback', e2);
-                        const titleText = (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque';
-                        flavor = `${titleText} — Ataque: ${attackRoll.total}`;
-                      }
-                      await attackRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: this.document }), flavor: flavor });
+                  const type = html.find('#wf-roll-type').val();
+                  const p = Number(html.find('#wf-prof').val()) || 0;
+                  const a = Number(html.find('#wf-attr').val()) || 0;
+                  const c = Number(html.find('#wf-circun').val()) || 0;
+                  const it = Number(html.find('#wf-itemmod').val()) || 0;
+                  const st = Number(html.find('#wf-status').val()) || 0;
+                  const mods = p + a + c + it + st;
+
+                  if (type === 'normal') {
+                    const r = new Roll(`2d10 + ${mods}`);
+                    await r.evaluate();
+
+                    const diceResults = (r.dice && r.dice[0] && Array.isArray(r.dice[0].results)) ? r.dice[0].results.map(d => d.result).join(', ') : '';
+                    const finalTotal = r.total ?? r._total ?? '';
+                    const attackCard = await foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/attack-roll-card.hbs', {
+                      title: (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque',
+                      effectName: (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque',
+                      itemName: srcItem?.name || null,
+                      showItem: Boolean(itemNameSuffix),
+                      attackTotal: finalTotal,
+                      stats: [
+                        { label: 'ATR', value: a },
+                        { label: 'Prof', value: p },
+                        { label: 'Circun', value: c },
+                        { label: 'Item', value: it },
+                        { label: 'Status', value: st }
+                      ],
+                      attackFormula: `2d10 + ${mods}`,
+                      attackDice: diceResults,
+                      effectDescription: effectDescription,
+                      both: false
+                    });
+
+                    await r.toMessage({ speaker: ChatMessage.getSpeaker({ actor: this.document }), flavor: attackCard, rollMode: game.settings.get('core', 'rollMode') });
+                  } else {
+                    const r3 = new Roll('3d10');
+                    await r3.evaluate();
+                    const results = r3.dice[0].results.map(d => d.result);
+                    const sorted = results.slice().sort((a, b) => a - b);
+                    let kept = 0;
+                    let keptDiceText = '';
+                    if (type === 'adv') {
+                      kept = sorted[1] + sorted[2];
+                      keptDiceText = `${sorted[1]}, ${sorted[2]}`;
+                    } else {
+                      kept = sorted[0] + sorted[1];
+                      keptDiceText = `${sorted[0]}, ${sorted[1]}`;
                     }
-                } catch (err) {
-                  console.error('Erro ao rolar ataque:', err);
-                  ui.notifications.error('Erro ao rolar ataque');
-                }
+                    const attackTotal = kept + mods;
+
+                    const attackCard = await foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/attack-roll-card.hbs', {
+                      title: (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque',
+                      effectName: (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque',
+                      itemName: srcItem?.name || null,
+                      showItem: Boolean(itemNameSuffix),
+                      attackTotal: attackTotal,
+                      effectDescription: effectDescription,
+                      stats: [
+                        { label: 'Dados (3d10)', value: results.join(', '), small: true },
+                        { label: 'Mantidos', value: keptDiceText },
+                        { label: 'Mods', value: mods }
+                      ],
+                      both: false,
+                      attackFormula: `${kept} + ${mods}`,
+                      attackDice: results.join(', ')
+                    });
+
+                    await r3.toMessage({ speaker: ChatMessage.getSpeaker({ actor: this.document }), flavor: attackCard, rollMode: game.settings.get('core', 'rollMode') });
+                  }
+                } catch (err) { console.error('Erro ao rolar ataque:', err); ui.notifications.error('Erro ao rolar ataque'); }
               }
             },
             both: {
               icon: iconBolt,
-              label: 'Roll Attack + Damage',
-              callback: async () => {
+              label: 'Rolar Ataque + Dano',
+              callback: async (html) => {
                 try {
-                  const attackRoll = new Roll(attackFormula, this.document.getRollData());
-                  await attackRoll.evaluate({ async: true });
-                  const damageRoll = new Roll(damageFormula, this.document.getRollData());
-                  await damageRoll.evaluate({ async: true });
-                  try {
-                    const templateData = {
+                  const type = html.find('#wf-roll-type').val();
+                  const p = Number(html.find('#wf-prof').val()) || 0;
+                  const a = Number(html.find('#wf-attr').val()) || 0;
+                  const c = Number(html.find('#wf-circun').val()) || 0;
+                  const it = Number(html.find('#wf-itemmod').val()) || 0;
+                  const st = Number(html.find('#wf-status').val()) || 0;
+                  const mods = p + a + c + it + st;
+
+                  let attackCard = '';
+                  if (type === 'normal') {
+                    const r = new Roll(`2d10 + ${mods}`);
+                    await r.evaluate();
+                    const diceResults = (r.dice && r.dice[0] && Array.isArray(r.dice[0].results)) ? r.dice[0].results.map(d => d.result).join(', ') : '';
+                    const attackTotal = r.total ?? r._total ?? '';
+
+                    const dmgRoll = new Roll(damageFormula);
+                    await dmgRoll.evaluate();
+                    const dmgDice = (dmgRoll.dice && dmgRoll.dice[0] && Array.isArray(dmgRoll.dice[0].results)) ? dmgRoll.dice[0].results.map(d => d.result).join(', ') : '';
+                    const dmgTotal = dmgRoll.total ?? dmgRoll._total ?? '';
+
+                    attackCard = await foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/attack-roll-card.hbs', {
                       title: (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque',
-                      effectDescription: null,
-                      attackTotal: attackRoll.total,
+                      effectName: (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque',
+                      itemName: srcItem?.name || null,
+                      showItem: Boolean(itemNameSuffix),
+                      attackTotal: attackTotal,
+                      effectDescription: effectDescription,
                       stats: [
-                        { label: 'Ataque', value: attackRoll.total, small: true },
-                        { label: 'Dano', value: damageRoll.total, small: true }
+                        { label: 'ATR', value: a },
+                        { label: 'Prof', value: p },
+                        { label: 'Circun', value: c },
+                        { label: 'Item', value: it },
+                        { label: 'Status', value: st }
                       ],
-                      attackFormula: attackFormula,
-                      attackDice: (attackRoll.dice && attackRoll.dice[0] && Array.isArray(attackRoll.dice[0].results)) ? attackRoll.dice[0].results.map(r => r.result).join(', ') : '',
+                      attackFormula: `2d10 + ${mods}`,
+                      attackDice: diceResults,
                       damageFormula: damageFormula,
-                      damageDice: (damageRoll.dice && damageRoll.dice[0] && Array.isArray(damageRoll.dice[0].results)) ? damageRoll.dice[0].results.map(r => r.result).join(', ') : '',
-                      damageTotal: damageRoll.total,
-                      damageType: damageType || null,
+                      damageDice: dmgDice,
+                      damageTotal: dmgTotal,
+                      damageType: damageType || '—',
                       both: true
-                    };
-                    const flavorHtml = await foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/attack-roll-card.hbs', templateData);
-                    await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this.document }), content: flavorHtml, type: CONST.CHAT_MESSAGE_TYPES.ROLL });
-                  } catch (e) {
-                    console.warn('Wayfinder | failed to render attack+dmg partial for effect, falling back', e);
-                    let flavor = '';
-                    try {
-                      flavor = await foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/attack-roll-card-fallback.hbs', {
-                        title: (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque',
-                        effectDescription: null,
-                        attackTotal: attackRoll.total,
-                        damageTotal: damageRoll.total,
-                        damageType: damageType || null
-                      });
-                    } catch (e2) {
-                      console.warn('Wayfinder | failed to render attack-roll-card-fallback partial, using text fallback', e2);
-                      const titleText = (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque';
-                      flavor = `${titleText} — Ataque: ${attackRoll.total} | Dano: ${damageRoll.total}`;
-                    }
-                    await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this.document }), content: flavor, type: CONST.CHAT_MESSAGE_TYPES.ROLL });
+                    });
+
+                    await r.toMessage({ speaker: ChatMessage.getSpeaker({ actor: this.document }), flavor: attackCard, rollMode: game.settings.get('core', 'rollMode') });
+                  } else {
+                    const r3 = new Roll('3d10');
+                    await r3.evaluate();
+                    const results = r3.dice[0].results.map(d => d.result);
+                    const sorted = results.slice().sort((a, b) => a - b);
+                    let kept = 0;
+                    let keptDiceText = '';
+                    if (type === 'adv') { kept = sorted[1] + sorted[2]; keptDiceText = `${sorted[1]}, ${sorted[2]}`; }
+                    else { kept = sorted[0] + sorted[1]; keptDiceText = `${sorted[0]}, ${sorted[1]}`; }
+                    const attackTotal = kept + mods;
+
+                    const dmgRoll = new Roll(damageFormula);
+                    await dmgRoll.evaluate();
+                    const dmgDice = (dmgRoll.dice && dmgRoll.dice[0] && Array.isArray(dmgRoll.dice[0].results)) ? dmgRoll.dice[0].results.map(d => d.result).join(', ') : '';
+                    const dmgTotal = dmgRoll.total ?? dmgRoll._total ?? '';
+
+                    attackCard = await foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/attack-roll-card.hbs', {
+                      title: (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque',
+                      effectName: (ae && (ae.label || ae.name)) || (effect && effect.name) || 'Ataque',
+                      itemName: srcItem?.name || null,
+                      showItem: Boolean(itemNameSuffix),
+                      attackTotal: attackTotal,
+                      effectDescription: effectDescription,
+                      stats: [
+                        { label: 'Dados (3d10)', value: results.join(', '), small: true },
+                        { label: 'Mantidos', value: keptDiceText },
+                        { label: 'Mods', value: mods }
+                      ],
+                      attackFormula: `${kept} + ${mods}`,
+                      attackDice: results.join(', '),
+                      damageFormula: damageFormula,
+                      damageDice: dmgDice,
+                      damageTotal: dmgTotal,
+                      damageType: damageType || '—',
+                      both: true
+                    });
+
+                    await r3.toMessage({ speaker: ChatMessage.getSpeaker({ actor: this.document }), flavor: attackCard, rollMode: game.settings.get('core', 'rollMode') });
                   }
-                } catch (err) {
-                  console.error('Erro ao rolar ataque+dano:', err);
-                  ui.notifications.error('Erro ao rolar ataque+dano');
-                }
+                } catch (err) { console.error('Erro ao rolar ataque+dano:', err); ui.notifications.error('Erro ao rolar ataque+dano'); }
               }
             },
             cancel: { label: 'Cancelar' }
           },
           default: 'attack'
         });
-        dlg.render(true);
+        try { dlg.render(true); } catch (err) { console.error('Wayfinder | dialog render failed', err); }
       } catch (err) {
         console.error('Erro ao executar ataque do efeito:', err);
         ui.notifications.error('Erro ao executar ataque do efeito');
@@ -2949,8 +3398,23 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
   async _openAttackDialog(effectId, btn = null) {
     console.log('Wayfinder | _openAttackDialog called with', effectId, 'btn?', !!btn);
     // Resolve either Item or ActiveEffect robustly
-    let effect = this.document.items.get(effectId);
-    let ae = this.document.effects.get(effectId);
+    // Support composite ids created earlier like `itemId::effectId`
+    let effect = null;
+    let ae = null;
+    if (typeof effectId === 'string' && effectId.includes('::')) {
+      const [itemId, effId] = effectId.split('::');
+      effect = this.document.items.get(itemId) || null;
+      if (effect) {
+        // try find embedded AE by _id or id
+        const found = (effect.effects || effect.system?.effects || []).find(e => (e._id === effId) || (e.id === effId) || (e._id === effId) || (e.id === effId));
+        if (found) {
+          ae = found;
+        }
+      }
+      // if not found yet, still attempt direct lookups below
+    }
+    if (!effect) effect = this.document.items.get(effectId);
+    if (!ae) ae = this.document.effects.get(effectId);
     // Parent item for an embedded ActiveEffect (if applicable)
     let parentItemForAe = null;
 
@@ -3289,6 +3753,39 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
 
     // Initial computed mods total
     const initialMods = Number(prof || 0) + Number(attrValue || 0) + circun + itemMod + status;
+
+    // Fallback: aggregate numeric changes from ActiveEffects on the actor that
+    // target stacking suffixes ('.item', '.circun', '.status') in case those
+    // modifiers were not applied directly to actor.system for some reason.
+    try {
+      let aeAdded = { circun: 0, item: 0, status: 0 };
+      for (const ae of Array.from(this.document.effects || [])) {
+        const changes = ae.changes || (ae.system && ae.system.changes) || [];
+        for (const ch of changes) {
+          try {
+            const key = (ch.key || '').toString();
+            const val = Number(ch.value ?? 0) || 0;
+            if (!key || !val) continue;
+            // If change targets an attribute/skill stacking suffix, count it
+            if (attrKey && key.includes(`attributes.${attrKey}`)) {
+              if (key.endsWith('.item')) { aeAdded.item += val; }
+              else if (key.endsWith('.circun')) { aeAdded.circun += val; }
+              else if (key.endsWith('.status')) { aeAdded.status += val; }
+            }
+            // Generic stacking suffixes
+            if (key.endsWith('.item') && !key.includes('.attributes.')) { aeAdded.item += val; }
+            if (key.endsWith('.circun') && !key.includes('.attributes.')) { aeAdded.circun += val; }
+            if (key.endsWith('.status') && !key.includes('.attributes.')) { aeAdded.status += val; }
+          } catch (e) {}
+        }
+      }
+      if (aeAdded.item || aeAdded.circun || aeAdded.status) {
+        console.log('Wayfinder | aggregated AE stacking modifiers', aeAdded);
+        itemMod = Number(itemMod || 0) + Number(aeAdded.item || 0);
+        circun = Number(circun || 0) + Number(aeAdded.circun || 0);
+        status = Number(status || 0) + Number(aeAdded.status || 0);
+      }
+    } catch (e) { /* ignore fallback errors */ }
 
     console.log('Wayfinder | computed mods', { prof, attrKey, attrValue, circun, itemMod, status, initialMods });
 

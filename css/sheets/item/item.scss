@@ -21,18 +21,14 @@
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
   }
 
-  .header-fields {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+  /* header-fields moved to components/sheet-header.scss to avoid duplication */
 
   .header-top {
     display: flex;
     gap: 12px;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    flex-direction: column;
   }
 
   .charname input[name="name"] {
@@ -51,6 +47,7 @@
     gap: 10px;
     margin-top: 6px;
     flex-wrap: wrap;
+    flex-direction: column;
   }
 
   .metadata-item {
@@ -61,6 +58,7 @@
     border: 1px solid rgba(255, 255, 255, 0.03);
     padding: 8px 10px;
     border-radius: 8px;
+    margin: 10px;
   }
 
   .metadata-icon {
@@ -106,7 +104,11 @@
   }
 
   .description-card .description-card-body {
+    display: flex;
+    margin: 10px;
     padding: 12px;
+    justify-content: flex-start;
+    width: 100%;
   }
 
   /* Right column: quick metadata and action buttons */
@@ -129,6 +131,21 @@
     cursor: pointer;
   }
 
+  /* Make the add-modifier button visible and match other quick action buttons */
+  .add-modifier-btn {
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.03),
+      rgba(0, 0, 0, 0.06)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    color: var(--color-text-primary, #eee);
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
   /* Effects list reuse: keep compact rows */
   .effects-list .effect-item {
     padding: 8px;
@@ -138,10 +155,349 @@
     margin-bottom: 8px;
   }
 
+  /* Ensure effect header actions behave like other sheets: right-aligned and vertically centered */
+  .effects-list .effect-item.effect-collapsible {
+    .effect-collapsible-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .effect-collapsible-header .effect-item-actions {
+      position: static;
+      margin-left: auto;
+      display: none;
+      gap: 6px;
+      align-items: center;
+      align-self: center;
+      flex: 0 0 auto;
+      transform: translateY(3px);
+    }
+
+    .effect-collapsible-header.active-header .effect-item-actions {
+      display: inline-flex;
+    }
+  }
+
   @media (max-width: 1000px) {
     .profile-img {
       width: 96px;
       height: 96px;
+    }
+  }
+}
+
+/* --- Moved from css/effects/effects.scss --- */
+
+/* Trait chip row (standalone item/effect sheets) */
+.wayfinder.sheet.item {
+  .trait-chip-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 8px;
+    border-radius: 8px;
+    background: linear-gradient(
+      180deg,
+      rgba(18, 18, 18, 0.95),
+      rgba(32, 32, 32, 0.92)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  }
+
+  .description-card {
+    border-radius: 8px;
+    background: linear-gradient(
+      180deg,
+      rgba(25, 25, 25, 0.98),
+      var(--color-light-6)
+    );
+    border: 1px solid var(--color-dark-4);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+  }
+
+  /* Make each immediate child div in the details tab look like a card */
+  .tab[data-tab="details"] > div {
+    background: linear-gradient(
+      180deg,
+      rgba(18, 18, 18, 0.95),
+      rgba(32, 32, 32, 0.92)
+    );
+    border: 1px solid var(--color-dark-4);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nice-block.compact-effect-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .grid.grid-3 {
+    display: flex;
+    gap: 12px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+  }
+}
+
+/* --- End moved block --- */
+
+/* Modifiers list: compact, inline layout for modifier rows */
+.wayfinder.sheet.item {
+  .item-modifiers-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: block;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .item-modifier-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: linear-gradient(
+      180deg,
+      rgba(25, 25, 25, 0.95),
+      rgba(32, 32, 32, 0.92)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    width: 100%;
+    box-sizing: border-box;
+    flex-wrap: nowrap;
+    max-width: 100%;
+  }
+
+  /* Ensure each modifier row occupies full width */
+  .item-modifiers-list > .item-modifier-row {
+    width: 100%;
+    margin: 5px 0;
+    box-sizing: border-box;
+  }
+
+  .item-modifier-row .modifier-left {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .item-modifier-row .modifier-right {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .modifier-name {
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .modifier-meta {
+    font-size: 0.85rem;
+    color: var(--wf-text-muted, rgba(255, 255, 255, 0.65));
+  }
+
+  .modifier-value {
+    flex: 0 0 48px;
+    min-width: 44px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 800;
+    color: var(--color-text-primary, #fff);
+  }
+
+  .modifier-actions button {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    padding: 6px;
+    border-radius: 6px;
+    color: var(--color-text-primary, #eee);
+    cursor: pointer;
+  }
+
+  /* Ensure modifier cards in effect sheets match the compact inline style
+     previously used for item modifier rows so the visual appearance
+     remains consistent across sheets. This restores the "old" style. */
+  /* Outer container styled as a single card containing modifier rows */
+  .modifiers-container,
+  .modifiers-card-wrapper {
+    background: linear-gradient(
+      180deg,
+      rgba(18, 18, 18, 0.96),
+      rgba(28, 28, 28, 0.94)
+    );
+    border: 1px solid var(--color-dark-4);
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  }
+
+  .modifiers-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modifiers-card .modifier-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: linear-gradient(
+      180deg,
+      rgba(18, 18, 18, 0.96),
+      rgba(30, 30, 30, 0.94)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    width: 100%;
+    box-sizing: border-box;
+    flex-wrap: nowrap;
+    max-width: 100%;
+    transition:
+      background 0.12s ease,
+      transform 0.08s ease;
+  }
+
+  .modifiers-card .modifier-card:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(
+      180deg,
+      rgba(22, 22, 22, 0.98),
+      rgba(34, 34, 34, 0.96)
+    );
+  }
+
+  .modifiers-card .modifier-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+
+  /* Origin shown as a subtle pill to improve scannability */
+  .modifiers-card .modifier-origin {
+    flex: 0 0 auto;
+    font-size: 0.78rem;
+    color: var(--wf-text-muted, rgba(255, 255, 255, 0.68));
+    background: rgba(255, 255, 255, 0.02);
+    padding: 6px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 160px;
+  }
+
+  .modifiers-card .modifier-info {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  .modifiers-card .modifier-name {
+    font-weight: 700;
+    font-size: 0.98rem;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Target path allowed to wrap; muted color and slightly smaller */
+  .modifiers-card .modifier-target {
+    font-size: 0.82rem;
+    color: var(--wf-text-muted, rgba(255, 255, 255, 0.6));
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Value as a prominent pill with subtle depth */
+  .modifiers-card .modifier-value {
+    flex: 0 0 56px;
+    min-width: 48px;
+    text-align: center;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.03),
+      rgba(0, 0, 0, 0.06)
+    );
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-weight: 900;
+    color: var(--color-text-primary, #fff);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+  }
+
+  .modifiers-card .modifier-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .modifiers-card .modifier-actions button {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    border-radius: 6px;
+    color: var(--color-text-primary, #eee);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    transition:
+      background 0.12s ease,
+      color 0.12s ease;
+  }
+
+  .modifiers-card .modifier-actions button:hover {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-accent, #ffd479);
+  }
+
+  @media (max-width: 600px) {
+    .item-modifier-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .modifier-right {
+      justify-content: space-between;
+      width: 100%;
     }
   }
 }

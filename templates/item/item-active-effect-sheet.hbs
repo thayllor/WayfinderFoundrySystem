@@ -9,6 +9,12 @@
     </section>
   </header>
 
+  {{!-- Sheet Tab Navigation --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item active" data-tab="details">Detalhes</a>
+    <a class="item" data-tab="effects">Active Modifiers</a>
+  </nav>
+
   {{!-- Sheet Body --}}
   <section class="sheet-body">
     {{#if traitsResolved.length}}
@@ -147,7 +153,7 @@
           <div class="description-card-header">
             <div class="description-card-title"><i class="fas fa-skull-crossbones"></i> Dano</div>
           </div>
-          <div class="description-card-body grid grid-3col">
+          <div class="description-card-body">
             <div class="metadata-item">
               <div class="metadata-icon"><i class="fas fa-exchange-alt"></i></div>
               <div class="metadata-content">
@@ -196,14 +202,41 @@
           </div>
         </div>
       {{/if}}
+    </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <button type="button" class="attach-to-item-btn">Associar a Arma...</button>
-          </div>
+    {{!-- MODIFIERS TAB --}}
+    <div class="tab" data-group="primary" data-tab="effects">
+      <p style="padding: 10px; color: #666; font-size: 12px;">Here you can add active modifiers that apply while the effect is active.</p>
+
+      <div class="modifiers-section">
+        <h3>Applied Active Modifiers</h3>
+        <p style="color: #999; font-size: 12px;">Use this tab to add, edit, or remove modifiers that this effect should apply.</p>
+        <div class="modifiers-container">
+          {{#if system.modifiers}}
+            <div class="modifiers-card">
+              {{#each system.modifiers as |m idx|}}
+                <div class="modifier-card" data-idx="{{idx}}">
+                  <div class="modifier-line">
+                    <div class="modifier-origin" title="{{#if flags.wayfinder.sourceItemName}}Item: {{flags.wayfinder.sourceItemName}}{{else if flags.wayfinder.sourceTalentName}}Talento: {{flags.wayfinder.sourceTalentName}}{{else}}Ficha{{/if}}">{{#if flags.wayfinder.sourceItemName}}Item: {{flags.wayfinder.sourceItemName}}{{else if flags.wayfinder.sourceTalentName}}Talento: {{flags.wayfinder.sourceTalentName}}{{else}}Ficha{{/if}}</div>
+                    <div class="modifier-info">
+                      <div class="modifier-name">{{m.name}}</div>
+                      <div class="modifier-target">→ {{m.targetPath}}</div>
+                    </div>
+                    <div class="modifier-value">{{m.value}}</div>
+                    <div class="modifier-actions">
+                      <button type="button" class="edit-modifier" data-idx="{{idx}}">Editar</button>
+                      <button type="button" class="delete-modifier" data-idx="{{idx}}">🗑</button>
+                    </div>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="modifiers-empty" style="color:#999; padding:8px">Nenhum modifier definido.</div>
+          {{/if}}
         </div>
-
-
+        <button type="button" class="add-modifier-btn">+ Add Modifier</button>
+      </div>
     </div>
   </section>
 </form>

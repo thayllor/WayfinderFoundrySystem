@@ -5,7 +5,11 @@
 */
 .talent-item {
   border: 1px solid var(--color-dark-4, rgba(255, 255, 255, 0.03));
-  background: linear-gradient(180deg, rgba(20, 20, 20, 0.95), var(--color-light-6));
+  background: linear-gradient(
+    180deg,
+    rgba(20, 20, 20, 0.95),
+    var(--color-light-6)
+  );
   border-radius: 8px;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
   margin: 8px 0;
@@ -95,7 +99,10 @@
   overflow: hidden;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
 }
-.talent-item .talent-effects-section .effect-item.effect-collapsible .effect-collapsible-header {
+.talent-item
+  .talent-effects-section
+  .effect-item.effect-collapsible
+  .effect-collapsible-header {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -103,16 +110,39 @@
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), transparent);
   cursor: pointer;
 }
-.talent-item .talent-effects-section .effect-item.effect-collapsible .effect-collapsible-icon {
+.talent-item
+  .talent-effects-section
+  .effect-item.effect-collapsible
+  .effect-collapsible-header
+  .effect-item-actions {
+  display: none;
+}
+.talent-item
+  .talent-effects-section
+  .effect-item.effect-collapsible
+  .effect-collapsible-header.active-header
+  .effect-item-actions {
+  display: inline-flex;
+}
+.talent-item
+  .talent-effects-section
+  .effect-item.effect-collapsible
+  .effect-collapsible-icon {
   color: rgba(255, 255, 255, 0.6);
   transition: transform 160ms ease;
 }
-.talent-item .talent-effects-section .effect-item.effect-collapsible .effect-collapsible-title {
+.talent-item
+  .talent-effects-section
+  .effect-item.effect-collapsible
+  .effect-collapsible-title {
   font-weight: 600;
   color: var(--color-text-primary, #111827);
   flex: 1 1 auto;
 }
-.talent-item .talent-effects-section .effect-item.effect-collapsible .effect-badge {
+.talent-item
+  .talent-effects-section
+  .effect-item.effect-collapsible
+  .effect-badge {
   flex: 0 0 auto;
   margin-left: 8px;
   font-size: 12px;
@@ -122,7 +152,10 @@
   color: var(--color-text-primary, #92400e);
   border: 1px solid rgba(255, 255, 255, 0.03);
 }
-.talent-item .talent-effects-section .effect-item.effect-collapsible .effect-collapsible-content {
+.talent-item
+  .talent-effects-section
+  .effect-item.effect-collapsible
+  .effect-collapsible-content {
   padding: 10px;
 }
 .talent-item .talent-effects-section .effect-item .effect-details {
@@ -134,20 +167,34 @@
   border-top: 1px dashed rgba(0, 0, 0, 0.03);
   padding-top: 8px;
 }
-.talent-item .talent-effects-section .effect-item .effect-section.effect-description {
+.talent-item
+  .talent-effects-section
+  .effect-item
+  .effect-section.effect-description {
   margin-top: 6px;
   padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 6px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(255, 255, 255, 0.01));
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
-.talent-item .talent-effects-section .effect-item .effect-section.effect-heightened {
+.talent-item
+  .talent-effects-section
+  .effect-item
+  .effect-section.effect-heightened {
   margin-top: 6px;
   padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 6px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(0, 0, 0, 0.02));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.01),
+    rgba(0, 0, 0, 0.02)
+  );
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
 .talent-item .talent-effects-section .effect-item .effect-section-header {
@@ -206,7 +253,11 @@
   padding: 12px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 6px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(255, 255, 255, 0.01));
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   color: #ffffff;
 }
@@ -215,7 +266,11 @@
   padding: 10px 12px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 6px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(255, 255, 255, 0.01));
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   color: #ffffff;
   display: flex;
@@ -224,30 +279,51 @@
   gap: 12px;
   /* left: icon + name + meta, right: actions/badges */
 }
-.talent-item .talent-effects-section .effect-item .talent-type-category .type-left {
+.talent-item
+  .talent-effects-section
+  .effect-item
+  .talent-type-category
+  .type-left {
   display: flex;
   align-items: center;
   gap: 10px;
   min-width: 0;
 }
-.talent-item .talent-effects-section .effect-item .talent-type-category .type-right {
+.talent-item
+  .talent-effects-section
+  .effect-item
+  .talent-type-category
+  .type-right {
   display: flex;
   align-items: center;
   gap: 8px;
   flex: 0 0 auto;
 }
-.talent-item .talent-effects-section .effect-item .talent-type-category .type-name {
+.talent-item
+  .talent-effects-section
+  .effect-item
+  .talent-type-category
+  .type-name {
   font-weight: 700;
   color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.talent-item .talent-effects-section .effect-item .talent-type-category .type-meta {
+.talent-item
+  .talent-effects-section
+  .effect-item
+  .talent-type-category
+  .type-meta {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.75);
 }
-.talent-item .talent-effects-section .effect-item .talent-type-category .type-actions button {
+.talent-item
+  .talent-effects-section
+  .effect-item
+  .talent-type-category
+  .type-actions
+  button {
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.9);
@@ -255,14 +331,23 @@
   border-radius: 6px;
   cursor: pointer;
 }
-.talent-item .talent-effects-section .effect-item .talent-type-category .type-actions button:hover {
+.talent-item
+  .talent-effects-section
+  .effect-item
+  .talent-type-category
+  .type-actions
+  button:hover {
   background: rgba(255, 255, 255, 0.03);
 }
 @media (max-width: 680px) {
   .talent-item .talent-effects-section .effect-item .talent-type-category {
     flex-wrap: wrap;
   }
-  .talent-item .talent-effects-section .effect-item .talent-type-category > .type-right {
+  .talent-item
+    .talent-effects-section
+    .effect-item
+    .talent-type-category
+    > .type-right {
     width: 100%;
     justify-content: flex-start;
   }
@@ -301,7 +386,7 @@
 }
 
 .talent-item.collapsed .talent-item-content {
-  display: none !important;
+  display: none;
 }
 
 /* Provide global rules so `.talent-type-category` applies outside nested effect contexts */
@@ -311,7 +396,11 @@
   padding: 10px 12px;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 6px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(255, 255, 255, 0.01));
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   color: #ffffff;
   display: flex;
@@ -359,13 +448,10 @@
   border: 2px solid var(--color-warm-2);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
 }
-.talent-type-category .wayfinder-talent-sheet .header-fields {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.talent-type-category .wayfinder-talent-sheet {
+  /* header-fields moved to components/sheet-header.scss to avoid duplication */
 }
-.talent-type-category .wayfinder-talent-sheet .charname input[name=name] {
+.talent-type-category .wayfinder-talent-sheet .charname input[name="name"] {
   font-size: 1.2rem;
   font-weight: 800;
   padding: 8px 10px;
@@ -388,16 +474,30 @@
   flex-direction: column;
   gap: 10px;
 }
-.talent-type-category .wayfinder-talent-sheet .quick-actions-panel .description-card {
-  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+.talent-type-category
+  .wayfinder-talent-sheet
+  .quick-actions-panel
+  .description-card {
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.98),
+    var(--color-light-6)
+  );
   border: 1px solid var(--color-dark-4);
   border-radius: 8px;
   overflow: hidden;
 }
-.talent-type-category .wayfinder-talent-sheet .quick-actions-panel .description-card .description-card-body {
+.talent-type-category
+  .wayfinder-talent-sheet
+  .quick-actions-panel
+  .description-card
+  .description-card-body {
   padding: 10px;
 }
-.talent-type-category .wayfinder-talent-sheet .quick-actions-panel .metadata-item {
+.talent-type-category
+  .wayfinder-talent-sheet
+  .quick-actions-panel
+  .metadata-item {
   display: flex;
   gap: 8px;
   align-items: center;
@@ -406,7 +506,10 @@
   background: rgba(255, 255, 255, 0.01);
   border: 1px solid rgba(255, 255, 255, 0.02);
 }
-.talent-type-category .wayfinder-talent-sheet .quick-actions-panel .metadata-icon {
+.talent-type-category
+  .wayfinder-talent-sheet
+  .quick-actions-panel
+  .metadata-icon {
   width: 34px;
   height: 34px;
   display: inline-flex;
@@ -418,7 +521,11 @@
 .talent-type-category .wayfinder-talent-sheet .btn {
   padding: 8px 10px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.06));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(0, 0, 0, 0.06)
+  );
   border: 1px solid rgba(255, 255, 255, 0.03);
   color: var(--color-text-primary, #eee);
   cursor: pointer;
@@ -470,7 +577,11 @@
   flex-wrap: wrap;
   padding: 8px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(18, 18, 18, 0.95), rgba(32, 32, 32, 0.92));
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 18, 0.95),
+    rgba(32, 32, 32, 0.92)
+  );
   border: 1px solid rgba(255, 255, 255, 0.03);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
 }
@@ -523,17 +634,26 @@
 .wayfinder-talent-sheet .effects-category.active-effects-category {
   padding: 10px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(34, 20, 18, 0.95), rgba(40, 24, 20, 0.92));
+  background: linear-gradient(
+    180deg,
+    rgba(34, 20, 18, 0.95),
+    rgba(40, 24, 20, 0.92)
+  );
   border: 1px solid rgba(120, 60, 40, 0.06);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
   margin: 5px;
 }
 
-.wayfinder-talent-sheet .effects-category.active-effects-category .effects-title {
+.wayfinder-talent-sheet
+  .effects-category.active-effects-category
+  .effects-title {
   color: var(--color-warm-2, #eab308);
 }
 
-.wayfinder-talent-sheet .effects-category.active-effects-category .effects-list .effect-item {
+.wayfinder-talent-sheet
+  .effects-category.active-effects-category
+  .effects-list
+  .effect-item {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
   border: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -542,17 +662,26 @@
 .wayfinder-talent-sheet .effects-category.passive-effects-category {
   padding: 10px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(34, 20, 18, 0.95), rgba(40, 24, 20, 0.92));
+  background: linear-gradient(
+    180deg,
+    rgba(34, 20, 18, 0.95),
+    rgba(40, 24, 20, 0.92)
+  );
   border: 1px solid rgba(120, 60, 40, 0.06);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
   margin: 5px;
 }
 
-.wayfinder-talent-sheet .effects-category.passive-effects-category .effects-title {
+.wayfinder-talent-sheet
+  .effects-category.passive-effects-category
+  .effects-title {
   color: var(--color-warm-2, #eab308);
 }
 
-.wayfinder-talent-sheet .effects-category.passive-effects-category .effects-list .effect-item {
+.wayfinder-talent-sheet
+  .effects-category.passive-effects-category
+  .effects-list
+  .effect-item {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
   border: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -582,24 +711,41 @@
 .wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible {
   border-radius: 8px;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(20, 20, 20, 0.98), rgba(12, 12, 12, 0.96));
+  background: linear-gradient(
+    180deg,
+    rgba(20, 20, 20, 0.98),
+    rgba(12, 12, 12, 0.96)
+  );
   border: 1px solid var(--color-dark-4);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-collapsible-header {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
   cursor: pointer;
   user-select: none;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(255, 255, 255, 0.01));
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
   border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-  transition: background 0.12s ease, box-shadow 0.12s ease;
+  transition:
+    background 0.12s ease,
+    box-shadow 0.12s ease;
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-collapsible-header .effect-collapsible-icon {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header
+  .effect-collapsible-icon {
   width: 18px;
   height: 18px;
   display: inline-flex;
@@ -609,16 +755,33 @@
   color: var(--color-text-primary, #eee);
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible.active-effect-item .effect-collapsible-header,
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-collapsible-header.active-header {
-  background: linear-gradient(180deg, rgba(10, 10, 10, 0.02), rgba(255, 255, 255, 0.02));
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible.active-effect-item
+  .effect-collapsible-header,
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header.active-header {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.02),
+    rgba(255, 255, 255, 0.02)
+  );
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-collapsible-header.active-header .effect-collapsible-icon {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header.active-header
+  .effect-collapsible-icon {
   transform: rotate(90deg);
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-collapsible-title {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-title {
   font-weight: 800;
   color: var(--color-text-primary, #fff);
   flex: 1 1 auto;
@@ -627,7 +790,10 @@
   text-overflow: ellipsis;
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-badge {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -640,57 +806,101 @@
   border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-badge.action-badge {
-  background: linear-gradient(180deg, rgba(40, 20, 10, 0.04), rgba(30, 10, 0, 0.03));
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-badge.action-badge {
+  background: linear-gradient(
+    180deg,
+    rgba(40, 20, 10, 0.04),
+    rgba(30, 10, 0, 0.03)
+  );
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-badge.magic-badge {
-  background: linear-gradient(180deg, rgba(10, 20, 40, 0.04), rgba(5, 10, 30, 0.03));
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-badge.magic-badge {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 20, 40, 0.04),
+    rgba(5, 10, 30, 0.03)
+  );
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-collapsible-content {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-content {
   padding: 10px 12px 14px 12px;
   display: block;
   background: transparent;
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-details {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-details {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-section.effect-traits .effect-section-header {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-traits
+  .effect-section-header {
   font-weight: 700;
   color: var(--color-text-primary);
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-section.effect-traits .effect-traits-row {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-traits
+  .effect-traits-row {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   align-items: center;
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-section.effect-traits .trait-chip {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-traits
+  .trait-chip {
   box-shadow: none;
   border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-section.effect-meta-block .description-card {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-meta-block
+  .description-card {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.03);
   border-radius: 6px;
   padding: 6px;
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-section.effect-meta-block .effect-meta-flex {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-meta-block
+  .effect-meta-flex {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-section.effect-meta-block .effect-meta-chip {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-meta-block
+  .effect-meta-chip {
   display: inline-flex;
   gap: 6px;
   align-items: center;
@@ -701,11 +911,19 @@
   font-weight: 700;
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-section.effect-description .effect-section-header {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-description
+  .effect-section-header {
   font-weight: 700;
 }
 
-.wayfinder-talent-sheet .effects-list .effect-item.effect-collapsible .effect-section.effect-description .effect-text {
+.wayfinder-talent-sheet
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-description
+  .effect-text {
   color: var(--color-text-primary);
   font-size: 0.92rem;
   line-height: 1.3;
@@ -721,24 +939,41 @@
 .talent-item .effects-list .effect-item.effect-collapsible {
   border-radius: 8px;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(20, 20, 20, 0.98), rgba(12, 12, 12, 0.96));
+  background: linear-gradient(
+    180deg,
+    rgba(20, 20, 20, 0.98),
+    rgba(12, 12, 12, 0.96)
+  );
   border: 1px solid var(--color-dark-4);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-collapsible-header {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
   cursor: pointer;
   user-select: none;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(255, 255, 255, 0.01));
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.02),
+    rgba(255, 255, 255, 0.01)
+  );
   border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-  transition: background 0.12s ease, box-shadow 0.12s ease;
+  transition:
+    background 0.12s ease,
+    box-shadow 0.12s ease;
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-collapsible-header .effect-collapsible-icon {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header
+  .effect-collapsible-icon {
   width: 18px;
   height: 18px;
   display: inline-flex;
@@ -748,16 +983,33 @@
   color: var(--color-text-primary, #eee);
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible.active-effect-item .effect-collapsible-header,
-.talent-item .effects-list .effect-item.effect-collapsible .effect-collapsible-header.active-header {
-  background: linear-gradient(180deg, rgba(10, 10, 10, 0.02), rgba(255, 255, 255, 0.02));
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible.active-effect-item
+  .effect-collapsible-header,
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header.active-header {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.02),
+    rgba(255, 255, 255, 0.02)
+  );
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-collapsible-header.active-header .effect-collapsible-icon {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-header.active-header
+  .effect-collapsible-icon {
   transform: rotate(90deg);
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-collapsible-title {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-title {
   font-weight: 800;
   color: var(--color-text-primary, #fff);
   flex: 1 1 auto;
@@ -779,15 +1031,32 @@
   border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-badge.action-badge {
-  background: linear-gradient(180deg, rgba(40, 20, 10, 0.04), rgba(30, 10, 0, 0.03));
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-badge.action-badge {
+  background: linear-gradient(
+    180deg,
+    rgba(40, 20, 10, 0.04),
+    rgba(30, 10, 0, 0.03)
+  );
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-badge.magic-badge {
-  background: linear-gradient(180deg, rgba(10, 20, 40, 0.04), rgba(5, 10, 30, 0.03));
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-badge.magic-badge {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 20, 40, 0.04),
+    rgba(5, 10, 30, 0.03)
+  );
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-collapsible-content {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-collapsible-content {
   padding: 10px 12px 14px 12px;
   display: block;
   background: transparent;
@@ -799,37 +1068,61 @@
   gap: 12px;
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-section.effect-traits .effect-section-header {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-traits
+  .effect-section-header {
   font-weight: 700;
   color: var(--color-text-primary);
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-section.effect-traits .effect-traits-row {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-traits
+  .effect-traits-row {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   align-items: center;
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-section.effect-traits .trait-chip {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-traits
+  .trait-chip {
   box-shadow: none;
   border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-section.effect-meta-block .description-card {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-meta-block
+  .description-card {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.03);
   border-radius: 6px;
   padding: 6px;
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-section.effect-meta-block .effect-meta-flex {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-meta-block
+  .effect-meta-flex {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-section.effect-meta-block .effect-meta-chip {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-meta-block
+  .effect-meta-chip {
   display: inline-flex;
   gap: 6px;
   align-items: center;
@@ -840,11 +1133,19 @@
   font-weight: 700;
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-section.effect-description .effect-section-header {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-description
+  .effect-section-header {
   font-weight: 700;
 }
 
-.talent-item .effects-list .effect-item.effect-collapsible .effect-section.effect-description .effect-text {
+.talent-item
+  .effects-list
+  .effect-item.effect-collapsible
+  .effect-section.effect-description
+  .effect-text {
   color: var(--color-text-primary);
   font-size: 0.92rem;
   line-height: 1.3;

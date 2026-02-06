@@ -2,7 +2,12 @@
 
 @use "./common/wayfinder.common.scss" as *;
 
+@use "./components/trait-chip.scss" as *;
+@use "./components/attack-card.scss" as *;
+
 @use "./effects/effects.scss" as *;
+
+@use "./components/sheet-header.scss" as *;
 
 @use "./sheets/actor/actor.scss" as *;
 

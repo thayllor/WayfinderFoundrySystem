@@ -5,3 +5,146 @@
 .wayfinder.sheet.actor {
   box-sizing: border-box;
 }
+
+/* Ensure the modifiers list is presented as a single card with row items */
+.wayfinder.sheet.actor {
+  .modifiers-container,
+  .modifiers-card-wrapper {
+    background: linear-gradient(
+      180deg,
+      rgba(18, 18, 18, 0.96),
+      rgba(28, 28, 28, 0.94)
+    );
+    border: 1px solid var(--color-dark-4);
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+    margin-bottom: 10px;
+  }
+}
+
+/* Apply modifier-card styling to actor sheets to match item sheets */
+.wayfinder.sheet.actor {
+  .modifiers-card .modifier-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: linear-gradient(
+      180deg,
+      rgba(18, 18, 18, 0.96),
+      rgba(30, 30, 30, 0.94)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    width: 100%;
+    box-sizing: border-box;
+    flex-wrap: nowrap;
+    max-width: 100%;
+    transition:
+      background 0.12s ease,
+      transform 0.08s ease;
+  }
+
+  .modifiers-card .modifier-card:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(
+      180deg,
+      rgba(22, 22, 22, 0.98),
+      rgba(34, 34, 34, 0.96)
+    );
+  }
+
+  .modifiers-card .modifier-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .modifiers-card .modifier-origin {
+    flex: 0 0 auto;
+    font-size: 0.78rem;
+    color: var(--wf-text-muted, rgba(255, 255, 255, 0.68));
+    background: rgba(255, 255, 255, 0.02);
+    padding: 6px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 160px;
+  }
+
+  .modifiers-card .modifier-info {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  .modifiers-card .modifier-name {
+    font-weight: 700;
+    font-size: 0.98rem;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .modifiers-card .modifier-target {
+    font-size: 0.82rem;
+    color: var(--wf-text-muted, rgba(255, 255, 255, 0.6));
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .modifiers-card .modifier-value {
+    flex: 0 0 56px;
+    min-width: 48px;
+    text-align: center;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.03),
+      rgba(0, 0, 0, 0.06)
+    );
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-weight: 900;
+    color: var(--color-text-primary, #fff);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+  }
+
+  .modifiers-card .modifier-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .modifiers-card .modifier-actions button {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    border-radius: 6px;
+    color: var(--color-text-primary, #eee);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    transition:
+      background 0.12s ease,
+      color 0.12s ease;
+  }
+
+  .modifiers-card .modifier-actions button:hover {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-accent, #ffd479);
+  }
+}

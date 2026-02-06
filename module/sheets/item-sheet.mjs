@@ -649,6 +649,40 @@ export class WayfinderItemSheet extends HandlebarsApplicationMixin(DocumentSheet
             paths.add(`system.skills.${s}.status`);
             paths.add(`system.skills.${s}.circun`);
           }
+          // Ensure actor has strike/spell defaults so suggestions include them
+          try {
+            const makeStack = () => ({ item: 0, circun: 0, status: 0, bonus: 0 });
+            const makeDamage = () => ({ item: 0, circun: 0, status: 0, bonus: 0 });
+            const strike = actor?.system?.strike || null;
+            const spell = actor?.system?.spell || null;
+            if (!strike) {
+              paths.add('system.strike.item'); paths.add('system.strike.circun'); paths.add('system.strike.status'); paths.add('system.strike.bonus');
+              paths.add('system.strike.damage.item'); paths.add('system.strike.damage.circun'); paths.add('system.strike.damage.status'); paths.add('system.strike.damage.bonus');
+            } else {
+              paths.add('system.strike.item'); paths.add('system.strike.circun'); paths.add('system.strike.status'); paths.add('system.strike.bonus');
+              if (!strike.damage) {
+                paths.add('system.strike.damage.item'); paths.add('system.strike.damage.circun'); paths.add('system.strike.damage.status'); paths.add('system.strike.damage.bonus');
+              }
+            }
+            if (!spell) {
+              paths.add('system.spell.item'); paths.add('system.spell.circun'); paths.add('system.spell.status'); paths.add('system.spell.bonus');
+              paths.add('system.spell.damage.item'); paths.add('system.spell.damage.circun'); paths.add('system.spell.damage.status'); paths.add('system.spell.damage.bonus');
+            } else {
+              paths.add('system.spell.item'); paths.add('system.spell.circun'); paths.add('system.spell.status'); paths.add('system.spell.bonus');
+              if (!spell.damage) {
+                paths.add('system.spell.damage.item'); paths.add('system.spell.damage.circun'); paths.add('system.spell.damage.status'); paths.add('system.spell.damage.bonus');
+              }
+            }
+            // Persist defaults asynchronously if missing
+            const need = {};
+            if (!strike) need['system.strike'] = Object.assign(makeStack(), { damage: makeDamage() });
+            else if (!strike.damage) need['system.strike'] = Object.assign({}, strike, { damage: makeDamage() });
+            if (!spell) need['system.spell'] = Object.assign(makeStack(), { damage: makeDamage() });
+            else if (!spell.damage) need['system.spell'] = Object.assign({}, spell, { damage: makeDamage() });
+            if (Object.keys(need).length) {
+              try { actor.update(need).catch?.(e => console.warn('Wayfinder: could not persist strike/spell defaults', e)); } catch(e) { console.warn('Wayfinder: actor.update failed', e); }
+            }
+          } catch (e) { /* ignore */ }
           // Defenses on armor (per-attribute item contribution)
           const defAttrs = actor?.system?.attributes ? Object.keys(actor.system.attributes) : [];
           for (const a of defAttrs) {
@@ -767,6 +801,12 @@ export class WayfinderItemSheet extends HandlebarsApplicationMixin(DocumentSheet
           ev.stopPropagation();
           return this._onRemoveEffect(ev);
         }
+        const editEffectBtn = ev.target.closest('.edit-effect-btn');
+        if (editEffectBtn) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          return this._onEditEffect(ev);
+        }
       };
       html.addEventListener('dragover', this._sheetDragover);
       html.addEventListener('drop', this._sheetDrop);
@@ -878,6 +918,229 @@ export class WayfinderItemSheet extends HandlebarsApplicationMixin(DocumentSheet
     }
 
     ui.notifications.warn('Não foi possível remover o efeito persistentemente; verifique permissões.');
+  }
+
+  /**
+   * Handle editing an effect (open effect item sheet)
+   */
+  async _onEditEffect(event) {
+    const btn = event.target.closest('.edit-effect-btn');
+    if (!btn) return;
+
+    const uuid = btn.dataset.uuid;
+    if (!uuid) return ui.notifications?.warn('UUID do efeito não encontrado.');
+
+    try {
+      let doc = await fromUuid(uuid);
+      // If fromUuid couldn't resolve, try several fallbacks:
+      // 1) If the UUID is a Compendium ref, try to load the pack entry directly.
+      // 2) If the DOM wrapper stores a pack/item reference, use it.
+      // 3) As a last resort, search item compendia for an entry with the given id.
+      if (!doc) {
+        // direct compendium ref
+        if (typeof uuid === 'string' && uuid.startsWith('Compendium.')) {
+          try {
+            const id = uuid.substring(uuid.lastIndexOf('.') + 1);
+            const itemTypeToken = '.Item.';
+            const idx = uuid.indexOf(itemTypeToken);
+            if (idx !== -1) {
+              const packKey = uuid.substring('Compendium.'.length, idx);
+              const pack = game.packs.get(packKey);
+              if (pack) {
+                if (typeof pack.getDocument === 'function') doc = await pack.getDocument(id);
+                else if (typeof pack.getEntry === 'function') {
+                  const entry = await pack.getEntry(id);
+                  if (entry && entry.document) doc = entry.document;
+                }
+              }
+            }
+          } catch (innerErr) {
+            console.debug('Wayfinder | failed to resolve compendium uuid manually', innerErr, uuid);
+          }
+        }
+
+        // try to read alternative IDs from the DOM wrapper (data attributes)
+        if (!doc) {
+          try {
+            const el = btn.closest('.effect-item');
+            const alt = el?.dataset?.sourceItemId || el?.dataset?.itemId || el?.dataset?.realId;
+            if (alt) {
+              // alt might already be a compendium ref
+              if (String(alt).startsWith('Compendium.')) {
+                const id = String(alt).substring(String(alt).lastIndexOf('.') + 1);
+                const itemTypeToken = '.Item.';
+                const idx = String(alt).indexOf(itemTypeToken);
+                if (idx !== -1) {
+                  const packKey = String(alt).substring('Compendium.'.length, idx);
+                  const pack = game.packs.get(packKey);
+                  if (pack) {
+                    if (typeof pack.getDocument === 'function') doc = await pack.getDocument(id);
+                    else if (typeof pack.getEntry === 'function') {
+                      const entry = await pack.getEntry(id);
+                      if (entry && entry.document) doc = entry.document;
+                    }
+                  }
+                }
+              } else {
+                // alt may be a raw id stored; search compendia for an entry with that id
+                const searchId = String(alt);
+                for (const pack of game.packs) {
+                  try {
+                    // Only search Item packs
+                    if (pack.metadata?.type !== 'Item') continue;
+                    if (typeof pack.getDocument === 'function') {
+                      const candidate = await pack.getDocument(searchId).catch(() => null);
+                      if (candidate) { doc = candidate; break; }
+                    }
+                    if (typeof pack.getEntry === 'function') {
+                      const entry = await pack.getEntry(searchId).catch(() => null);
+                      if (entry && entry.document) { doc = entry.document; break; }
+                    }
+                  } catch (pErr) { /* ignore per-pack errors */ }
+                }
+              }
+            }
+          } catch (domErr) {
+            console.debug('Wayfinder | failed to resolve via DOM dataset', domErr);
+          }
+        }
+      }
+
+      if (!doc) {
+        // If the effect is an embedded object stored on this item (flags.wayfinder.embeddedEffects),
+        // open an edit dialog and persist changes back into the flags array.
+        try {
+          const el = btn.closest('.effect-item');
+          const idxAttr = el?.dataset?.effectIndex ?? el?.dataset?.effectindex ?? el?.dataset?.effectIndex;
+          const embedded = Array.isArray(this.document.flags?.wayfinder?.embeddedEffects) ? foundry.utils.deepClone(this.document.flags.wayfinder.embeddedEffects) : [];
+          let foundIdx = -1;
+          if (idxAttr !== undefined && idxAttr !== null && idxAttr !== '') {
+            const parsed = Number(idxAttr);
+            if (!Number.isNaN(parsed) && embedded[parsed]) foundIdx = parsed;
+          }
+          if (foundIdx === -1 && uuid) {
+            foundIdx = embedded.findIndex(e => (e.uuid === uuid || e._id === uuid || e.id === uuid));
+          }
+          if (foundIdx !== -1) {
+            const ef = embedded[foundIdx];
+            // Try to open the embedded effect using an in-memory Item document so the full ItemSheet
+            // (or Effect sheet) is shown. Constructing a new Item via the Document constructor
+            // avoids the deprecated temporary create API.
+            try {
+              const copyData = foundry.utils.duplicate(ef);
+              delete copyData._id;
+              let tempDoc = null;
+              try {
+                // Prefer the global Item constructor if available
+                if (typeof Item === 'function') tempDoc = new Item(copyData);
+                else if (foundry && foundry.documents && typeof foundry.documents.Item === 'function') tempDoc = new foundry.documents.Item(copyData);
+              } catch (ctorErr) {
+                tempDoc = null;
+              }
+              if (tempDoc && tempDoc.sheet) {
+                // Override update so saving the sheet persists back into the parent's embeddedEffects
+                const parentDoc = this.document;
+                const localIdx = foundIdx;
+                const localEmbedded = embedded;
+                const localEf = ef;
+                tempDoc.update = async (updates, options) => {
+                  try {
+                    // Merge name
+                    if (updates?.name !== undefined) localEf.name = updates.name;
+                    // Merge system fields
+                    if (updates?.system) {
+                      try {
+                        foundry.utils.mergeObject(localEf.system || {}, updates.system, { inplace: true, insertKeys: true, insertValues: true });
+                      } catch (mErr) {
+                        // fallback shallow assign
+                        Object.assign(localEf.system = localEf.system || {}, updates.system);
+                      }
+                    }
+                    // Merge flags if present
+                    if (updates?.flags) {
+                      try {
+                        foundry.utils.mergeObject(localEf.flags || {}, updates.flags, { inplace: true, insertKeys: true, insertValues: true });
+                      } catch (fErr) {
+                        Object.assign(localEf.flags = localEf.flags || {}, updates.flags);
+                      }
+                    }
+                    // Replace embedded entry and persist on parent document
+                    localEmbedded[localIdx] = localEf;
+                    await parentDoc.update({ ['flags.wayfinder.embeddedEffects']: localEmbedded });
+                    // Close the temporary sheet
+                    try { tempDoc.sheet.close(); } catch (e) {}
+                    return localEf;
+                  } catch (err) {
+                    console.error('Wayfinder | failed to save via tempDoc.update', err);
+                    throw err;
+                  }
+                };
+                tempDoc.sheet.render(true);
+                return;
+              }
+            } catch (inMemoryErr) {
+              // fallback to dialog rendering below
+            }
+
+            // Render the effect template inside a Dialog (editing embedded effects in-place)
+            const tpl = (ef.type === 'passive-effect') ? 'item-passive-effect-sheet.hbs' : 'item-active-effect-sheet.hbs';
+            const ctx = {
+              item: ef,
+              system: ef.system || {},
+              editable: true,
+              cssClasses: this.constructor.DEFAULT_OPTIONS.classes.join(' '),
+              traitsResolved: ef.traitsResolved || []
+            };
+            const content = await foundry.applications.handlebars.renderTemplate(`systems/wayfinder/templates/item/${tpl}`, ctx);
+            new Dialog({
+              title: `Editar Efeito: ${ef.name || 'Efeito'}`,
+              content,
+              buttons: {
+                save: { label: 'Salvar', callback: async (htmlDlg) => {
+                  let root = htmlDlg;
+                  if (htmlDlg.jquery && htmlDlg.length) root = htmlDlg[0];
+                  const form = root.querySelector('form');
+                  if (!form) return ui.notifications?.error('Formulário do efeito não encontrado.');
+                  const fd = new FormData(form);
+                  const values = Object.fromEntries(fd.entries());
+                  // Apply simple form values back onto the embedded effect object
+                  for (const [k, v] of Object.entries(values)) {
+                    if (k.startsWith('system.')) {
+                      const sub = k.substring('system.'.length);
+                      foundry.utils.setProperty(ef, `system.${sub}`, v);
+                    } else {
+                      foundry.utils.setProperty(ef, k, v);
+                    }
+                  }
+                  embedded[foundIdx] = ef;
+                  try {
+                    await this.document.update({ ['flags.wayfinder.embeddedEffects']: embedded });
+                    ui.notifications?.info('Efeito atualizado.');
+                    try { this.render(true); } catch (e) {}
+                  } catch (upErr) {
+                    console.error('Wayfinder | failed to save embedded effect', upErr);
+                    ui.notifications?.error('Falha ao salvar o efeito embutido. Veja o console.');
+                  }
+                } },
+                cancel: { label: 'Cancelar' }
+              },
+              default: 'save'
+            }).render(true);
+            return;
+          }
+        } catch (embeddedErr) {
+          console.debug('Wayfinder | error attempting to edit embedded effect', embeddedErr);
+        }
+        return ui.notifications?.warn('Documento do efeito não encontrado.');
+      }
+      // If this is a CompendiumDocument/embedded entry with a sheet, open it
+      if (doc.sheet) return doc.sheet.render(true);
+      // Fallback: try to open Item sheet via ItemSheet
+      if (doc instanceof foundry.documents.BaseDocument && doc.sheet) return doc.sheet.render(true);
+    } catch (err) {
+      console.error('Erro ao abrir editor de efeito:', err);
+      ui.notifications?.error('Não foi possível abrir o editor do efeito. Veja o console.');
+    }
   }
 
   /** Handle drops onto an Item sheet (e.g., attach an active-effect item to this weapon) */

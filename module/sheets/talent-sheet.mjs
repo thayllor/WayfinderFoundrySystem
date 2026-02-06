@@ -1,6 +1,8 @@
 /**
  * Talent Sheet - for displaying talents with effects and traits
  */
+import { saveSelection, restoreSelection, applyFontSizeToSelection, pastePlain } from '../helpers/text-editor.mjs';
+
 export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.DocumentSheetV2) {
   static DEFAULT_OPTIONS = {
     classes: ["wayfinder", "sheet", "item"],
@@ -362,6 +364,24 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
         });
       });
 
+      // Font size control for talent editor (use helper)
+      const fontInput = group.querySelector('.editor-font-size-input');
+      const applyFontBtn = group.querySelector('.editor-apply-font-btn');
+      let savedRangeForFont = null;
+      if (applyFontBtn) {
+        applyFontBtn.addEventListener('mousedown', () => { savedRangeForFont = saveSelection(); });
+        applyFontBtn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          const size = fontInput?.value || null;
+          if (!size) return;
+          if (savedRangeForFont) restoreSelection(savedRangeForFont);
+          applyFontSizeToSelection(size);
+          textarea.value = content.innerHTML;
+          textarea.dispatchEvent(new Event('change', { bubbles: true }));
+          savedRangeForFont = null;
+        });
+      }
+
       // Sync content to textarea
       content.addEventListener('input', () => {
         textarea.value = content.innerHTML;
@@ -370,6 +390,9 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
       content.addEventListener('blur', () => {
         textarea.value = content.innerHTML;
       });
+
+      // Paste: strip styles and insert plain text
+      content.addEventListener('paste', (ev) => pastePlain(ev));
 
       // Preserve formatting on paste
       content.addEventListener('paste', (e) => {

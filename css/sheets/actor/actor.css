@@ -10,7 +10,11 @@
   align-items: flex-start;
   padding: 12px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.98),
+    var(--color-light-6)
+  );
   border: 1px solid var(--color-dark-4);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
@@ -97,6 +101,78 @@
     height: 100px;
   }
 }
+/* Modifiers card styling overrides */
+.wayfinder.sheet.actor .modifiers-container,
+.wayfinder.sheet.actor .modifiers-card-wrapper {
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 18, 0.96),
+    rgba(28, 28, 28, 0.94)
+  );
+  border: 1px solid var(--color-dark-4);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  margin-bottom: 10px;
+}
+
+.wayfinder.sheet.actor .modifiers-card .modifier-card {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 18, 0.96),
+    rgba(30, 30, 30, 0.94)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition:
+    background 0.12s ease,
+    transform 0.08s ease;
+}
+
+.wayfinder.sheet.actor .modifiers-card .modifier-card:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(
+    180deg,
+    rgba(22, 22, 22, 0.98),
+    rgba(34, 34, 34, 0.96)
+  );
+}
+
+.wayfinder.sheet.actor .modifiers-card .modifier-origin {
+  font-size: 0.78rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.68));
+  background: rgba(255, 255, 255, 0.02);
+  padding: 6px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  max-width: 160px;
+}
+
+.wayfinder.sheet.actor .modifiers-card .modifier-name {
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.wayfinder.sheet.actor .modifiers-card .modifier-target {
+  font-size: 0.82rem;
+  color: var(--wf-text-muted, rgba(255, 255, 255, 0.6));
+  white-space: normal;
+}
+
+.wayfinder.sheet.actor .modifiers-card .modifier-value {
+  padding: 8px 12px;
+  font-weight: 900;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.wayfinder.sheet.actor .modifiers-card .modifier-actions button {
+  background: transparent;
+  border: none;
+  width: 36px;
+  height: 36px;
+}
 /* Component: Resources Row (actor sheet) */
 .wayfinder.sheet.actor .top-resources-row {
   display: flex;
@@ -111,7 +187,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.98),
+    var(--color-light-6)
+  );
   border: 1px solid var(--color-dark-4);
   border-radius: 10px;
   padding: 8px 10px;
@@ -141,7 +221,13 @@
 /* Load local Canterbury Regular if present; fallback to system names. Place woff/woff2 in `fonts/` */
 @font-face {
   font-family: "Canterbury Regular";
-  src: local("Canterbury Regular"), local("Canterbury-Regular"), local("Canterbury"), url("../fonts/canterbury/Canterbury.ttf") format("truetype"), url("../fonts/Canterbury-Regular.woff2") format("woff2"), url("../fonts/Canterbury-Regular.woff") format("woff");
+  src:
+    local("Canterbury Regular"),
+    local("Canterbury-Regular"),
+    local("Canterbury"),
+    url("../fonts/canterbury/Canterbury.ttf") format("truetype"),
+    url("../fonts/Canterbury-Regular.woff2") format("woff2"),
+    url("../fonts/Canterbury-Regular.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -225,7 +311,10 @@
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-name {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-name {
   font-size: 1rem;
   font-weight: 700;
   color: var(--color-text-primary, #e6e6e6);
@@ -234,7 +323,10 @@
   line-height: 1.1;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
 }
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-roll-badge {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-roll-badge {
   width: 120px;
   height: 40px;
   display: block;
@@ -243,11 +335,27 @@
 .wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute {
   /* Apply font and sizing to the curved text — target textPath first (preferred), fallback to text */
 }
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-roll-badge textPath,
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-roll-badge text {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-roll-badge
+  textPath,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-roll-badge
+  text {
   fill: var(--color-text-primary, #e6e6e6);
   /* Prefer local Canterbury Regular; fallback to common system fonts */
-  font-family: "Canterbury Regular", "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family:
+    "Canterbury Regular",
+    "Montserrat",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial;
   font-weight: 700;
   font-size: var(--wf-arc-font-size);
   transform: translateY(var(--wf-arc-dy));
@@ -258,7 +366,11 @@
 .wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute {
   /* Hide the visual path used for textPath so only the curved text remains visible */
 }
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-roll-badge .wf-arc-path {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-roll-badge
+  .wf-arc-path {
   stroke: none;
   fill: none;
   pointer-events: none;
@@ -274,20 +386,32 @@
 .wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute {
   /* New nested markup boxes */
 }
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-pentagon-box {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-pentagon-box {
   position: relative;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-value-container {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-value-container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-value-box,
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-defence-box {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-value-box,
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-defence-box {
   width: 64px;
   height: 64px;
   display: flex;
@@ -298,13 +422,22 @@
   background-size: contain;
   box-sizing: border-box;
 }
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-value-box {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-value-box {
   background-image: url("../images/atributo.png");
 }
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-defence-box {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-defence-box {
   background-image: url("../images/shield.png");
 }
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-value {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-value {
   width: 56px;
   border: none;
   background: transparent;
@@ -314,7 +447,10 @@
   font-size: 1.5rem;
   line-height: 1;
 }
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute .attribute-defence {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute
+  .attribute-defence {
   font-weight: 700;
   color: var(--color-text-primary, #ffffff);
   font-size: 1.5rem;
@@ -347,30 +483,44 @@
   /* Named positions for attributes (class and data-attribute-key selectors). */
 }
 .wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.presence,
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=presence] {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="presence"] {
   left: 87%;
   top: 46%;
 }
 .wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.wisdom,
 .wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.wisdow,
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=wisdom],
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=wisdow] {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="wisdom"],
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="wisdow"] {
   left: 13%;
   top: 46%;
 }
 .wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.intelligence,
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=intelligence] {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="intelligence"] {
   top: 27%;
 }
 .wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.strength,
 .wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.strenth,
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=strength],
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=strenth] {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="strength"],
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="strenth"] {
   top: 77%;
   left: 29.5%;
 }
 .wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute.dexterity,
-.wayfinder.sheet.actor .attributes-pentagon .pentagon-attribute[data-attribute-key=dexterity] {
+.wayfinder.sheet.actor
+  .attributes-pentagon
+  .pentagon-attribute[data-attribute-key="dexterity"] {
   top: 77%;
   left: 71%;
 }
@@ -410,7 +560,7 @@
 }
 
 .sheet-tabs.wayfinder {
-  gap: 0 !important;
+  gap: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -429,7 +579,9 @@
   background: rgba(0, 0, 0, 0.12);
   box-shadow: none;
   border: 1px solid rgba(0, 0, 0, 0.06);
-  transition: transform 0.12s ease, background 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    background 0.12s ease;
   font-size: 0; /* hide inline label text while keeping icon pseudo-element */
   overflow: visible;
 }
@@ -473,43 +625,43 @@
 .sheet-tabs.wayfinder {
   /* Use specific background images for each tab from images/icons/ */
 }
-.sheet-tabs.wayfinder .item[data-tab=skills] {
+.sheet-tabs.wayfinder .item[data-tab="skills"] {
   background-image: url("../images/icons/pericias.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 28px 28px;
 }
-.sheet-tabs.wayfinder .item[data-tab=actions] {
+.sheet-tabs.wayfinder .item[data-tab="actions"] {
   background-image: url("../images/icons/efeitos.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 28px 28px;
 }
-.sheet-tabs.wayfinder .item[data-tab=modifiers] {
+.sheet-tabs.wayfinder .item[data-tab="modifiers"] {
   background-image: url("../images/icons/modificadores.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 28px 28px;
 }
-.sheet-tabs.wayfinder .item[data-tab=talents] {
+.sheet-tabs.wayfinder .item[data-tab="talents"] {
   background-image: url("../images/icons/talento.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 28px 28px;
 }
-.sheet-tabs.wayfinder .item[data-tab=spells] {
+.sheet-tabs.wayfinder .item[data-tab="spells"] {
   background-image: url("../images/icons/magia.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 28px 28px;
 }
-.sheet-tabs.wayfinder .item[data-tab=notes] {
+.sheet-tabs.wayfinder .item[data-tab="notes"] {
   background-image: url("../images/icons/notas.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 28px 28px;
 }
-.sheet-tabs.wayfinder .item[data-tab=resources] {
+.sheet-tabs.wayfinder .item[data-tab="resources"] {
   background-image: url("../images/icons/inventario.png");
   background-repeat: no-repeat;
   background-position: center;
@@ -527,7 +679,7 @@
   }
 }
 /* Tab: Skills */
-.wayfinder.sheet.actor .tab[data-tab=skills] {
+.wayfinder.sheet.actor .tab[data-tab="skills"] {
   padding: 8px 0;
 }
 
@@ -536,13 +688,22 @@
   background: transparent;
   border-radius: 10px;
   padding: 8px;
-  transition: box-shadow 0.18s ease, transform 0.12s ease, background-color 0.12s ease;
+  transition:
+    box-shadow 0.18s ease,
+    transform 0.12s ease,
+    background-color 0.12s ease;
 }
 
 .wayfinder.sheet.actor .sheet-body .tab.active {
-  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.98),
+    var(--color-light-6)
+  );
   border: 1px solid rgba(255, 255, 255, 0.03);
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35) inset;
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.55),
+    0 2px 8px rgba(0, 0, 0, 0.35) inset;
   transform: translateY(-2px);
   padding: 10px;
   margin: 10px;
@@ -550,7 +711,9 @@
 }
 
 .wayfinder.sheet.actor .sheet-tabs .item {
-  transition: box-shadow 0.12s ease, background 0.12s ease;
+  transition:
+    box-shadow 0.12s ease,
+    background 0.12s ease;
   border-radius: 8px;
 }
 
@@ -560,7 +723,7 @@
   border: 1px solid rgba(255, 255, 255, 0.025);
 }
 
-.wayfinder.sheet.actor .tab[data-tab=skills] .skills-grid {
+.wayfinder.sheet.actor .tab[data-tab="skills"] .skills-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
@@ -568,7 +731,11 @@
 
 /* Description card used as the outer wrapper for the skills tab */
 .wayfinder.sheet.actor .skills-card.description-card {
-  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.98),
+    var(--color-light-6)
+  );
   border: 1px solid var(--color-dark-4);
   border-radius: 8px;
   overflow: hidden;
@@ -619,13 +786,19 @@
   grid-template-columns: 320px 1fr;
   gap: 14px;
   align-items: start;
-  background: linear-gradient(180deg, rgba(20, 20, 20, 0.95), var(--color-light-6));
+  background: linear-gradient(
+    180deg,
+    rgba(20, 20, 20, 0.95),
+    var(--color-light-6)
+  );
   border: 1px solid rgba(255, 255, 255, 0.03);
   border-radius: 12px;
   padding: 14px;
   position: relative;
   /* Card-like shadow: deep ambient shadow + subtle colored rim using theme light color */
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35) inset;
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.55),
+    0 2px 8px rgba(0, 0, 0, 0.35) inset;
 }
 .wayfinder.sheet.actor .skills-card {
   /* Subtle rim/highlight that picks up the sheet's light color for cohesion */
@@ -636,7 +809,9 @@
   inset: 0;
   border-radius: 12px;
   pointer-events: none;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.01), 0 8px 20px rgba(0, 0, 0, 0.25) inset;
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.01),
+    0 8px 20px rgba(0, 0, 0, 0.25) inset;
 }
 .wayfinder.sheet.actor .skills-card .tab-title-skills {
   grid-column: 1/-1;
@@ -663,7 +838,8 @@
   gap: 12px;
   align-items: start;
 }
-.wayfinder.sheet.actor .skills-card .skills-table-left, .wayfinder.sheet.actor .skills-card .skills-table-right {
+.wayfinder.sheet.actor .skills-card .skills-table-left,
+.wayfinder.sheet.actor .skills-card .skills-table-right {
   width: 50%;
   overflow: auto;
   background: transparent;
@@ -673,7 +849,8 @@
   .wayfinder.sheet.actor .skills-card .skills-section {
     grid-template-columns: 1fr;
   }
-  .wayfinder.sheet.actor .skills-card .skills-table-left, .wayfinder.sheet.actor .skills-card .skills-table-right {
+  .wayfinder.sheet.actor .skills-card .skills-table-left,
+  .wayfinder.sheet.actor .skills-card .skills-table-right {
     width: 100%;
   }
   .wayfinder.sheet.actor .skills-card .tab-title-skills {
@@ -743,7 +920,11 @@
 }
 
 .wayfinder.sheet.actor .attribute-total {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.06));
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(0, 0, 0, 0.06)
+  );
   padding: 6px 8px;
   border-radius: 6px;
   display: inline-block;
@@ -841,7 +1022,11 @@
 .wayfinder.sheet.actor .description-card-actions .btn {
   padding: 6px 10px;
   border-radius: 6px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.08));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(0, 0, 0, 0.08)
+  );
   border: 1px solid rgba(255, 255, 255, 0.03);
   color: var(--color-text-primary, #eee);
   cursor: pointer;
@@ -869,7 +1054,11 @@
   align-items: center;
   gap: 8px;
   padding: 6px 10px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.06));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(0, 0, 0, 0.06)
+  );
   border: 1px solid rgba(255, 255, 255, 0.04);
   color: var(--color-text-primary, #f2f2f2);
   border-radius: 999px;
@@ -903,10 +1092,10 @@
 }
 /* Thin right-side columns (last 3 columns) for skills tables
    Keep visual styling identical to other columns — only restrict width/padding/alignment. */
-.wayfinder.sheet.actor .skills-table th:nth-last-child(-n+4),
-.wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4),
-.wayfinder.sheet.actor .skills-table tfoot td:nth-last-child(-n+4),
-.wayfinder.sheet.actor .skills-table tfoot th:nth-last-child(-n+4) {
+.wayfinder.sheet.actor .skills-table th:nth-last-child(-n + 4),
+.wayfinder.sheet.actor .skills-table td:nth-last-child(-n + 4),
+.wayfinder.sheet.actor .skills-table tfoot td:nth-last-child(-n + 4),
+.wayfinder.sheet.actor .skills-table tfoot th:nth-last-child(-n + 4) {
   width: 64px;
   max-width: 64px;
   padding: 6px 8px;
@@ -915,7 +1104,7 @@
   /* Do not override color, background or borders here — keep base table styles. */
 }
 
-.wayfinder.sheet.actor .skills-table thead th:nth-last-child(-n+4) {
+.wayfinder.sheet.actor .skills-table thead th:nth-last-child(-n + 4) {
   font-size: 0.82rem;
   text-transform: none;
   letter-spacing: 0.4px;
@@ -933,8 +1122,8 @@
 }
 
 @media (max-width: 900px) {
-  .wayfinder.sheet.actor .skills-table th:nth-last-child(-n+4),
-  .wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) {
+  .wayfinder.sheet.actor .skills-table th:nth-last-child(-n + 4),
+  .wayfinder.sheet.actor .skills-table td:nth-last-child(-n + 4) {
     width: 56px;
     max-width: 56px;
     padding: 5px 6px;
@@ -947,9 +1136,15 @@
   }
 }
 /* Inputs / selects inside the thin columns should scale down to fit */
-.wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) input.short-input,
-.wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) select.short-input,
-.wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) .short-input {
+.wayfinder.sheet.actor
+  .skills-table
+  td:nth-last-child(-n + 4)
+  input.short-input,
+.wayfinder.sheet.actor
+  .skills-table
+  td:nth-last-child(-n + 4)
+  select.short-input,
+.wayfinder.sheet.actor .skills-table td:nth-last-child(-n + 4) .short-input {
   width: 100%;
   max-width: 64px;
   padding: 4px 6px;
@@ -967,9 +1162,15 @@
 }
 
 @media (max-width: 900px) {
-  .wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) input.short-input,
-  .wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) select.short-input,
-  .wayfinder.sheet.actor .skills-table td:nth-last-child(-n+4) .short-input {
+  .wayfinder.sheet.actor
+    .skills-table
+    td:nth-last-child(-n + 4)
+    input.short-input,
+  .wayfinder.sheet.actor
+    .skills-table
+    td:nth-last-child(-n + 4)
+    select.short-input,
+  .wayfinder.sheet.actor .skills-table td:nth-last-child(-n + 4) .short-input {
     max-width: 56px;
     font-size: 0.86rem;
   }
@@ -988,7 +1189,11 @@
   align-items: center;
   gap: 8px;
   padding: 6px 10px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.06));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(0, 0, 0, 0.06)
+  );
   border: 1px solid rgba(255, 255, 255, 0.04);
   color: var(--color-text-primary, #f2f2f2);
   border-radius: 999px;
@@ -1027,10 +1232,18 @@
   }
 }
 /* Actor tab titles: use Canterbury medieval font, centered and large */
-.wayfinder.sheet.actor .tab [class^=tab-title],
+.wayfinder.sheet.actor .tab [class^="tab-title"],
 .wayfinder.sheet.actor .tab .tab-title,
 .wayfinder.sheet.actor .tab h2 {
-  font-family: "Canterbury Regular", "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family:
+    "Canterbury Regular",
+    "Montserrat",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial;
   text-align: center;
   display: block;
   width: 100%;
@@ -1042,18 +1255,18 @@
 }
 
 @media (min-width: 1200px) {
-  .wayfinder.sheet.actor .tab [class^=tab-title],
+  .wayfinder.sheet.actor .tab [class^="tab-title"],
   .wayfinder.sheet.actor .tab .tab-title,
   .wayfinder.sheet.actor .tab h2 {
     font-size: 2.2rem;
   }
 }
 /* Tab: Actions */
-.wayfinder.sheet.actor .tab[data-tab=actions] {
+.wayfinder.sheet.actor .tab[data-tab="actions"] {
   padding: 8px 0;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=actions] .action-list {
+.wayfinder.sheet.actor .tab[data-tab="actions"] .action-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1061,7 +1274,11 @@
 
 /* Mirror the card layout used for the skills tab for Actions */
 .wayfinder.sheet.actor .actions-card.description-card {
-  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.98),
+    var(--color-light-6)
+  );
   border: 1px solid var(--color-dark-4);
   border-radius: 8px;
   overflow: hidden;
@@ -1101,7 +1318,11 @@
   /* Effects section card: wrapper for Active/Passive lists inside each source */
 }
 .wayfinder.sheet.actor .effects-source-card .effects-section {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(0, 0, 0, 0.04));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.01),
+    rgba(0, 0, 0, 0.04)
+  );
   border: 1px solid var(--color-dark-4);
   border-radius: 8px;
   padding: 10px;
@@ -1126,13 +1347,20 @@
   font-style: italic;
   padding: 8px;
 }
-.wayfinder.sheet.actor .effects-source-card .effects-collapsible-list > .collapsible-effect {
+.wayfinder.sheet.actor
+  .effects-source-card
+  .effects-collapsible-list
+  > .collapsible-effect {
   margin-bottom: 8px;
 }
 .wayfinder.sheet.actor .effects-source-card {
   margin: 10px;
   padding: 10px;
-  background: linear-gradient(180deg, rgba(18, 18, 18, 0.96), rgba(28, 28, 28, 0.92));
+  background: linear-gradient(
+    180deg,
+    rgba(18, 18, 18, 0.96),
+    rgba(28, 28, 28, 0.92)
+  );
   border: 1px solid var(--color-dark-4);
   border-radius: 8px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
@@ -1147,58 +1375,60 @@
 }
 
 @media (max-width: 1000px) {
-  .wayfinder.sheet.actor .actions-card .description-card-body.three-column-card {
+  .wayfinder.sheet.actor
+    .actions-card
+    .description-card-body.three-column-card {
     grid-template-columns: 1fr;
   }
 }
 /* Tab: Modifiers */
-.wayfinder.sheet.actor .tab[data-tab=modifiers] {
+.wayfinder.sheet.actor .tab[data-tab="modifiers"] {
   padding: 8px 0;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=modifiers] .modifier-list {
+.wayfinder.sheet.actor .tab[data-tab="modifiers"] .modifier-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
 /* Tab: Talents */
-.wayfinder.sheet.actor .tab[data-tab=talents] {
+.wayfinder.sheet.actor .tab[data-tab="talents"] {
   padding: 8px 0;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=talents] .talent-list {
+.wayfinder.sheet.actor .tab[data-tab="talents"] .talent-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 10px;
 }
 
 /* Tab: Spells */
-.wayfinder.sheet.actor .tab[data-tab=spells] {
+.wayfinder.sheet.actor .tab[data-tab="spells"] {
   padding: 8px 0;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .spells-grid {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spells-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
 }
 
 /* Controls row */
-.wayfinder.sheet.actor .tab[data-tab=spells] .spells-controls-card {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spells-controls-card {
   display: flex;
   gap: 12px;
   margin-bottom: 8px;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .spells-row {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spells-row {
   display: flex;
   gap: 12px;
   width: 100%;
   flex-wrap: wrap;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .spells-card {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spells-card {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.03);
   border-radius: 8px;
@@ -1207,25 +1437,32 @@
   flex: 1 1 220px;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .spells-card .description-card-body {
+.wayfinder.sheet.actor
+  .tab[data-tab="spells"]
+  .spells-card
+  .description-card-body {
   padding: 10px;
 }
 
 /* Spell levels list */
-.wayfinder.sheet.actor .tab[data-tab=spells] .spells-levels {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spells-levels {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-category {
-  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spell-type-category {
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.98),
+    var(--color-light-6)
+  );
   border: 1px solid var(--color-dark-4);
   border-radius: 8px;
   overflow: hidden;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-header {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spell-type-header {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1235,16 +1472,16 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-icon {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spell-type-icon {
   width: 20px;
   text-align: center;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-badge {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spell-type-badge {
   font-weight: 800;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .spell-count {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spell-count {
   margin-left: auto;
   background: rgba(255, 255, 255, 0.03);
   padding: 4px 8px;
@@ -1252,16 +1489,20 @@
   font-weight: 700;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .spell-type-content {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spell-type-content {
   padding: 10px 12px;
   display: grid;
   gap: 8px;
 }
 
 /* Spell entry and talent styles */
-.wayfinder.sheet.actor .tab[data-tab=spells] .spell-entry,
-.wayfinder.sheet.actor .tab[data-tab=spells] .talent-item {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spell-entry,
+.wayfinder.sheet.actor .tab[data-tab="spells"] .talent-item {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(0, 0, 0, 0.02)
+  );
   border: 1px solid rgba(255, 255, 255, 0.03);
   border-radius: 8px;
   padding: 8px 10px;
@@ -1271,20 +1512,20 @@
   flex-direction: column;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .spell-item-header,
-.wayfinder.sheet.actor .tab[data-tab=spells] .talent-item-header {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spell-item-header,
+.wayfinder.sheet.actor .tab[data-tab="spells"] .talent-item-header {
   display: flex;
   align-items: center;
   gap: 8px;
   width: 100%;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .spell-item-name,
-.wayfinder.sheet.actor .tab[data-tab=spells] .talent-item-name {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .spell-item-name,
+.wayfinder.sheet.actor .tab[data-tab="spells"] .talent-item-name {
   font-weight: 700;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .talent-level-badge {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .talent-level-badge {
   margin-left: 8px;
   background: rgba(255, 255, 255, 0.03);
   padding: 2px 8px;
@@ -1292,42 +1533,42 @@
   font-weight: 700;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=spells] .talent-item-content {
+.wayfinder.sheet.actor .tab[data-tab="spells"] .talent-item-content {
   padding: 8px 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 @media (max-width: 800px) {
-  .wayfinder.sheet.actor .tab[data-tab=spells] .spells-row {
+  .wayfinder.sheet.actor .tab[data-tab="spells"] .spells-row {
     flex-direction: column;
   }
 }
 /* Tab: Notes */
-.wayfinder.sheet.actor .tab[data-tab=notes] {
+.wayfinder.sheet.actor .tab[data-tab="notes"] {
   padding: 8px 0;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=notes] .notes-editor {
+.wayfinder.sheet.actor .tab[data-tab="notes"] .notes-editor {
   min-height: 120px;
 }
 
 /* Tab: Resources/Inventory */
-.wayfinder.sheet.actor .tab[data-tab=resources] {
+.wayfinder.sheet.actor .tab[data-tab="resources"] {
   padding: 8px 0;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-list {
+.wayfinder.sheet.actor .tab[data-tab="resources"] .inventory-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
 /* Tab: Inventory */
-.wayfinder.sheet.actor .tab[data-tab=inventory] {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] {
   padding: 8px 0;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-cards {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-cards {
   display: grid;
   /* stack cards vertically and let them take full available width */
   grid-template-columns: 1fr;
@@ -1337,9 +1578,13 @@
   width: 100%;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-card {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-card {
   /* Use the sheet card look for visual consistency */
-  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.98),
+    var(--color-light-6)
+  );
   border: 1px solid var(--color-dark-4);
   color: var(--color-text-primary);
   border-radius: 8px;
@@ -1351,7 +1596,7 @@
   max-width: 100%;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-card-header {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-card-header {
   padding: 10px 14px;
   font-weight: 800;
   font-size: 1rem;
@@ -1360,7 +1605,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-card-body {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-card-body {
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -1368,37 +1613,44 @@
   background: transparent;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-empty {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-empty {
   padding: 18px;
   color: var(--wf-text-muted, #6b7280);
   font-size: 0.95rem;
   text-align: center;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-item {
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr) auto;
   gap: 12px;
   align-items: center;
   padding: 10px 12px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(0, 0, 0, 0.02)
+  );
   border: 1px solid rgba(255, 255, 255, 0.04);
-  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background 120ms ease;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item:hover {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-name {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-item-name {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-icon {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-item-icon {
   width: 40px;
   height: 40px;
   border-radius: 6px;
@@ -1410,7 +1662,7 @@
   font-size: 14px;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-name-text {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-item-name-text {
   font-weight: 700;
   font-size: 1rem;
   /* allow up to two lines, then ellipsis */
@@ -1422,30 +1674,39 @@
   white-space: normal;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-meta {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-item-meta {
   font-size: 0.85rem;
   color: var(--wf-text-muted, rgba(255, 255, 255, 0.65));
   margin-top: 4px;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-description {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-item-description {
   font-size: 0.9rem;
   color: var(--wf-text-muted, rgba(255, 255, 255, 0.6));
   margin-top: 8px;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls {
+.wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-item-controls {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls select,
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls input[type=checkbox] {
+.wayfinder.sheet.actor
+  .tab[data-tab="inventory"]
+  .inventory-item-controls
+  select,
+.wayfinder.sheet.actor
+  .tab[data-tab="inventory"]
+  .inventory-item-controls
+  input[type="checkbox"] {
   margin: 0;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls button {
+.wayfinder.sheet.actor
+  .tab[data-tab="inventory"]
+  .inventory-item-controls
+  button {
   background: transparent;
   border: none;
   cursor: pointer;
@@ -1453,8 +1714,14 @@
   padding: 6px;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .item-edit,
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .item-delete {
+.wayfinder.sheet.actor
+  .tab[data-tab="inventory"]
+  .inventory-item-controls
+  .item-edit,
+.wayfinder.sheet.actor
+  .tab[data-tab="inventory"]
+  .inventory-item-controls
+  .item-delete {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1463,17 +1730,26 @@
   border-radius: 6px;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .item-edit:hover {
+.wayfinder.sheet.actor
+  .tab[data-tab="inventory"]
+  .inventory-item-controls
+  .item-edit:hover {
   background: rgba(43, 108, 176, 0.08);
   color: #fff;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .item-delete:hover {
+.wayfinder.sheet.actor
+  .tab[data-tab="inventory"]
+  .inventory-item-controls
+  .item-delete:hover {
   background: rgba(220, 38, 38, 0.08);
   color: #fff;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .inventory-item-hand-select {
+.wayfinder.sheet.actor
+  .tab[data-tab="inventory"]
+  .inventory-item-controls
+  .inventory-item-hand-select {
   -webkit-appearance: none;
   appearance: none;
   padding: 6px 28px 6px 8px;
@@ -1484,7 +1760,10 @@
   min-width: 110px;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .inventory-item-tuned {
+.wayfinder.sheet.actor
+  .tab[data-tab="inventory"]
+  .inventory-item-controls
+  .inventory-item-tuned {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1492,28 +1771,31 @@
   color: var(--wf-text-muted, #6b7280);
 }
 
-.wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls .inventory-item-tuned-checkbox {
+.wayfinder.sheet.actor
+  .tab[data-tab="inventory"]
+  .inventory-item-controls
+  .inventory-item-tuned-checkbox {
   width: 16px;
   height: 16px;
 }
 
 @media (max-width: 700px) {
-  .wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-cards {
+  .wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-cards {
     grid-template-columns: 1fr;
   }
-  .wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item {
+  .wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-item {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto;
     gap: 8px;
     align-items: start;
   }
-  .wayfinder.sheet.actor .tab[data-tab=inventory] .inventory-item-controls {
+  .wayfinder.sheet.actor .tab[data-tab="inventory"] .inventory-item-controls {
     justify-content: flex-end;
   }
 }
 /* Fallback selectors (no .wayfinder.sheet.actor prefix) to match different DOM contexts */
-.tab[data-tab=inventory] .inventory-cards,
-.tab[data-tab=resources] .inventory-cards {
+.tab[data-tab="inventory"] .inventory-cards,
+.tab[data-tab="resources"] .inventory-cards {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
@@ -1522,9 +1804,13 @@
   width: 100%;
 }
 
-.tab[data-tab=inventory] .inventory-card,
-.tab[data-tab=resources] .inventory-card {
-  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+.tab[data-tab="inventory"] .inventory-card,
+.tab[data-tab="resources"] .inventory-card {
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.98),
+    var(--color-light-6)
+  );
   border: 1px solid var(--color-dark-4);
   color: var(--color-text-primary);
   border-radius: 8px;
@@ -1536,8 +1822,8 @@
   max-width: 100%;
 }
 
-.tab[data-tab=inventory] .inventory-card-header,
-.tab[data-tab=resources] .inventory-card-header {
+.tab[data-tab="inventory"] .inventory-card-header,
+.tab[data-tab="resources"] .inventory-card-header {
   padding: 10px 14px;
   font-weight: 800;
   font-size: 1rem;
@@ -1546,8 +1832,8 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.tab[data-tab=inventory] .inventory-card-body,
-.tab[data-tab=resources] .inventory-card-body {
+.tab[data-tab="inventory"] .inventory-card-body,
+.tab[data-tab="resources"] .inventory-card-body {
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -1555,34 +1841,41 @@
   background: transparent;
 }
 
-.tab[data-tab=inventory] .inventory-item,
-.tab[data-tab=resources] .inventory-item {
+.tab[data-tab="inventory"] .inventory-item,
+.tab[data-tab="resources"] .inventory-item {
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr) auto;
   gap: 12px;
   align-items: center;
   padding: 10px 12px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(0, 0, 0, 0.02)
+  );
   border: 1px solid rgba(255, 255, 255, 0.04);
-  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background 120ms ease;
 }
 
-.tab[data-tab=inventory] .inventory-item:hover,
-.tab[data-tab=resources] .inventory-item:hover {
+.tab[data-tab="inventory"] .inventory-item:hover,
+.tab[data-tab="resources"] .inventory-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
-.tab[data-tab=inventory] .inventory-item-name,
-.tab[data-tab=resources] .inventory-item-name {
+.tab[data-tab="inventory"] .inventory-item-name,
+.tab[data-tab="resources"] .inventory-item-name {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 
-.tab[data-tab=inventory] .inventory-item-name-text,
-.tab[data-tab=resources] .inventory-item-name-text {
+.tab[data-tab="inventory"] .inventory-item-name-text,
+.tab[data-tab="resources"] .inventory-item-name-text {
   font-weight: 700;
   font-size: 1rem;
   display: -webkit-box;
@@ -1593,22 +1886,22 @@
   white-space: normal;
 }
 
-.tab[data-tab=inventory] .inventory-item-meta,
-.tab[data-tab=resources] .inventory-item-meta {
+.tab[data-tab="inventory"] .inventory-item-meta,
+.tab[data-tab="resources"] .inventory-item-meta {
   font-size: 0.85rem;
   color: var(--wf-text-muted, rgba(255, 255, 255, 0.65));
   margin-top: 4px;
 }
 
-.tab[data-tab=inventory] .inventory-item-controls,
-.tab[data-tab=resources] .inventory-item-controls {
+.tab[data-tab="inventory"] .inventory-item-controls,
+.tab[data-tab="resources"] .inventory-item-controls {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 /* Also apply the same inventory styles when the markup is placed under the `resources` tab */
-.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-cards {
+.wayfinder.sheet.actor .tab[data-tab="resources"] .inventory-cards {
   display: grid;
   /* stack cards vertically and let them take full available width */
   grid-template-columns: 1fr;
@@ -1618,8 +1911,12 @@
   width: 100%;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-card {
-  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+.wayfinder.sheet.actor .tab[data-tab="resources"] .inventory-card {
+  background: linear-gradient(
+    180deg,
+    rgba(25, 25, 25, 0.98),
+    var(--color-light-6)
+  );
   border: 1px solid var(--color-dark-4);
   color: var(--color-text-primary);
   border-radius: 8px;
@@ -1631,7 +1928,7 @@
   max-width: 100%;
 }
 
-.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-card-header {
+.wayfinder.sheet.actor .tab[data-tab="resources"] .inventory-card-header {
   padding: 10px 14px;
   font-weight: 800;
   font-size: 1rem;
@@ -1640,7 +1937,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.wayfinder.sheet.actor .tab[data-tab=resources] .inventory-card-body {
+.wayfinder.sheet.actor .tab[data-tab="resources"] .inventory-card-body {
   padding: 12px;
   display: flex;
   flex-direction: column;

@@ -21,39 +21,39 @@
           <span>{{system.talentType}}</span>
         </div>
       </div>
-      <div class="talent-metadata-card">
-        <div class="metadata-item">
-          <div class="metadata-icon">
-            <i class="fas fa-layer-group"></i>
+        <div class="talent-metadata-card">
+          <div class="metadata-item">
+            <div class="metadata-icon">
+              <i class="fas fa-layer-group"></i>
+            </div>
+            <div class="metadata-content">
+              <label>Nível</label>
+              <input
+                type="number"
+                name="system.level"
+                value="{{system.level}}"
+                min="1"
+                max="20"
+                class="talent-level-input"
+              />
+            </div>
           </div>
-          <div class="metadata-content">
-            <label>Nível</label>
-            <input
-              type="number"
-              name="system.level"
-              value="{{system.level}}"
-              min="1"
-              max="20"
-              class="talent-level-input"
-            />
+          <div class="metadata-item">
+            <div class="metadata-icon type-icon">
+              <i class="fas fa-tag"></i>
+            </div>
+            <div class="metadata-content">
+              <label>Tipo</label>
+              <select name="system.talentType" class="talent-type-select">
+                <option value="Basic" {{#if (eq system.talentType "Basic")}}selected{{/if}}>Basic</option>
+                <option value="General" {{#if (eq system.talentType "General")}}selected{{/if}}>General</option>
+                <option value="Ancestry" {{#if (eq system.talentType "Ancestry")}}selected{{/if}}>Ancestry</option>
+                <option value="Class" {{#if (eq system.talentType "Class")}}selected{{/if}}>Class</option>
+                <option value="Spell" {{#if (eq system.talentType "Spell")}}selected{{/if}}>Spell</option>
+              </select>
+            </div>
           </div>
         </div>
-        <div class="metadata-item">
-          <div class="metadata-icon type-icon">
-            <i class="fas fa-tag"></i>
-          </div>
-          <div class="metadata-content">
-            <label>Tipo</label>
-            <select name="system.talentType" class="talent-type-select">
-              <option value="Basic" {{#if (eq system.talentType "Basic")}}selected{{/if}}>Basic</option>
-              <option value="General" {{#if (eq system.talentType "General")}}selected{{/if}}>General</option>
-              <option value="Ancestry" {{#if (eq system.talentType "Ancestry")}}selected{{/if}}>Ancestry</option>
-              <option value="Class" {{#if (eq system.talentType "Class")}}selected{{/if}}>Class</option>
-              <option value="Spell" {{#if (eq system.talentType "Spell")}}selected{{/if}}>Spell</option>
-            </select>
-          </div>
-        </div>
-      </div>
     </section>
   </header>
 
@@ -63,26 +63,7 @@
       <div class="sheet-main">
         {{! Traits Section }}
         {{#if traitsResolved.length}}
-          <div class="trait-chip-row">
-            <span class="trait-chip-label">Traits:</span>
-            {{#each traitsResolved as |trait|}}
-              <div
-                class="trait-chip"
-                style="background: {{trait.color}}; color: {{trait.textColor}};"
-                title="{{trait.name}}"
-              >
-                <span class="trait-chip-name">{{trait.name}}</span>
-                {{#if @root.editable}}
-                  <button
-                    type="button"
-                    class="trait-chip-remove"
-                    data-uuid="{{trait.uuid}}"
-                    title="Remover trait"
-                  >×</button>
-                {{/if}}
-              </div>
-            {{/each}}
-          </div>
+          {{> "systems/wayfinder/templates/components/trait-chip-row.hbs" traits=traitsResolved editable=@root.editable}}
         {{/if}}
 
         {{! Description Section }}
@@ -116,26 +97,6 @@
               <div class="effects-list effects-collapsible-list">
                 {{#each activeEffects as |effect idx|}}
                   {{{collapsibleEffect effect=effect idx=idx}}}
-                  {{#if @root.editable}}
-                    <div class="effect-item-actions">
-                      <button
-                        type="button"
-                        class="remove-effect-btn"
-                        data-uuid="{{effect.uuid}}"
-                        title="Remover efeito"
-                      >
-                        <i class="fas fa-trash"></i>
-                      </button>
-                       <button
-                          type="button"
-                          class="edit-effect-btn"
-                          data-uuid="{{effect.uuid}}"
-                          title="Editar efeito"
-                        >
-                          <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
-                  {{/if}}
                 {{/each}}
               </div>
             {{else}}
@@ -160,26 +121,6 @@
               <div class="effects-list effects-collapsible-list">
                 {{#each passiveEffects as |effect idx|}}
                   {{{collapsibleEffect effect=effect idx=idx}}}
-                  {{#if @root.editable}}
-                    <div class="effect-item-actions">
-                      <button
-                        type="button"
-                        class="remove-effect-btn"
-                        data-uuid="{{effect.uuid}}"
-                        title="Remover efeito"
-                      >
-                        <i class="fas fa-trash"></i>
-                      </button>
-                       <button
-                          type="button"
-                          class="edit-effect-btn"
-                          data-uuid="{{effect.uuid}}"
-                          title="Editar efeito"
-                        >
-                          <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
-                  {{/if}}
                 {{/each}}
               </div>
             {{else}}

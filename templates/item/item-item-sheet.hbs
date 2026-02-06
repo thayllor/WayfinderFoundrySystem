@@ -87,7 +87,7 @@
         <div class="description-card-header">
           <div class="description-card-title"><i class="fas fa-coins"></i> Informações</div>
         </div>
-        <div class="description-card-body grid grid-3col">
+        <div class="description-card-body">
           <div class="metadata-item">
             <div class="metadata-icon">
               <i class="fas fa-dollar-sign"></i>
@@ -135,7 +135,6 @@
       <div class="description-card">
         <div class="description-card-header">
           <div class="description-card-title"><i class="fas fa-file-alt"></i> Descrição do Item</div>
-          <div class="description-card-hint">Use formatação rica para descrever o item.</div>
         </div>
         {{textoEstilizado
           name="system.description"
@@ -156,11 +155,11 @@
             <div class="description-card-title"><i class="fas fa-crosshairs"></i> Arma</div>
           </div>
           <div class="description-card-body">
-            <div class="grid grid-3col">
+            <div class="grid grid-3">
               <div class="metadata-item">
                 <div class="metadata-icon"><i class="fas fa-dice-d20"></i></div>
-                <div class="metadata-content">
-                  <label>Dado de Dano</label>
+                <div class="metadata-content" style="max-width: min-content;">
+                  <label style="min-width: max-content;">Dado de Dano</label>
                   <input type="text" name="system.damageDie" value="{{system.damageDie}}" placeholder="1d6" />
                 </div>
               </div>
@@ -286,34 +285,33 @@
       </div>
       <div class="description-card-body">
         {{#if system.modifiers}}
-          <ul class="item-modifiers-list">
+          <div class="item-modifiers-list">
             {{#each system.modifiers as |mod idx|}}
-              <li class="item-modifier-row" data-mod-id="{{this.id}}">
+              <div class="item-modifier-row" data-mod-id="{{this.id}}">
                 <div class="modifier-left">
                   <div class="modifier-name">{{this.name}}</div>
                   <div class="modifier-meta">
                     <span class="modifier-target">{{this.targetPath}}</span>
                   </div>
                 </div>
+                <div class="modifier-value">{{this.value}}</div>
                 <div class="modifier-right">
-                  <div class="modifier-value">{{this.value}}</div>
                   {{#if ../editable}}
-                    <div class="modifier-actions">
-                      <button type="button" class="modifier-edit" data-mod-id="{{this.id}}" title="Editar modificador"><i class="fas fa-edit"></i></button>
-                      <button type="button" class="modifier-remove" data-mod-id="{{this.id}}" title="Remover modificador"><i class="fas fa-trash"></i></button>
-                    </div>
-                  {{/if}}
+                      <div class="modifier-actions">
+                        <button type="button" class="modifier-remove" data-mod-id="{{this.id}}" title="Remover modificador"><i class="fas fa-trash"></i></button>
+                      </div>
+                    {{/if}}
                 </div>
-              </li>
+              </div>
             {{/each}}
-          </ul>
+          </div>
         {{else}}
           <p style="color:#666;">No modifiers on this item. Click "Criar Modificador" to add one.</p>
         {{/if}}
       </div>
     </div>
 
-    <div class="talent-effects-section">
+    <div class="talent-effects-section effects-section">
       {{! Active Effects }}
       <div class="effects-category active-effects-category">
         <h3 class="effects-title active-title" style="color: var(--wayfinder-primary-dark);">
@@ -328,18 +326,6 @@
           <div class="effects-list">
             {{#each activeEffects as |effect idx|}}
               {{{collapsibleEffect effect=effect idx=idx}}}
-              {{#if @root.editable}}
-                <div class="effect-item-actions">
-                  <button
-                    type="button"
-                    class="remove-effect-btn"
-                    data-uuid="{{effect.uuid}}"
-                    title="Remover efeito"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              {{/if}}
             {{/each}}
           </div>
         {{else}}
@@ -364,18 +350,6 @@
           <div class="effects-list">
             {{#each passiveEffects as |effect idx|}}
               {{{collapsibleEffect effect=effect idx=idx}}}
-              {{#if @root.editable}}
-                <div class="effect-item-actions">
-                  <button
-                    type="button"
-                    class="remove-effect-btn"
-                    data-uuid="{{effect.uuid}}"
-                    title="Remover efeito"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              {{/if}}
             {{/each}}
           </div>
         {{else}}
