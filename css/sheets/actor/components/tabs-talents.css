@@ -1,0 +1,10 @@
+/* Tab: Talents */
+.wayfinder.sheet.actor .tab[data-tab=talents] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=talents] .talent-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}

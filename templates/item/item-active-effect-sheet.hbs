@@ -12,20 +12,21 @@
   {{!-- Sheet Tab Navigation --}}
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item active" data-tab="details">Detalhes</a>
-    <a class="item" data-tab="effects">Modificadores</a>
+    <a class="item" data-tab="effects">Active Modifiers</a>
   </nav>
 
   {{!-- Sheet Body --}}
-  <section class="sheet-body">     {{#if traitsResolved.length}}
-     <div class="trait-chip-row">
-       <span class="trait-chip-label">Traits:</span>
-       {{#each traitsResolved as |trait|}}
-         <div class="trait-chip" style="background-color: {{trait.color}};" title="{{trait.name}}">
-           <span class="trait-chip-name">{{trait.name}}</span>
-         </div>
-       {{/each}}
-     </div>
-     {{/if}}
+  <section class="sheet-body">
+    {{#if traitsResolved.length}}
+      <div class="trait-chip-row">
+        <span class="trait-chip-label">Traits:</span>
+        {{#each traitsResolved as |trait|}}
+          <div class="trait-chip" style="background: {{trait.color}}; color: {{trait.textColor}};" title="{{trait.name}}">
+            <span class="trait-chip-name">{{trait.name}}</span>
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
     {{!-- DETAILS TAB --}}
     <div class="tab active" data-group="primary" data-tab="details">
       <div class="form-group">
@@ -36,7 +37,6 @@
       <div class="description-card">
         <div class="description-card-header">
           <div class="description-card-title"><i class="fas fa-file-alt"></i> Descrição</div>
-          <div class="description-card-hint">Use formatação rica para narrar o efeito.</div>
         </div>
         {{textoEstilizado
           name="system.description"
@@ -45,106 +45,197 @@
           editable=editable
         }}
       </div>
+      {{!-- Checkbox row: Is Magic and Is Attack (placed directly under description) --}}
+      <div class="form-row">
+        <div class="form-group checkbox">
+          <label>É Magia?</label>
+          <input type="checkbox" name="system.isMagic" class="magic-toggle" {{#if system.isMagic}}checked{{/if}}/>
+        </div>
+        <div class="form-group checkbox">
+          <label>É um Ataque?</label>
+          <input type="checkbox" name="system.isAttack" class="attack-toggle" {{#if system.isAttack}}checked{{/if}}/>
+        </div>
+        <div class="form-group checkbox">
+          <label>Dá Dano?</label>
+          <input type="checkbox" name="system.hasDamage" class="has-damage-toggle" {{#if system.hasDamage}}checked{{/if}}/>
+        </div>
+      </div>
+      {{!-- Bloco movido: informações rápidas (Alcance/Alvo/Duração/Custo/Require Roll) --}}
+      <div class="nice-block compact-effect-info">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Alcance</label>
+            <input type="text" name="system.range" value="{{system.range}}" placeholder="Ex: Toque, 6m, 30m" class="effect-input"/>
+          </div>
+          <div class="form-group">
+            <label>Alvo</label>
+            <input type="text" name="system.target" value="{{system.target}}" placeholder="Ex: Uma criatura, Auto" class="effect-input"/>
+          </div>
+        </div>
 
-      <div class="form-group checkbox">
-        <label>É Magia?</label>
-        <input type="checkbox" name="system.isMagic" class="magic-toggle" {{#if system.isMagic}}checked{{/if}}/>
+        <div class="form-row">
+          {{#if system.isMagic}}
+          <div class="form-group">
+            <label>Duração</label>
+            <input type="text" name="system.duration" value="{{system.duration}}" placeholder="Ex: 1 rodada, 10 minutos" class="effect-input"/>
+          </div>
+          {{/if}}
+          <div class="form-group">
+            <label>Custo em Foco</label>
+            <input type="number" name="system.focusCost" value="{{system.focusCost}}" min="0" class="effect-input"/>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group checkbox">
+            <label>Requer Roll?</label>
+            <input type="checkbox" name="system.requiresRoll" {{#if system.requiresRoll}}checked{{/if}}/>
+          </div>
+          <div class="form-group">
+            <label>Ações</label>
+            <input type="text" name="system.actionCost" value="{{system.actionCost}}" placeholder="Ex: >, >>, >>>, <>" class="effect-input"/>
+          </div>
+        </div>
       </div>
 
       {{#if system.isMagic}}
-      <div class="magic-section">
-        <div class="form-group magic-circle-group">
-          <label>Círculo da Magia</label>
-          <select name="system.magicCircle" class="magic-circle-select">
-            <option value="">Selecione...</option>
-            <option value="cantrip" {{#if (eq system.magicCircle "cantrip")}}selected{{/if}}>Cantrips</option>
-            <option value="1" {{#if (eq system.magicCircle "1")}}selected{{/if}}>1º Círculo</option>
-            <option value="2" {{#if (eq system.magicCircle "2")}}selected{{/if}}>2º Círculo</option>
-            <option value="3" {{#if (eq system.magicCircle "3")}}selected{{/if}}>3º Círculo</option>
-            <option value="4" {{#if (eq system.magicCircle "4")}}selected{{/if}}>4º Círculo</option>
-            <option value="5" {{#if (eq system.magicCircle "5")}}selected{{/if}}>5º Círculo</option>
-            <option value="6" {{#if (eq system.magicCircle "6")}}selected{{/if}}>6º Círculo</option>
-            <option value="7" {{#if (eq system.magicCircle "7")}}selected{{/if}}>7º Círculo</option>
-            <option value="8" {{#if (eq system.magicCircle "8")}}selected{{/if}}>8º Círculo</option>
-            <option value="9" {{#if (eq system.magicCircle "9")}}selected{{/if}}>9º Círculo</option>
-            <option value="10" {{#if (eq system.magicCircle "10")}}selected{{/if}}>10º Círculo</option>
-          </select>
-        </div>
+        <div class="magic-section">
+          <div class="form-group magic-circle-group">
+            <label>Círculo da Magia</label>
+            <select name="system.magicCircle" class="magic-circle-select">
+              <option value="">Selecione...</option>
+              <option value="cantrip" {{#if (eq system.magicCircle "cantrip")}}selected{{/if}}>Cantrips</option>
+              <option value="1" {{#if (eq system.magicCircle "1")}}selected{{/if}}>1º Círculo</option>
+              <option value="2" {{#if (eq system.magicCircle "2")}}selected{{/if}}>2º Círculo</option>
+              <option value="3" {{#if (eq system.magicCircle "3")}}selected{{/if}}>3º Círculo</option>
+              <option value="4" {{#if (eq system.magicCircle "4")}}selected{{/if}}>4º Círculo</option>
+              <option value="5" {{#if (eq system.magicCircle "5")}}selected{{/if}}>5º Círculo</option>
+              <option value="6" {{#if (eq system.magicCircle "6")}}selected{{/if}}>6º Círculo</option>
+              <option value="7" {{#if (eq system.magicCircle "7")}}selected{{/if}}>7º Círculo</option>
+              <option value="8" {{#if (eq system.magicCircle "8")}}selected{{/if}}>8º Círculo</option>
+              <option value="9" {{#if (eq system.magicCircle "9")}}selected{{/if}}>9º Círculo</option>
+              <option value="10" {{#if (eq system.magicCircle "10")}}selected{{/if}}>10º Círculo</option>
+            </select>
+          </div>
 
-        <div class="heightened-section">
-          <h4 class="heightened-title">Heightened</h4>
-          <table class="heightened-table">
-            <thead>
-              <tr>
-                <th>Nível</th>
-                <th>Efeitos</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each system.heightened as |entry idx|}}
-              <tr class="heightened-row" data-idx="{{idx}}">
-                <td><input type="text" name="system.heightened.{{idx}}.level" value="{{entry.level}}" placeholder="Ex: +1, +2, 3" class="heightened-level"/></td>
-                <td><div contenteditable="true" class="heightened-effects-editor" data-field="system.heightened.{{idx}}.effects">{{{entry.effects}}}</div><textarea name="system.heightened.{{idx}}.effects" class="heightened-effects-hidden" style="display: none;">{{entry.effects}}</textarea></td>
-                <td><button type="button" class="remove-heightened-btn" data-idx="{{idx}}">×</button></td>
-              </tr>
-              {{/each}}
-            </tbody>
-          </table>
-          <button type="button" class="add-heightened-btn" data-action="add-heightened">+ Adicionar Heightened</button>
+          <div class="heightened-section">
+            <table class="heightened-table">
+              <thead>
+                <tr>
+                  <th class="heightened-header" colspan="3">Heightened</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each system.heightened as |entry idx|}}
+                <tr class="heightened-row" data-idx="{{idx}}">
+                  <td><input type="text" name="system.heightened.{{idx}}.level" value="{{entry.level}}" placeholder="Ex: +1, +2, 3" class="heightened-level"/></td>
+                  <td class="desc-col">
+                    {{textoEstilizado
+                      name=(concat "system.heightened." idx ".effects")
+                      value=entry.effects
+                      label=""
+                      editable=../editable
+                    }}
+                  </td>
+                  <td><button type="button" class="remove-heightened-btn" data-idx="{{idx}}">×</button></td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+            <button type="button" class="add-heightened-btn" data-action="add-heightened">+ Adicionar Heightened</button>
+          </div>
         </div>
-      </div>
       {{/if}}
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Alcance</label>
-          <input type="text" name="system.range" value="{{system.range}}" placeholder="Ex: Toque, 6m, 30m" class="effect-input"/>
-        </div>
-        <div class="form-group">
-          <label>Alvo</label>
-          <input type="text" name="system.target" value="{{system.target}}" placeholder="Ex: Uma criatura, Auto" class="effect-input"/>
-        </div>
-      </div>
+      {{!-- Damage fields when the effect deals damage --}}
+      {{#if system.hasDamage}}
+        <div class="description-card damage-section">
+          <div class="description-card-header">
+            <div class="description-card-title"><i class="fas fa-skull-crossbones"></i> Dano</div>
+          </div>
+          <div class="description-card-body">
+            <div class="metadata-item">
+              <div class="metadata-icon"><i class="fas fa-exchange-alt"></i></div>
+              <div class="metadata-content">
+                <label>Fonte do Dado</label>
+                <select name="system.damageSource">
+                  <option value="weapon" {{#if (eq system.damageSource "weapon")}}selected{{/if}}>Arma (usar dado da arma)</option>
+                  <option value="custom" {{#if (eq system.damageSource "custom")}}selected{{/if}}>Personalizado</option>
+                </select>
+              </div>
+            </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Duração</label>
-          <input type="text" name="system.duration" value="{{system.duration}}" placeholder="Ex: 1 rodada, 10 minutos" class="effect-input"/>
-        </div>
-        <div class="form-group">
-          <label>Custo em Foco</label>
-          <input type="number" name="system.focusCost" value="{{system.focusCost}}" min="0" class="effect-input"/>
-        </div>
-      </div>
+            <div class="metadata-item">
+              <div class="metadata-icon"><i class="fas fa-dice-d6"></i></div>
+              <div class="metadata-content">
+                <label>Dado de Dano (se Personalizado)</label>
+                {{#if (eq system.damageSource "custom")}}
+                  <input type="text" name="system.damageDie" value="{{system.damageDie}}" placeholder="1d6" />
+                {{else}}
+                  <div class="muted">Usa o dado da arma onde o efeito está</div>
+                {{/if}}
+              </div>
+            </div>
 
-      <div class="form-row">
-        <div class="form-group checkbox">
-          <label>Requer Roll?</label>
-          <input type="checkbox" name="system.requiresRoll" {{#if system.requiresRoll}}checked{{/if}}/>
+            <div class="metadata-item">
+              <div class="metadata-icon"><i class="fas fa-fire"></i></div>
+              <div class="metadata-content">
+                <label>Tipo de Dano</label>
+                <select name="system.damageType">
+                  <option value="">Nenhum</option>
+                  <option value="bludgeoning" {{#if (eq system.damageType "bludgeoning")}}selected{{/if}}>Contusão</option>
+                  <option value="piercing" {{#if (eq system.damageType "piercing")}}selected{{/if}}>Perfurante</option>
+                  <option value="slashing" {{#if (eq system.damageType "slashing")}}selected{{/if}}>Cortante</option>
+                  <option value="fire" {{#if (eq system.damageType "fire")}}selected{{/if}}>Fogo</option>
+                  <option value="cold" {{#if (eq system.damageType "cold")}}selected{{/if}}>Gélido</option>
+                  <option value="acid" {{#if (eq system.damageType "acid")}}selected{{/if}}>Ácido</option>
+                  <option value="lightning" {{#if (eq system.damageType "lightning")}}selected{{/if}}>Elétrico</option>
+                  <option value="poison" {{#if (eq system.damageType "poison")}}selected{{/if}}>Veneno</option>
+                  <option value="psychic" {{#if (eq system.damageType "psychic")}}selected{{/if}}>Psíquico</option>
+                  <option value="radiant" {{#if (eq system.damageType "radiant")}}selected{{/if}}>Radiante</option>
+                  <option value="necrotic" {{#if (eq system.damageType "necrotic")}}selected{{/if}}>Necrótico</option>
+                  <option value="force" {{#if (eq system.damageType "force")}}selected{{/if}}>Força</option>
+                  <option value="thunder" {{#if (eq system.damageType "thunder")}}selected{{/if}}>Trovoada</option>
+                </select>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {{#if system.requiresRoll}}
-      <div class="form-group">
-        <label>Fórmula do Roll</label>
-        <input type="text" name="system.rollFormula" value="{{system.rollFormula}}" placeholder="Ex: 1d20 + @attributes.dexterity.modifier" class="effect-input"/>
-      </div>
       {{/if}}
-
-      <div class="form-group">
-        <label>Efeito ao Chat</label>
-        <textarea name="system.chatEffect" class="effect-textarea" placeholder="Descrição do que acontece quando ativado">{{system.chatEffect}}</textarea>
-      </div>
     </div>
 
     {{!-- MODIFIERS TAB --}}
     <div class="tab" data-group="primary" data-tab="effects">
-      <p style="padding: 10px; color: #666; font-size: 12px;">Aqui você pode adicionar modificadores que serão aplicados quando o efeito estiver ativo</p>
+      <p style="padding: 10px; color: #666; font-size: 12px;">Here you can add active modifiers that apply while the effect is active.</p>
 
       <div class="modifiers-section">
-        <h3>Modificadores Aplicados</h3>
-        <p style="color: #999; font-size: 12px;">Recurso a ser implementado - permite aplicar bônus/penalidades a atributos da ficha</p>
+        <h3>Applied Active Modifiers</h3>
+        <p style="color: #999; font-size: 12px;">Use this tab to add, edit, or remove modifiers that this effect should apply.</p>
+        <div class="modifiers-container">
+          {{#if system.modifiers}}
+            <div class="modifiers-card">
+              {{#each system.modifiers as |m idx|}}
+                <div class="modifier-card" data-idx="{{idx}}">
+                  <div class="modifier-line">
+                    <div class="modifier-origin" title="{{#if flags.wayfinder.sourceItemName}}Item: {{flags.wayfinder.sourceItemName}}{{else if flags.wayfinder.sourceTalentName}}Talento: {{flags.wayfinder.sourceTalentName}}{{else}}Ficha{{/if}}">{{#if flags.wayfinder.sourceItemName}}Item: {{flags.wayfinder.sourceItemName}}{{else if flags.wayfinder.sourceTalentName}}Talento: {{flags.wayfinder.sourceTalentName}}{{else}}Ficha{{/if}}</div>
+                    <div class="modifier-info">
+                      <div class="modifier-name">{{m.name}}</div>
+                      <div class="modifier-target">→ {{m.targetPath}}</div>
+                    </div>
+                    <div class="modifier-value">{{m.value}}</div>
+                    <div class="modifier-actions">
+                      <button type="button" class="edit-modifier" data-idx="{{idx}}">Editar</button>
+                      <button type="button" class="delete-modifier" data-idx="{{idx}}">🗑</button>
+                    </div>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="modifiers-empty" style="color:#999; padding:8px">Nenhum modifier definido.</div>
+          {{/if}}
+        </div>
+        <button type="button" class="add-modifier-btn">+ Add Modifier</button>
       </div>
     </div>
   </section>

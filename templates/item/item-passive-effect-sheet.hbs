@@ -11,7 +11,7 @@
   {{!-- Sheet Tab Navigation --}}
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item active" data-tab="details">Detalhes</a>
-    <a class="item" data-tab="effects">Modificadores</a>
+    <a class="item" data-tab="effects">Active Modifiers</a>
   </nav>
 
   {{!-- Sheet Body --}}
@@ -19,8 +19,8 @@
      <div class="trait-chip-row">
        <span class="trait-chip-label">Traits:</span>
        {{#each traitsResolved as |trait|}}
-         <div class="trait-chip" style="background-color: {{trait.color}};" title="{{trait.name}}">
-           <span class="trait-chip-name">{{trait.name}}</span>
+        <div class="trait-chip" style="background: {{trait.color}}; color: {{trait.textColor}};" title="{{trait.name}}">
+          <span class="trait-chip-name">{{trait.name}}</span>
          </div>
        {{/each}}
      </div>
@@ -32,12 +32,17 @@
         <input type="text" name="name" value="{{item.name}}" class="effect-input"/>
       </div>
 
-      {{textoEstilizado
-        name="system.effect"
-        value=system.effect
-        label="Efeito"
-        editable=editable
-      }}
+      <div class="description-card">
+        <div class="description-card-header">
+          <div class="description-card-title"><i class="fas fa-file-alt"></i> Efeito</div>
+        </div>
+        {{textoEstilizado
+          name="system.effect"
+          value=system.effect
+          label=""
+          editable=editable
+        }}
+      </div>
 
       <div class="form-group checkbox">
         <label>Efeito Permanente?</label>
@@ -48,11 +53,36 @@
 
     {{!-- MODIFIERS TAB --}}
     <div class="tab" data-group="primary" data-tab="effects">
-      <p style="padding: 10px; color: #666; font-size: 12px;">Aqui você pode adicionar modificadores permanentes que serão aplicados enquanto o efeito estiver ativo</p>
+      <p style="padding: 10px; color: #666; font-size: 12px;">Here you can add permanent modifiers that apply while the effect is active.</p>
 
       <div class="modifiers-section">
-        <h3>Modificadores Aplicados</h3>
-        <p style="color: #999; font-size: 12px;">Recurso a ser implementado - permite aplicar bônus/penalidades a atributos da ficha</p>
+        <h3>Applied Active Modifiers</h3>
+        <p style="color: #999; font-size: 12px;">Add modifiers that this passive effect grants while present.</p>
+        <div class="modifiers-container">
+          {{#if system.modifiers}}
+            <div class="modifiers-card">
+              {{#each system.modifiers as |m idx|}}
+                <div class="modifier-card" data-idx="{{idx}}">
+                  <div class="modifier-line">
+                    <div class="modifier-origin" title="{{#if flags.wayfinder.sourceItemName}}Item: {{flags.wayfinder.sourceItemName}}{{else if flags.wayfinder.sourceTalentName}}Talento: {{flags.wayfinder.sourceTalentName}}{{else}}Ficha{{/if}}">{{#if flags.wayfinder.sourceItemName}}Item: {{flags.wayfinder.sourceItemName}}{{else if flags.wayfinder.sourceTalentName}}Talento: {{flags.wayfinder.sourceTalentName}}{{else}}Ficha{{/if}}</div>
+                    <div class="modifier-info">
+                      <div class="modifier-name">{{m.name}}</div>
+                      <div class="modifier-target">→ {{m.targetPath}}</div>
+                    </div>
+                    <div class="modifier-value">{{m.value}}</div>
+                    <div class="modifier-actions">
+                      <button type="button" class="edit-modifier" data-idx="{{idx}}">Editar</button>
+                      <button type="button" class="delete-modifier" data-idx="{{idx}}">🗑</button>
+                    </div>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="modifiers-empty" style="color:#999; padding:8px">Nenhum modifier definido.</div>
+          {{/if}}
+        </div>
+        <button type="button" class="add-modifier-btn">+ Add Modifier</button>
       </div>
     </div>
   </section>

@@ -1,0 +1,185 @@
+<div class="form-group trait-description-group">
+  <div class="trait-description-header">
+    {{!-- <label class="trait-description-label">{{label}}</label> --}}
+    {{#if editable}}
+      <button
+        type="button"
+        class="trait-editor-toggle-btn"
+        title="Editar descrição"
+      >
+        <i class="fas fa-edit"></i>
+        Editar
+      </button>
+    {{/if}}
+  </div>
+  <div class="trait-editor-wrapper">
+    <div class="trait-editor-toolbar" style="display: none;">
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="undo"
+        title="Desfazer (Ctrl+Z)"
+      ><i class="fas fa-undo"></i></button>
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="redo"
+        title="Refazer (Ctrl+Y)"
+      ><i class="fas fa-redo"></i></button>
+      <span class="editor-separator"></span>
+
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="bold"
+        title="Negrito (Ctrl+B)"
+      ><i class="fas fa-bold"></i></button>
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="italic"
+        title="Itálico (Ctrl+I)"
+      ><i class="fas fa-italic"></i></button>
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="underline"
+        title="Sublinhado (Ctrl+U)"
+      ><i class="fas fa-underline"></i></button>
+      <span class="editor-separator"></span>
+
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="insertUnorderedList"
+        title="Lista com bullets"
+      ><i class="fas fa-list-ul"></i></button>
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="insertOrderedList"
+        title="Lista numerada"
+      ><i class="fas fa-list-ol"></i></button>
+      <span class="editor-separator"></span>
+
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="formatBlock"
+        data-value="h2"
+        title="Título H2"
+      ><strong>H2</strong></button>
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="formatBlock"
+        data-value="h3"
+        title="Título H3"
+      ><strong>H3</strong></button>
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="formatBlock"
+        data-value="p"
+        title="Parágrafo Normal"
+      ><strong>P</strong></button>
+      <span class="editor-separator"></span>
+
+      <!-- Removed title/paragraph buttons. Added font-size control -->
+      <label class="editor-font-label">Tamanho:</label>
+      <input
+        type="number"
+        min="8"
+        max="72"
+        step="1"
+        value="14"
+        class="editor-font-size-input"
+        style="width:60px;margin-right:4px;"
+        title="Tamanho da fonte (px)"
+      />
+      <button
+        type="button"
+        class="editor-fmt-btn editor-apply-font-btn"
+        title="Aplicar tamanho de fonte"
+      >Aplicar</button>
+      <span class="editor-separator"></span>
+
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="justifyLeft"
+        title="Alinhar à esquerda"
+      ><i class="fas fa-align-left"></i></button>
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="justifyCenter"
+        title="Centralizar"
+      ><i class="fas fa-align-center"></i></button>
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="justifyRight"
+        title="Alinhar à direita"
+      ><i class="fas fa-align-right"></i></button>
+      <span class="editor-separator"></span>
+
+      <button
+        type="button"
+        class="editor-fmt-btn"
+        data-format="formatBlock"
+        data-value="blockquote"
+        title="Citação"
+      ><i class="fas fa-quote-right"></i></button>
+      <button
+        type="button"
+        class="editor-fmt-btn editor-link-btn"
+        title="Inserir Link"
+      ><i class="fas fa-link"></i></button>
+      <span class="editor-separator"></span>
+
+      <button
+        type="button"
+        class="editor-fmt-btn editor-text-color-btn"
+        title="Cor do Texto"
+      ><i class="fas fa-palette"></i></button>
+      <button
+        type="button"
+        class="editor-fmt-btn editor-bg-color-btn"
+        title="Cor de Fundo"
+      ><i class="fas fa-fill-drip"></i></button>
+      <span class="editor-separator"></span>
+
+      <button
+        type="button"
+        class="editor-fmt-btn editor-table-btn"
+        title="Inserir Tabela"
+      ><i class="fas fa-table"></i></button>
+      <button
+        type="button"
+        class="editor-fmt-btn editor-image-btn"
+        title="Inserir Imagem"
+      ><i class="fas fa-image"></i></button>
+      <span class="editor-separator"></span>
+
+      <button
+        type="button"
+        class="editor-fmt-btn editor-preview-btn"
+        title="Alternar Pré-visualização"
+      ><i class="fas fa-eye"></i></button>
+      <span class="editor-stats"></span>
+      <button type="button" class="editor-close-btn" title="Fechar Editor"><i
+          class="fas fa-times"
+        ></i>
+        Pronto</button>
+    </div>
+
+    <div
+      class="trait-editor-content"
+      contenteditable="false"
+      data-text-editable="false"
+    >{{{value}}}</div>
+    <div class="trait-editor-preview" style="display: none;"></div>
+    <textarea name="{{name}}" style="display: none;">{{value}}</textarea>
+  </div>
+</div>

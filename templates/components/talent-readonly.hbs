@@ -1,0 +1,66 @@
+<div class="talent-readonly">
+  {{#if traitsResolved.length}}
+    <div class="trait-chip-row">
+      <span class="trait-chip-label">Traits:</span>
+      {{#each traitsResolved}}
+        <div
+          class="trait-chip"
+          style="background: {{this.color}}; color: {{this.textColor}};"
+          title="{{this.name}}"
+        >
+          <span class="trait-chip-name">{{this.name}}</span>
+        </div>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  {{#if item.system.description}}
+    <div class="talent-description-section">
+      <div class="description-card">
+        <div class="description-card-header">
+          <div class="description-card-title"><i class="fas fa-file-alt"></i>
+            Descrição do Talent</div>
+        </div>
+        <div
+          class="talent-description-readonly"
+        >{{{item.system.description}}}</div>
+      </div>
+    </div>
+  {{/if}}
+
+  <div class="talent-effects-section">
+    {{#if activeEffects.length}}
+      <div class="effects-category active-effects-category">
+        <h3 class="effects-title active-title">
+          <i class="fas fa-bolt"></i>
+          Efeitos Ativos
+          <span class="effect-count">{{activeEffects.length}}</span>
+        </h3>
+        <div class="effects-list">
+          <div class="effects-collapsible-list">
+            {{#each activeEffects as |effect idx|}}
+              {{{collapsibleEffect effect=effect idx=idx source="talent"}}}
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if passiveEffects.length}}
+      <div class="effects-category passive-effects-category">
+        <h3 class="effects-title passive-title">
+          <i class="fas fa-shield-alt"></i>
+          Efeitos Passivos
+          <span class="effect-count">{{passiveEffects.length}}</span>
+        </h3>
+        <div class="effects-list">
+          <div class="effects-collapsible-list">
+            {{#each passiveEffects as |effect idx|}}
+              {{{collapsibleEffect effect=effect idx=idx source="talent"}}}
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    {{/if}}
+  </div>
+</div>

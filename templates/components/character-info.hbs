@@ -1,35 +1,90 @@
-{{! Character Info Row Component }}
 <div class="character-info-row">
-  <div class="info-field">
-    <label>Ancestry</label>
-    <input
-      type="text"
-      name="system.ancestry"
-      value="{{system.ancestry}}"
-      placeholder="Ancestry"
+  <div class="character-portrait">
+    <img
+      class="character-portrait-img"
+      src="{{actor.img}}"
+      data-edit="img"
+      title="Retrato do Personagem"
+      height="150"
+      width="150"
     />
   </div>
-  <div class="info-field">
-    <label>Class</label>
-    <input
-      type="text"
-      name="system.class"
-      value="{{system.class}}"
-      placeholder="Class"
-    />
-  </div>
-  <div class="info-field">
-    <label>Level</label>
-    <input
-      type="number"
-      name="system.level"
-      value="{{system.level}}"
-      min="1"
-      max="20"
-    />
-  </div>
-  <div class="info-field">
-    <label>EXP</label>
-    <input type="number" name="system.exp" value="{{system.exp}}" />
+  <div class="character-info-fields">
+    {{! First Row }}
+    <div class="info-field">
+      <label>Nome do Personagem</label>
+      <input
+        type="text"
+        name="name"
+        value="{{actor.name}}"
+        placeholder="Nome"
+      />
+    </div>
+    <div class="info-field">
+      <label>Nome do Jogador</label>
+      <input
+        type="text"
+        name="system.playerName"
+        value="{{system.playerName}}"
+        placeholder="Jogador"
+      />
+    </div>
+    <div class="info-field">
+      <label>Pronome</label>
+      <input
+        type="text"
+        name="system.pronoun"
+        value="{{system.pronoun}}"
+        placeholder="ex: ele/dele"
+      />
+    </div>
+    <div class="info-field">
+      <label>Idade</label>
+      <input
+        type="number"
+        name="system.age"
+        value="{{system.age}}"
+        placeholder="Idade"
+      />
+    </div>
+    {{! Second Row }}
+    <div class="info-field">
+      <label>Ascendência</label>
+      <input
+        type="text"
+        name="system.ancestry"
+        value="{{system.ancestry}}"
+        placeholder="Ascendência"
+      />
+    </div>
+    <div class="info-field">
+      <label>Classe</label>
+      <input
+        type="text"
+        name="system.class"
+        value="{{system.class}}"
+        placeholder="Classe"
+      />
+    </div>
+    <div class="info-field">
+      <label>Nível</label>
+      <input
+        type="number"
+        name="system.level"
+        value="{{system.level}}"
+        min="1"
+        max="20"
+        placeholder="Nível"
+      />
+    </div>
+    <div class="info-field">
+      <label>Experiência</label>
+      <input
+        type="number"
+        name="system.exp"
+        value="{{system.exp}}"
+        placeholder="Experiência"
+      />
+    </div>
   </div>
 </div>

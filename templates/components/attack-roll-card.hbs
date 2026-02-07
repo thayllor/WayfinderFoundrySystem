@@ -1,0 +1,73 @@
+<article class="wf-chat-card" role="group" aria-label="Wayfinder Roll Card">
+
+  {{! Title card }}
+  <div class="wf-card wf-card--title" role="region" aria-label="Title">
+    <div class="wf-card__title">{{#if
+        effectName
+      }}{{effectName}}{{else}}{{title}}{{/if}}</div>
+    {{#if subtitle}}<div class="wf-card__subtitle">{{subtitle}}</div>{{/if}}
+  </div>
+
+  {{! Value card with d10 emblem }}
+  <div class="wf-card wf-card--value" role="region" aria-label="Result">
+    <div class="wf-d10" aria-hidden="true">
+      <div class="wf-d10-value">{{attackTotal}}</div>
+    </div>
+    {{#if attackFormula}}
+      <div class="wf-card__meta">
+        <div class="wf-card__label">{{attackFormula}}</div>
+      </div>
+    {{/if}}
+  </div>
+
+  {{! Bonuses card: shows chips for each bonus/stat }}
+  <div class="wf-card wf-card--bonuses" role="region" aria-label="Bonuses">
+    <div class="wf-panel__title">Bônus</div>
+    <div class="wf-bonuses-grid">
+      {{#each stats}}
+        <div class="wf-bonus-chip" role="listitem">{{this.label}}
+          {{this.value}}</div>
+      {{/each}}
+      {{#unless stats}}
+        <div class="wf-bonus-chip">(nenhum bônus)</div>
+      {{/unless}}
+    </div>
+  </div>
+
+  {{! Dice / Rolls card }}
+  <div class="wf-card wf-card--dice" role="region" aria-label="Dados rolados">
+    <div class="wf-panel__title">Dados</div>
+    <div class="wf-roll-list">
+      {{#if rolls}}
+        {{#each rolls}}
+          <div class="wf-roll-die">{{this}}</div>
+        {{/each}}
+      {{else}}
+        {{#if attackDice}}
+          <div class="wf-roll-die">{{attackDice}}</div>
+        {{/if}}
+        {{#if damageDice}}
+          <div class="wf-roll-die">{{damageDice}}
+            ·
+            <span class="wf-total">{{damageTotal}}</span></div>
+        {{/if}}
+        {{#if damageFormula}}
+          <div class="wf-card__actions">
+            <button
+              class="wf-roll-damage-btn"
+              type="button"
+              title="Rolar dano"
+              aria-label="Rolar dano"
+              data-formula="{{damageFormula}}"
+              data-dice="{{damageDice}}"
+            >
+              <i class="fa-solid fa-dice-d20" aria-hidden="true"></i>
+              <span class="btn-label">Rolar Dano</span>
+            </button>
+          </div>
+        {{/if}}
+      {{/if}}
+    </div>
+  </div>
+
+</article>

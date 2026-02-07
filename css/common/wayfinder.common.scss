@@ -1,0 +1,175 @@
+/* Wayfinder common utilities and base styles
+ 	 - Fonts and third-party imports
+ 	 - Generic typography (labels, h2/h3)
+ 	 - Global utilities used across components and sheets
+*/
+
+/* Example font import - replace with your preferred font stack if needed */
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;700&display=swap");
+
+:root {
+  /* small set of design tokens used across the system */
+  --wf-font-sans:
+    "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial;
+  --wf-font-serif: "Cinzel", serif;
+  --wf-label-size: 11px;
+  --wf-h2-size: 1.25rem;
+  --wf-h3-size: 1rem;
+  --wf-h4-size: 2rem;
+}
+
+/* Generic typography */
+.wayfinder label,
+.wayfinder .label {
+  font-family: var(--wf-font-sans);
+  font-size: var(--wf-label-size);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.wayfinder h2 {
+  font-family: var(--wf-font-sans);
+  font-size: var(--wf-h2-size);
+  margin: 0 0 8px 0;
+}
+
+.wayfinder h3 {
+  font-family: var(--wf-font-sans);
+  font-size: var(--wf-h3-size);
+  margin: 0 0 6px 0;
+}
+.wayfinder h4 {
+  font-size: var(--wf-h4-size);
+}
+
+/* Utilities */
+.wf-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.wf-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.wf-hidden {
+  display: none;
+}
+
+/* Reset images used as portraits inside sheets */
+.wayfinder img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* End of common utilities */
+
+/* Responsive helpers */
+:root {
+  --wf-break-sm: 600px;
+  --wf-break-md: 900px;
+}
+
+/* Wayfinder window sizing rules
+   - Ensure new windows open with a practical minimum width
+   - Constrain the window content/body to a maximum width for readable layout
+*/
+
+/* Prefer targeting both .window-app and .app.window-app to catch different contexts */
+.window-app,
+.app.window-app {
+  min-width: 900px;
+  box-sizing: border-box;
+}
+
+/* Limit the inner window content width so body doesn't exceed 1200px and center it */
+.app .window-content,
+.window-app .window-content {
+  max-width: 1200px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 920px) {
+  /* On very small screens allow windows to be smaller than the min for usability */
+  .window-app,
+  .app.window-app {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .wayfinder {
+    font-size: 14px;
+  }
+  .wf-row {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .wayfinder {
+    font-size: 13px;
+  }
+  .wf-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* (Reverted recent centering/scroll rules) */
+
+/* Wayfinder: center window content and allow internal scrolling without breaking outer UI
+   - Scoped to `.wayfinder` to avoid impacting other modules/layouts
+   - Uses `max-height` + `overflow-y:auto` on `.window-content` so the content area scrolls
+   - Does not set `min-height` on the app container to avoid interfering with sidebars
+*/
+.wayfinder .window-app,
+.wayfinder .app.window-app {
+  /* Stack header then content, but do not force global centering */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.wayfinder .window-header {
+  flex: 0 0 auto;
+}
+
+.wayfinder .window-content {
+  flex: 1 1 auto;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: auto;
+}
+
+/* Center only the inner Wayfinder form horizontally and vertically inside the content area */
+.wayfinder .window-content > form.wayfinder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+@media (max-width: 920px) {
+  .wayfinder .window-app,
+  .wayfinder .app.window-app {
+    display: block;
+    padding: 6px;
+  }
+  .wayfinder .window-content,
+  .wayfinder .app.window-app .window-content {
+    max-height: none;
+    overflow-y: visible;
+  }
+}

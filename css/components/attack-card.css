@@ -1,0 +1,225 @@
+@charset "UTF-8";
+/* attack-card.scss — stacked chat card design for Wayfinder
+	 - Four stacked full-width cards: title, value (d10 emblem), bonuses (chips), dice rolled
+	 - Uses Foundry palette variables where available so cards match chat background and dark palette
+	 - Minimal, well-scoped styles to avoid interfering with other UI
+*/
+.wf-chat-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 6px 0;
+  margin: 0;
+  background: transparent;
+}
+
+/* Base card used by each stacked section */
+.wf-card {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border-radius: 10px;
+  color: var(--color-text, #e6eef8);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  /* Match the sheet header dark gradient so cards feel cohesive with sheets */
+  background: linear-gradient(180deg, rgba(28, 28, 28, 0.98), rgba(18, 18, 18, 0.95));
+}
+
+/* Title card */
+.wf-card--title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wf-card--title .wf-card__title {
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: var(--color-text, #f0f6ff);
+}
+
+.wf-card__subtitle {
+  font-size: 0.9rem;
+  color: var(--color-text-muted, #9aa6b2);
+}
+
+/* Value / d10 emblem */
+.wf-card--value {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.wf-d10 {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  transform: rotate(45deg);
+  border-radius: 10%;
+  background: linear-gradient(180deg, var(--color-primary, #06203a), rgba(6, 32, 58, 0.18));
+  color: var(--color-primary-contrast, #fff);
+  box-shadow: 0 8px 20px rgba(6, 32, 58, 0.32);
+}
+
+.wf-d10 .wf-d10-value {
+  transform: rotate(-45deg);
+  font-weight: 900;
+  font-size: 1.25rem;
+}
+
+.wf-card--value .wf-card__meta {
+  font-weight: 700;
+  color: var(--color-text, #eef6ff);
+}
+
+/* Bonuses container */
+.wf-card--bonuses {
+  display: block;
+}
+
+.wf-bonuses-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.wf-bonus-chip {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-weight: 800;
+  color: var(--color-text, #e6eef8);
+}
+
+/* Dice / rolls */
+.wf-card--dice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wf-roll-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.wf-roll-die {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--color-text, #eef6ff);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+  font-weight: 900;
+}
+
+/* Chat-specific stronger contrast and guaranteed full-width inside chat messages */
+.chat-message .wf-chat-card .wf-card {
+  /* When rendered in chat, ensure the cards match sheet background as well */
+  background: linear-gradient(180deg, rgba(28, 28, 28, 0.98), rgba(18, 18, 18, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  width: 100%;
+}
+
+/* Palette helpers: allow using different accents for each card when needed */
+.wf-card--accent-primary {
+  background: linear-gradient(180deg, var(--color-primary, #06203a), rgba(6, 32, 58, 0.18));
+}
+
+.wf-card--accent-warm {
+  background: linear-gradient(180deg, var(--color-warm-1, #6b2a1f), rgba(107, 42, 31, 0.16));
+}
+
+.wf-card--accent-cool {
+  background: linear-gradient(180deg, var(--color-cool-1, #1f3a5f), rgba(31, 58, 95, 0.16));
+}
+
+@media (max-width: 700px) {
+  .wf-d10 {
+    width: 56px;
+    height: 56px;
+  }
+  .wf-card {
+    padding: 10px 12px;
+  }
+  /* Make the Foundry chat message body use a column flex layout when our card is present.
+     This scopes the change to chat messages only and keeps default Foundry behavior otherwise. */
+  .chat-message .message {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .chat-message .message .message-content,
+  .chat-message .message .message-header {
+    width: 100%;
+  }
+}
+/* Strong overrides for Foundry chat when using the light chat theme.
+   Ensure our cards remain dark and legible even inside theme-light chat logs. */
+.chat-log.themed.theme-light .message .flavor-text > .wf-chat-card .wf-card,
+.chat-message.theme-light .message .flavor-text > .wf-chat-card .wf-card {
+  /* Scope dark cards only when the chat message actually contains our wf-chat-card element.
+     Do not force this globally so other chat messages keep the theme-light appearance. */
+  background: linear-gradient(180deg, rgba(28, 28, 28, 0.98), rgba(18, 18, 18, 0.95));
+  color: var(--color-text, #f0f6ff);
+  border-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Keep flavor-text wrapper transparent but avoid using !important so theme styles can win elsewhere */
+.chat-message .flavor-text,
+.chat-message .flavor-text article.wf-chat-card {
+  background: transparent;
+  color: inherit;
+}
+
+/* Damage roll button inside chat card */
+.wf-roll-damage-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--color-warm-1, #7a2e24), #5a231b);
+  color: var(--color-primary-contrast, #fff);
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 14px rgba(90, 35, 27, 0.35), inset 0 -2px 0 rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+  user-select: none;
+}
+
+.wf-roll-damage-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(90, 35, 27, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.18);
+}
+
+.wf-roll-damage-btn:active {
+  transform: translateY(0);
+  opacity: 0.95;
+}
+
+.wf-roll-damage-btn:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.06);
+  outline-offset: 2px;
+}
+
+.wf-roll-damage-btn .wf-btn-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-grid;
+  place-items: center;
+  opacity: 0.98;
+}
+
+/* Variant for a more neutral/primary accent when preferred */
+.wf-roll-damage-btn.wf-accent-primary {
+  background: linear-gradient(180deg, var(--color-primary, #0b3a57), #06283b);
+}

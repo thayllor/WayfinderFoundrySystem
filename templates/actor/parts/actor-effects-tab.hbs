@@ -1,0 +1,149 @@
+<h2 class="tab-title tab-title-actions">Efeitos</h2>
+
+<div class="effects-container split-by-source">
+  <div class="effects-source-column effects-source-items">
+    <div class="effects-source-card">
+      <h2 class="effects-source-title">Efeitos de Itens</h2>
+      <div class="type-effects">
+
+        <div class="effects-section">
+          <h3 class="effects-subtitle">Ativos</h3>
+          <div class="effects-list-wrapper">
+            {{#if (gt itemActiveEffects.length 0)}}
+              <div class="effects-collapsible-list">
+                {{#each itemActiveEffects as |effect index|}}
+                  {{{collapsibleEffect
+                    effect=effect
+                    idx=index
+                    source="effects-tab"
+                    editable=true
+                  }}}
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="effects-empty">Nenhum efeito ativo vindo de itens.</p>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="effects-section">
+          <h3 class="effects-subtitle">Passivos</h3>
+          <div class="effects-list-wrapper">
+            {{#if (gt itemPassiveEffects.length 0)}}
+              <div class="effects-collapsible-list">
+                {{#each itemPassiveEffects as |effect index|}}
+                  {{{collapsibleEffect
+                    effect=effect
+                    idx=index
+                    source="effects-tab"
+                    editable=true
+                  }}}
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="effects-empty">Nenhum efeito passivo vindo de itens.</p>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="effects-source-column effects-source-talents">
+    <div class="effects-source-card">
+      <h2 class="effects-source-title">Efeitos de Talentos</h2>
+      <div class="type-effects">
+
+        <div class="effects-section">
+          <h3 class="effects-subtitle">Ativos</h3>
+          <div class="effects-list-wrapper">
+            {{#if (gt talentActiveEffects.length 0)}}
+              <div class="effects-collapsible-list">
+                {{#each talentActiveEffects as |effect index|}}
+                  {{{collapsibleEffect
+                    effect=effect
+                    idx=index
+                    source="effects-tab"
+                    editable=true
+                  }}}
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="effects-empty">Nenhum efeito ativo vindo de talentos.</p>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="effects-section">
+          <h3 class="effects-subtitle">Passivos</h3>
+          <div class="effects-list-wrapper">
+            {{#if (gt talentPassiveEffects.length 0)}}
+              <div class="effects-collapsible-list">
+                {{#each talentPassiveEffects as |effect index|}}
+                  {{{collapsibleEffect
+                    effect=effect
+                    idx=index
+                    source="effects-tab"
+                    editable=true
+                  }}}
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="effects-empty">Nenhum efeito passivo vindo de talentos.</p>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="effects-source-column effects-source-talent-spells">
+    <div class="effects-source-card">
+      <h2 class="effects-source-title">Efeitos de Talentos Mágicos</h2>
+      <div class="type-effects">
+
+        <div class="effects-section">
+          <h3 class="effects-subtitle">Ativos</h3>
+          <div class="effects-list-wrapper">
+            {{#if (gt talentSpellActiveEffects.length 0)}}
+              <div class="effects-collapsible-list">
+                {{#each talentSpellActiveEffects as |effect index|}}
+                  {{{collapsibleEffect
+                    effect=effect
+                    idx=index
+                    source="effects-tab"
+                    editable=true
+                  }}}
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="effects-empty">Nenhum efeito ativo vindo de talentos
+                mágicos.</p>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="effects-section">
+          <h3 class="effects-subtitle">Passivos</h3>
+          <div class="effects-list-wrapper">
+            {{#if (gt talentSpellPassiveEffects.length 0)}}
+              <div class="effects-collapsible-list">
+                {{#each talentSpellPassiveEffects as |effect index|}}
+                  {{{collapsibleEffect
+                    effect=effect
+                    idx=index
+                    source="effects-tab"
+                    editable=true
+                  }}}
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="effects-empty">Nenhum efeito passivo vindo de talentos
+                mágicos.</p>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

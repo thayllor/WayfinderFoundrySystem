@@ -1,0 +1,8 @@
+/* Tab: Notes */
+.wayfinder.sheet.actor .tab[data-tab=notes] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=notes] .notes-editor {
+  min-height: 120px;
+}

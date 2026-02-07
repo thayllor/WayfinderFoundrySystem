@@ -1,6 +1,8 @@
 /**
  * Talent Sheet - for displaying talents with effects and traits
  */
+import { saveSelection, restoreSelection, applyFontSizeToSelection, pastePlain } from '../helpers/text-editor.mjs';
+
 export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.DocumentSheetV2) {
   static DEFAULT_OPTIONS = {
     classes: ["wayfinder", "sheet", "item"],
@@ -25,15 +27,55 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
     const traitUuids = Array.isArray(this.document.system?.traits) ? this.document.system.traits : [];
     const traitsResolved = [];
 
+    const normalizeColor = (raw) => {
+      try {
+        if (!raw && raw !== '') return '#666666';
+        let c = raw;
+        if (typeof c === 'object' && c !== null) {
+          if (typeof c.value === 'string') c = c.value;
+          else return '#666666';
+        }
+        if (typeof c !== 'string') return '#666666';
+        c = c.trim();
+        // If hex without leading #, add it
+        if (/^[0-9A-Fa-f]{6}$/.test(c)) return `#${c}`;
+        // If short hex like 'fff', expand
+        if (/^[0-9A-Fa-f]{3}$/.test(c)) return `#${c}`;
+        // Otherwise return as-is (lets CSS handle rgb(), named colors, etc.)
+        return c || '#666666';
+      } catch (e) {
+        return '#666666';
+      }
+    };
+
+    const getContrastColor = (color) => {
+      try {
+        if (!color || typeof color !== 'string') return '#fff';
+        const hex = color.trim();
+        // simple hex parser
+        if (hex.startsWith('#')) {
+          const h = hex.substring(1);
+          const r = parseInt(h.length === 3 ? h[0]+h[0] : h.substring(0,2), 16);
+          const g = parseInt(h.length === 3 ? h[1]+h[1] : h.substring(2,4), 16);
+          const b = parseInt(h.length === 3 ? h[2]+h[2] : h.substring(4,6), 16);
+          const yiq = (r*299 + g*587 + b*114) / 1000;
+          return yiq >= 128 ? '#000' : '#fff';
+        }
+      } catch (e) {}
+      return '#fff';
+    };
+
     for (const uuid of traitUuids) {
       try {
         const doc = await fromUuid(uuid);
         if (doc && doc.type === 'trait') {
+          const c = normalizeColor(doc.system?.color);
           traitsResolved.push({
             uuid,
             id: doc.id,
             name: doc.name,
-            color: doc.system?.color || '#666666'
+            color: c,
+            textColor: getContrastColor(c)
           });
         }
       } catch (err) {
@@ -46,23 +88,20 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
     const activeEffects = [];
     const passiveEffects = [];
 
-    for (const uuid of effectUuids) {
+    for (const entry of effectUuids) {
       try {
-        const doc = await fromUuid(uuid);
-        if (doc && (doc.type === 'active-effect' || doc.type === 'passive-effect')) {
+        // If entry is a string, treat as UUID and resolve
+        if (typeof entry === 'string') {
+          const doc = await fromUuid(entry);
+          if (!doc) continue;
+
           const traitUuidsEffect = Array.isArray(doc.system?.traits) ? doc.system.traits : [];
           const traitsResolvedEffect = [];
-
           for (const tuuid of traitUuidsEffect) {
             try {
               const tdoc = await fromUuid(tuuid);
-              if (tdoc && tdoc.type === 'trait') {
-                traitsResolvedEffect.push({
-                  uuid: tuuid,
-                  id: tdoc.id,
-                  name: tdoc.name,
-                  color: tdoc.system?.color || '#666666'
-                });
+                if (tdoc && tdoc.type === 'trait') {
+                traitsResolvedEffect.push({ uuid: tuuid, id: tdoc.id, name: tdoc.name, color: normalizeColor(tdoc.system?.color) });
               }
             } catch (err) {
               console.warn('Erro ao resolver trait de efeito:', tuuid, err);
@@ -70,7 +109,7 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
           }
 
           const effectData = {
-            uuid,
+            uuid: entry,
             id: doc.id,
             name: doc.name,
             type: doc.type,
@@ -80,10 +119,11 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
             target: doc.system?.target || '',
             duration: doc.system?.duration || '',
             focusCost: doc.system?.focusCost || 0,
+            actionCost: doc.system?.actionCost ?? doc.system?.actions ?? '',
             isMagic: doc.system?.isMagic || false,
             magicCircle: doc.system?.magicCircle || '',
             isPermanent: doc.system?.isPermanent || false,
-            isActive: doc.system?.isActive !== false, // default true
+            isActive: doc.system?.isActive !== false,
             traitsResolved: traitsResolvedEffect,
             heightened: Array.isArray(doc.system?.heightened)
               ? doc.system.heightened
@@ -92,14 +132,52 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
                   : [])
           };
 
-          if (doc.type === 'active-effect') {
-            activeEffects.push(effectData);
-          } else {
-            passiveEffects.push(effectData);
+          if (doc.type === 'active-effect') activeEffects.push(effectData);
+          else passiveEffects.push(effectData);
+
+        } else if (entry && typeof entry === 'object') {
+          // Inline effect object on the talent
+          const systemData = entry.system || {};
+          const traitUuidsEffect = Array.isArray(systemData?.traits) ? systemData.traits : [];
+          const traitsResolvedEffect = [];
+          for (const tuuid of traitUuidsEffect) {
+            try {
+              const tdoc = await fromUuid(tuuid);
+                if (tdoc && tdoc.type === 'trait') {
+                traitsResolvedEffect.push({ uuid: tuuid, id: tdoc.id, name: tdoc.name, color: normalizeColor(tdoc.system?.color) });
+              } else {
+                traitsResolvedEffect.push({ uuid: tuuid, name: String(tuuid), color: '#666666' });
+              }
+            } catch (err) {
+              traitsResolvedEffect.push({ uuid: tuuid, name: String(tuuid), color: '#666666' });
+            }
           }
+
+          const effectData = {
+            uuid: entry.uuid || entry._id || null,
+            id: entry.id || entry._id || null,
+            name: entry.name || entry.label || 'Effect',
+            type: entry.type || systemData.type || 'active-effect',
+            description: entry.description ?? systemData.description ?? '',
+            effect: entry.effect ?? systemData.effect ?? '',
+            range: entry.range ?? systemData.range ?? '',
+            target: entry.target ?? systemData.target ?? '',
+            duration: entry.duration ?? systemData.duration ?? '',
+            focusCost: entry.focusCost ?? systemData.focusCost ?? 0,
+            actionCost: entry.actionCost ?? systemData.actionCost ?? systemData.actions ?? '',
+            isMagic: entry.isMagic ?? systemData.isMagic ?? false,
+            magicCircle: entry.magicCircle ?? systemData.magicCircle ?? '',
+            isPermanent: entry.isPermanent ?? systemData.isPermanent ?? false,
+            isActive: entry.isActive ?? true,
+            traitsResolved: traitsResolvedEffect,
+            heightened: Array.isArray(systemData?.heightened) ? systemData.heightened : (systemData?.heightened && typeof systemData.heightened === 'object' ? Object.values(systemData.heightened) : [])
+          };
+
+          if (effectData.type === 'active-effect') activeEffects.push(effectData);
+          else passiveEffects.push(effectData);
         }
       } catch (err) {
-        console.warn('Erro ao resolver efeito para talent:', uuid, err);
+        console.warn('Erro ao resolver efeito para talent:', entry, err);
       }
     }
 
@@ -134,6 +212,12 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
           ev.preventDefault();
           ev.stopPropagation();
           return this._onRemoveEffect(ev);
+        }
+        const editEffectBtn = ev.target.closest('.edit-effect-btn');
+        if (editEffectBtn) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          return this._onEditEffect(ev);
         }
         const removeTraitBtn = ev.target.closest('.trait-chip-remove');
         if (removeTraitBtn) {
@@ -171,6 +255,28 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
 
       if (!toggleBtn || !content || !textarea) return;
 
+      // Pre-render icons used by the editor controls (non-blocking)
+      let iconTimes = 'fas fa-times';
+      let iconEdit = 'fas fa-edit';
+      let iconEye = 'fas fa-eye';
+      let iconEyeSlash = 'fas fa-eye-slash';
+      Promise.all([
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-times' }),
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-edit' }),
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-eye' }),
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-eye-slash' })
+      ]).then(([t, e, eye, eyeslash]) => {
+        iconTimes = t; iconEdit = e; iconEye = eye; iconEyeSlash = eyeslash;
+      }).catch((ie) => {
+        console.warn('Wayfinder | failed to render editor icon partials', ie);
+      });
+
+      // Wrap fallback class names into <i> tags so buttons get HTML immediately
+      if (typeof iconTimes === 'string' && !iconTimes.includes('<')) iconTimes = `<i class="${iconTimes}"></i>`;
+      if (typeof iconEdit === 'string' && !iconEdit.includes('<')) iconEdit = `<i class="${iconEdit}"></i>`;
+      if (typeof iconEye === 'string' && !iconEye.includes('<')) iconEye = `<i class="${iconEye}"></i>`;
+      if (typeof iconEyeSlash === 'string' && !iconEyeSlash.includes('<')) iconEyeSlash = `<i class="${iconEyeSlash}"></i>`;
+
       let isPreview = false;
 
       // Toggle editor mode
@@ -180,8 +286,8 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
         content.setAttribute('data-text-editable', !isEditing);
         toolbar.style.display = !isEditing ? 'flex' : 'none';
         toggleBtn.innerHTML = !isEditing
-          ? '<i class="fas fa-times"></i> Cancelar'
-          : '<i class="fas fa-edit"></i> Editar';
+          ? `${iconTimes} Cancelar`
+          : `${iconEdit} Editar`;
 
         if (!isEditing) {
           content.focus();
@@ -193,7 +299,7 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
         content.setAttribute('contenteditable', 'false');
         content.setAttribute('data-text-editable', 'false');
         toolbar.style.display = 'none';
-        toggleBtn.innerHTML = '<i class="fas fa-edit"></i> Editar';
+        toggleBtn.innerHTML = `${iconEdit} Editar`;
         textarea.value = content.innerHTML;
         textarea.dispatchEvent(new Event('change', { bubbles: true }));
       });
@@ -205,11 +311,11 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
           preview.innerHTML = content.innerHTML;
           preview.style.display = 'block';
           content.style.display = 'none';
-          previewBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Editar';
+          previewBtn.innerHTML = `${iconEyeSlash} Editar`;
         } else {
           preview.style.display = 'none';
           content.style.display = 'block';
-          previewBtn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+          previewBtn.innerHTML = `${iconEye} Preview`;
         }
       });
 
@@ -258,6 +364,24 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
         });
       });
 
+      // Font size control for talent editor (use helper)
+      const fontInput = group.querySelector('.editor-font-size-input');
+      const applyFontBtn = group.querySelector('.editor-apply-font-btn');
+      let savedRangeForFont = null;
+      if (applyFontBtn) {
+        applyFontBtn.addEventListener('mousedown', () => { savedRangeForFont = saveSelection(); });
+        applyFontBtn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          const size = fontInput?.value || null;
+          if (!size) return;
+          if (savedRangeForFont) restoreSelection(savedRangeForFont);
+          applyFontSizeToSelection(size);
+          textarea.value = content.innerHTML;
+          textarea.dispatchEvent(new Event('change', { bubbles: true }));
+          savedRangeForFont = null;
+        });
+      }
+
       // Sync content to textarea
       content.addEventListener('input', () => {
         textarea.value = content.innerHTML;
@@ -266,6 +390,9 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
       content.addEventListener('blur', () => {
         textarea.value = content.innerHTML;
       });
+
+      // Paste: strip styles and insert plain text
+      content.addEventListener('paste', (ev) => pastePlain(ev));
 
       // Preserve formatting on paste
       content.addEventListener('paste', (e) => {
@@ -380,6 +507,29 @@ export class WayfinderTalentSheet extends foundry.applications.api.HandlebarsApp
       current.splice(idx, 1);
       await this.document.update({ 'system.effects': current });
       ui.notifications?.info('Efeito removido do talent.');
+    }
+  }
+
+  /**
+   * Handle editing an effect (open effect item sheet)
+   */
+  async _onEditEffect(event) {
+    const btn = event.target.closest('.edit-effect-btn');
+    if (!btn) return;
+
+    const uuid = btn.dataset.uuid;
+    if (!uuid) return ui.notifications?.warn('UUID do efeito não encontrado.');
+
+    try {
+      const doc = await fromUuid(uuid);
+      if (!doc) return ui.notifications?.warn('Documento do efeito não encontrado.');
+      // If this is a CompendiumDocument, resolve to its document or open its sheet
+      if (doc.sheet) return doc.sheet.render(true);
+      // Fallback: try to open Item sheet via ItemSheet
+      if (doc instanceof foundry.documents.BaseDocument && doc.sheet) return doc.sheet.render(true);
+    } catch (err) {
+      console.error('Erro ao abrir editor de efeito:', err);
+      ui.notifications?.error('Não foi possível abrir o editor do efeito. Veja o console.');
     }
   }
 }

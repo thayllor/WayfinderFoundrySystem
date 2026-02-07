@@ -1,0 +1,14 @@
+{{! Notes Tab }}
+<div class="notes-section">
+  <h2 class="tab-title tab-title-notes">Anotações</h2>
+  <div class="notes-card description-card">
+    <div class="description-card-body">
+      {{textoEstilizado
+        name="system.notes"
+        value=system.notes
+        label="Anotações"
+        editable=@root.editable
+      }}
+    </div>
+  </div>
+</div>

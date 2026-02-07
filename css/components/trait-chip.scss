@@ -1,0 +1,57 @@
+/* Trait chip component styles — centralised and reusable */
+.trait-chip-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .trait-chip-label {
+    font-weight: 700;
+    color: var(--color-text-secondary, #bdbdbd);
+    margin-right: 8px;
+    font-size: 0.86rem;
+    white-space: nowrap;
+  }
+
+  .trait-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    /* Prefer explicit trait variables; allow inline styles to override when present */
+    background: var(--trait-bg, #474343);
+    color: var(--trait-color, #fff);
+    background-image: none;
+    font-weight: 700;
+    font-size: 0.86rem;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    box-shadow: none;
+  }
+
+  .trait-chip-small {
+    padding: 2px 8px;
+    font-size: 0.82rem;
+    border-radius: 5px;
+  }
+
+  .trait-chip .trait-chip-name {
+    line-height: 1;
+  }
+
+  .trait-chip .trait-chip-remove {
+    margin-left: 6px;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    font-weight: 900;
+    padding: 0 6px;
+    cursor: pointer;
+    border-radius: 4px;
+    line-height: 1;
+  }
+
+  .trait-chip .trait-chip-remove:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+}

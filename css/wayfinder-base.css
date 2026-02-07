@@ -1,10 +1,12 @@
+@charset "UTF-8";
 /* Base styles: variables, resets, fonts, and global rules */
 :root {
-  --wayfinder-main-color: #8b5a3c;
-  --wayfinder-bg-color: #f5f0e6;
-  --wayfinder-primary-dark: #a8751a;
-  --wayfinder-accent-light: #f2c97d;
-  /* ...other variables... */
+  /* Map Wayfinder variables to Foundry palette variables so theme changes follow Foundry's dark/light modes.
+     These use Foundry's palette names (example: --color-warm-1, --color-light-1, --color-dark-2, etc.)
+     with fallbacks to the previous Wayfinder hard-coded colors.
+  */
+  /* Wayfinder-specific variables removed — use Foundry palette variables directly */
+  /* Keep any other Wayfinder-specific variables here; prefer Foundry equivalents when present */
 }
 
 body,
@@ -12,7 +14,7 @@ html {
   margin: 0;
   padding: 0;
   font-family: "Roboto", Arial, sans-serif;
-  background: var(--wayfinder-bg-color);
+  background: var(--color-light-1);
 }
 
 /* ...other global/base rules... */

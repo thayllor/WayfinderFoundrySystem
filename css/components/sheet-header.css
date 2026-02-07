@@ -1,0 +1,43 @@
+/* Sheet header card - reuseable across sheets */
+.wayfinder .sheet-header {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(28, 28, 28, 0.98), rgba(18, 18, 18, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  margin-bottom: 12px;
+  justify-content: space-around;
+}
+
+/* Make the profile image stand out inside the header */
+.wayfinder .sheet-header .profile-img {
+  flex: 0 0 auto;
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid var(--color-warm-2);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+}
+
+/* Ensure header fields take full remaining width */
+.wayfinder .sheet-header .header-fields {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .wayfinder .sheet-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .wayfinder .sheet-header .profile-img {
+    width: 96px;
+    height: 96px;
+  }
+}

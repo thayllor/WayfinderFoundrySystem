@@ -1,31 +1,47 @@
 {{! Attributes Pentagon Component }}
 <div class="attributes-pentagon">
+
   <img
     src="systems/wayfinder/images/marca_dagua_atributos.png"
-    alt="Marca d'Água Atributos"
+    alt="Marca d'Água Atribut os"
     class="pentagon-background-img"
   />
   <div class="pentagon-attributes-container">
     {{#each system.attributes as |attribute key|}}
       <div class="pentagon-attribute" data-attribute-key="{{key}}">
         <div class="attribute-name" data-attribute-key="{{key}}">
-          <div
+          <svg
             class="attribute-roll-badge"
-            title="Roll 2d10 + atributo"
-          >{{key}}</div>
+            viewBox="0 0 120 40"
+            aria-hidden="true"
+            role="img"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+          >
+            <defs>
+              <!-- Slightly lower, wider arc so the text sits below the top edge -->
+              <path
+                id="arc-{{key}}"
+                class="wf-arc-path"
+                d="M10,30 A50,50 0 0,1 110,30"
+                aria-hidden="true"
+              />
+            </defs>
+            <text
+              text-anchor="middle"
+              style="fill:var(--color-text-primary,#e6e6e6);font-family:var(--wf-font-sans);font-weight:700;font-size:16px;"
+              dy="4"
+            >
+              <textPath
+                href="#arc-{{key}}"
+                xlink:href="#arc-{{key}}"
+                startOffset="50%"
+              >{{key}}</textPath>
+            </text>
+          </svg>
         </div>
         <div class="attribute-pentagon-box">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <polygon
-              points="50,15 85,40 75,80 25,80 15,40"
-              fill="none"
-              stroke="#8b5a3c"
-              stroke-width="1.5"
-              opacity="0.6"
-            />
-          </svg>
-          <div class="attribute-value-triangle">
-            <div class="triangle-up">
+          <div class="attribute-value-container">
+            <div class="attribute-value-box">
               <input
                 class="attribute-value"
                 type="number"
@@ -33,14 +49,18 @@
                 value="{{default attribute.value 0}}"
               />
             </div>
-            <div class="triangle-down">
-              <span
-                class="attribute-value"
-                style="color: var(--wayfinder-main-color); background: var(--wayfinder-bg-color);"
-              >
-                {{default (calculateDefenseDC key system.attributes) 10}}
+            <div class="attribute-defence-box">
+              <span class="attribute-defence">
+                <span class="defense-total">{{defenseTotal
+                    key
+                    system.attributes
+                  }}</span>
               </span>
             </div>
+            <span class="defense-total">{{defenseTotal
+                key
+                system.attributes
+              }}</span>
           </div>
         </div>
       </div>

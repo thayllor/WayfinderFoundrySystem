@@ -1,0 +1,103 @@
+/* Tab: Actions */
+.wayfinder.sheet.actor .tab[data-tab=actions] {
+  padding: 8px 0;
+}
+
+.wayfinder.sheet.actor .tab[data-tab=actions] .action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Mirror the card layout used for the skills tab for Actions */
+.wayfinder.sheet.actor .actions-card.description-card {
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wayfinder.sheet.actor .actions-card .description-card-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background: transparent;
+}
+
+.wayfinder.sheet.actor .actions-card .description-card-title {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-text-primary, #e6e6e6);
+}
+
+.wayfinder.sheet.actor .actions-card .description-card-body.three-column-card {
+  display: grid;
+  grid-template-columns: 300px 1fr 1fr;
+  gap: 12px;
+  padding: 12px;
+  align-items: start;
+}
+
+.wayfinder.sheet.actor .actions-controls-card {
+  background: transparent;
+  padding: 0;
+}
+
+.wayfinder.sheet.actor .actions-table-container {
+  overflow: auto;
+}
+
+/* Effects source card: general card styling used inside Actions/Effects lists */
+.wayfinder.sheet.actor .effects-source-card {
+  /* Effects section card: wrapper for Active/Passive lists inside each source */
+}
+.wayfinder.sheet.actor .effects-source-card .effects-section {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(0, 0, 0, 0.04));
+  border: 1px solid var(--color-dark-4);
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) inset;
+  max-width: 450px;
+}
+.wayfinder.sheet.actor .effects-source-card .effects-subtitle {
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #f2f2f2);
+}
+.wayfinder.sheet.actor .effects-source-card .effects-list-wrapper {
+  padding: 6px 4px;
+  /* Allow expanded effect items to increase window content height instead of scrolling locally */
+  max-height: none;
+  overflow: visible;
+}
+.wayfinder.sheet.actor .effects-source-card .effects-empty {
+  color: rgba(255, 255, 255, 0.45);
+  font-style: italic;
+  padding: 8px;
+}
+.wayfinder.sheet.actor .effects-source-card .effects-collapsible-list > .collapsible-effect {
+  margin-bottom: 8px;
+}
+.wayfinder.sheet.actor .effects-source-card {
+  margin: 10px;
+  padding: 10px;
+  background: linear-gradient(180deg, rgba(18, 18, 18, 0.96), rgba(28, 28, 28, 0.92));
+  border: 1px solid var(--color-dark-4);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  color: var(--color-text-primary, #eee);
+}
+
+.wayfinder.sheet.actor .type-effects {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  justify-content: space-around;
+}
+
+@media (max-width: 1000px) {
+  .wayfinder.sheet.actor .actions-card .description-card-body.three-column-card {
+    grid-template-columns: 1fr;
+  }
+}

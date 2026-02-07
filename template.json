@@ -3,182 +3,228 @@
     "types": ["character", "npc"],
     "templates": {
       "base": {
-        "health": {
-          "value": 10,
-          "min": 0,
-          "max": 10
+        "level": {
+          "value": 1
         },
-        "power": {
-          "value": 5,
-          "min": 0,
-          "max": 5
+        "classDC": 10,
+        "stamina": {
+          "current": 0,
+          "maximum": 0,
+          "temporary": 0
         },
-        "biography": ""
+        "speed": 0
+      },
+      "character": {
+        "templates": ["base"],
+        "attributes": {
+          "strength": {
+            "value": 0,
+            "defenseDC": 10,
+            "item": 0,
+            "circun": 0,
+            "status": 0,
+            "proficiency": "untrained"
+          },
+          "dexterity": {
+            "value": 0,
+            "defenseDC": 10,
+            "item": 0,
+            "circun": 0,
+            "status": 0,
+            "proficiency": "untrained"
+          },
+          "intelligence": {
+            "value": 0,
+            "defenseDC": 10,
+            "item": 0,
+            "circun": 0,
+            "status": 0,
+            "proficiency": "untrained"
+          },
+          "wisdom": {
+            "value": 0,
+            "defenseDC": 10,
+            "item": 0,
+            "circun": 0,
+            "status": 0,
+            "proficiency": "untrained"
+          },
+          "presence": {
+            "value": 0,
+            "defenseDC": 10,
+            "item": 0,
+            "circun": 0,
+            "status": 0,
+            "proficiency": "untrained"
+          }
+        },
+        "playerName": "Nome do Jogador",
+        "ancestry": "",
+        "class": "",
+        "classDC": 10,
+        "skills": {
+          "arcana": {
+            "attribute": "INT",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "acrobatics": {
+            "attribute": "DEX",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "athletics": {
+            "attribute": "STR",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "crafting": {
+            "attribute": "INT",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "deception": {
+            "attribute": "PRE",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "diplomacy": {
+            "attribute": "PRE",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "intimidation": {
+            "attribute": "PRE",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "medicine": {
+            "attribute": "WIS",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "nature": {
+            "attribute": "WIS",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "occultism": {
+            "attribute": "INT",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "performance": {
+            "attribute": "PRE",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "religion": {
+            "attribute": "WIS",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "society": {
+            "attribute": "INT",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "stealth": {
+            "attribute": "DEX",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "survival": {
+            "attribute": "WIS",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "tactics": {
+            "attribute": "INT",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "thievery": {
+            "attribute": "DEX",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          },
+          "lore": {
+            "attribute": "INT",
+            "proficiency": "untrained",
+            "item": 0,
+            "circun": 0,
+            "status": 0
+          }
+        },
+        "shield": {
+          "hardness": 0,
+          "structure": 0
+        },
+        "perception": {
+          "item": 0,
+          "circun": 0,
+          "status": 0,
+          "senses": ""
+        },
+        "focus": {
+          "current": 0,
+          "maximum": 0
+        },
+        "heroPoints": {
+          "current": 0,
+          "maximum": 0
+        },
+        "resonance": {
+          "current": 0,
+          "maximum": 0
+        },
+        "surges": {
+          "current": 0,
+          "maximum": 0
+        },
+        "exp": "0/100",
+        "favoriteActives": "",
+        "favoritePassives": "",
+        "favoriteStrikes": ""
+      },
+      "npc": {
+        "templates": ["base"],
+        "cr": 0
       }
-    },
-    "character": {
-      "templates": ["base"],
-      "attributes": {
-        "strength": {
-          "value": 0,
-          "defenseDC": 10,
-          "item": 0
-        },
-        "dexterity": {
-          "value": 0,
-          "defenseDC": 10,
-          "item": 0
-        },
-        "intelligence": {
-          "value": 0,
-          "defenseDC": 10,
-          "item": 0
-        },
-        "wisdom": {
-          "value": 0,
-          "defenseDC": 10,
-          "item": 0
-        },
-        "presence": {
-          "value": 0,
-          "defenseDC": 10,
-          "item": 0
-        }
-      },
-      "level": {
-        "value": 1
-      },
-      "playerName": "",
-      "ancestry": "",
-      "class": "",
-      "classDC": 10,
-      "skills": {
-        "arcana": {
-          "attribute": "INT",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "acrobatics": {
-          "attribute": "DEX",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "athletics": {
-          "attribute": "STR",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "crafting": {
-          "attribute": "INT",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "deception": {
-          "attribute": "PRE",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "diplomacy": {
-          "attribute": "PRE",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "intimidation": {
-          "attribute": "PRE",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "medicine": {
-          "attribute": "WIS",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "nature": {
-          "attribute": "WIS",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "occultism": {
-          "attribute": "INT",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "performance": {
-          "attribute": "PRE",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "religion": {
-          "attribute": "WIS",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "society": {
-          "attribute": "INT",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "stealth": {
-          "attribute": "DEX",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "survival": {
-          "attribute": "WIS",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "tactics": {
-          "attribute": "INT",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "thievery": {
-          "attribute": "DEX",
-          "proficiency": "untrained",
-          "bonus": 0
-        },
-        "lore": { "attribute": "INT", "proficiency": "untrained", "bonus": 0 }
-      },
-      "shield": {
-        "hardness": 0,
-        "structure": 0,
-        "bonus": 0
-      },
-      "perception": {
-        "bonus": 0,
-        "senses": ""
-      },
-      "stamina": {
-        "current": 0,
-        "maximum": 0,
-        "temporary": 0
-      },
-      "focus": {
-        "current": 0,
-        "maximum": 0
-      },
-      "heroPoints": {
-        "current": 0,
-        "maximum": 0
-      },
-      "resonance": {
-        "current": 0,
-        "maximum": 0
-      },
-      "surges": {
-        "current": 0,
-        "maximum": 0
-      },
-      "speed": 0,
-      "exp": "0/100",
-      "favoriteActives": "",
-      "favoritePassives": "",
-      "favoriteStrikes": ""
-    },
-    "npc": {
-      "templates": ["base"],
-      "cr": 0
     }
   },
   "Item": {

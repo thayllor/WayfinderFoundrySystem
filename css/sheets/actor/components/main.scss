@@ -1,0 +1,13 @@
+/* Main SCSS entry for actor components — imports component SCSS files. */
+@use "character-info.scss" as *;
+@use "resources-row.scss" as *;
+@use "_attributes-resources-horizontal.scss" as *;
+@use "sheet-tabs.scss" as *;
+@use "tabs-skills.scss" as *;
+@use "tabs-actions.scss" as *;
+@use "tabs-modifiers.scss" as *;
+@use "tabs-talents.scss" as *;
+@use "tabs-spells.scss" as *;
+@use "tabs-notes.scss" as *;
+@use "tabs-resources.scss" as *;
+@use "tabs-inventory.scss" as *;

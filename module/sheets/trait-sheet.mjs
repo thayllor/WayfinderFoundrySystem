@@ -1,4 +1,5 @@
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
+import { saveSelection, restoreSelection, createColorPicker, applyForeColor, applyBackgroundColor, applyFontSizeToSelection, pastePlain } from '../helpers/text-editor.mjs';
 
 export class WayfinderTraitSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
   static DEFAULT_OPTIONS = {
@@ -203,7 +204,28 @@ export class WayfinderTraitSheet extends HandlebarsApplicationMixin(DocumentShee
         saveHistoryStep();
         updateStats();
       });
+
+    // End format buttons forEach
     });
+
+    // Font size control: apply selected font size to selection (use helper)
+    const fontInput = html.querySelector('.editor-font-size-input');
+    const applyFontBtn = html.querySelector('.editor-apply-font-btn');
+    let savedRangeForFont = null;
+    if (applyFontBtn) {
+      applyFontBtn.addEventListener('mousedown', () => { savedRangeForFont = saveSelection(); });
+      applyFontBtn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const size = fontInput?.value || null;
+        if (!size) return;
+        if (savedRangeForFont) restoreSelection(savedRangeForFont);
+        applyFontSizeToSelection(size);
+        textarea.value = content.innerHTML;
+        saveHistoryStep();
+        updateStats();
+        savedRangeForFont = null;
+      });
+    }
 
     // Color picker buttons with inline pickers
     const textColorBtn = html.querySelector('.editor-text-color-btn');
@@ -212,86 +234,28 @@ export class WayfinderTraitSheet extends HandlebarsApplicationMixin(DocumentShee
     if (textColorBtn) {
       textColorBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
-
-        const input = document.createElement('input');
-        input.type = 'color';
-        input.style.position = 'absolute';
-        input.style.opacity = '0';
-        input.style.width = '1px';
-        input.style.height = '1px';
-        input.style.pointerEvents = 'none';
-
-        input.addEventListener('input', (e) => {
-          const color = e.target.value;
-          // Apply color to selection using span
-          const selection = window.getSelection();
-          if (selection.rangeCount > 0 && !selection.isCollapsed) {
-            const range = selection.getRangeAt(0);
-            const span = document.createElement('span');
-            span.style.color = color;
-            try {
-              range.surroundContents(span);
-            } catch (err) {
-              // If surroundContents fails, extract and wrap
-              const fragment = range.extractContents();
-              span.appendChild(fragment);
-              range.insertNode(span);
-            }
-          }
+        const saved = saveSelection();
+        createColorPicker((color) => {
+          if (saved) restoreSelection(saved);
+          applyForeColor(color);
           textarea.value = content.innerHTML;
           saveHistoryStep();
           updateStats();
         });
-
-        input.addEventListener('blur', () => {
-          setTimeout(() => input.remove(), 100);
-        });
-
-        document.body.appendChild(input);
-        input.click();
       });
     }
 
     if (bgColorBtn) {
       bgColorBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
-
-        const input = document.createElement('input');
-        input.type = 'color';
-        input.style.position = 'absolute';
-        input.style.opacity = '0';
-        input.style.width = '1px';
-        input.style.height = '1px';
-        input.style.pointerEvents = 'none';
-
-        input.addEventListener('input', (e) => {
-          const color = e.target.value;
-          // Apply background color to selection using span
-          const selection = window.getSelection();
-          if (selection.rangeCount > 0 && !selection.isCollapsed) {
-            const range = selection.getRangeAt(0);
-            const span = document.createElement('span');
-            span.style.backgroundColor = color;
-            try {
-              range.surroundContents(span);
-            } catch (err) {
-              // If surroundContents fails, extract and wrap
-              const fragment = range.extractContents();
-              span.appendChild(fragment);
-              range.insertNode(span);
-            }
-          }
+        const saved = saveSelection();
+        createColorPicker((color) => {
+          if (saved) restoreSelection(saved);
+          applyBackgroundColor(color);
           textarea.value = content.innerHTML;
           saveHistoryStep();
           updateStats();
         });
-
-        input.addEventListener('blur', () => {
-          setTimeout(() => input.remove(), 100);
-        });
-
-        document.body.appendChild(input);
-        input.click();
       });
     }
 
@@ -300,6 +264,9 @@ export class WayfinderTraitSheet extends HandlebarsApplicationMixin(DocumentShee
       textarea.value = content.innerHTML;
       updateStats();
     });
+
+    // Paste: strip styles and insert plain text
+    content.addEventListener('paste', (ev) => pastePlain(ev));
 
     // Handle escape key to close editor
     content.addEventListener('keydown', (ev) => {
@@ -327,37 +294,71 @@ export class WayfinderTraitSheet extends HandlebarsApplicationMixin(DocumentShee
    * Open a color picker dialog
    * @private
    */
-  _openColorDialog(title, callback) {
-    const colorHtml = `
-      <div class="color-picker-dialog">
-        <input type="color" id="color-input" value="#000000" style="width: 100%; height: 200px; cursor: pointer;">
-      </div>
-    `;
-
+  async _openColorDialog(title, callback) {
     const DialogClass = (typeof ApplicationV2 !== 'undefined' && ApplicationV2?.Dialog) ? ApplicationV2.Dialog : Dialog;
-    const dialog = new DialogClass({
-      title: title,
-      content: colorHtml,
-      buttons: {
-        apply: {
-          icon: '<i class="fas fa-check"></i>',
-          label: 'Aplicar',
-          callback: (html) => {
-            const dom = (html && html[0]) ? html[0] : html;
-            const input = dom.querySelector('#color-input');
-            if (input && callback) {
-              callback(input.value);
+    // Render icon + color-picker partials and then create dialog to avoid inline HTML in JS
+    let iconCheck = 'fas fa-check';
+    let iconTimes = 'fas fa-times';
+
+    const makeDialog = (colorHtml) => {
+      const dialog = new DialogClass({
+        title: title,
+        content: colorHtml,
+        buttons: {
+          apply: {
+            icon: iconCheck,
+            label: 'Aplicar',
+            callback: (html) => {
+              const dom = (html && html[0]) ? html[0] : html;
+              const input = dom.querySelector('#color-input');
+              if (input && callback) {
+                callback(input.value);
+              }
             }
+          },
+          cancel: {
+            icon: iconTimes,
+            label: 'Cancelar'
           }
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: 'Cancelar'
-        }
-      },
-      default: 'apply'
-    });
+        default: 'apply'
+      });
+      dialog.render(true);
+    };
 
-    dialog.render(true);
+    try {
+      const [checkHtml, timesHtml, colorHtml] = await Promise.all([
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-check' }),
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/icon.hbs', { className: 'fas fa-times' }),
+        foundry.applications.handlebars.renderTemplate('systems/wayfinder/templates/components/color-picker-dialog.hbs', { value: '#000000' })
+      ]);
+      iconCheck = checkHtml;
+      iconTimes = timesHtml;
+      makeDialog(colorHtml);
+    } catch (ie) {
+      console.warn('Wayfinder | failed to render icon/color partials in color dialog', ie);
+      // keep class fallbacks wrapped as <i>
+      if (typeof iconCheck === 'string' && !iconCheck.includes('<')) iconCheck = `<i class="${iconCheck}"></i>`;
+      if (typeof iconTimes === 'string' && !iconTimes.includes('<')) iconTimes = `<i class="${iconTimes}"></i>`;
+
+      // Build fallback HTML programmatically to avoid large inline string literals
+      try {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'color-picker-dialog';
+        const input = document.createElement('input');
+        input.type = 'color';
+        input.id = 'color-input';
+        input.value = '#000000';
+        input.style.width = '100%';
+        input.style.height = '200px';
+        input.style.cursor = 'pointer';
+        wrapper.appendChild(input);
+        makeDialog(wrapper.outerHTML);
+      } catch (e) {
+        console.warn('Wayfinder | failed to construct fallback color dialog DOM', e);
+        // Fallback to empty dialog content if DOM creation is unavailable
+        makeDialog('');
+      }
+    }
   }
 }

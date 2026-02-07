@@ -1,0 +1,20 @@
+<div class="trait-chip-row">
+  <span class="trait-chip-label">Traits:</span>
+  {{#each traits}}
+    <div
+      class="trait-chip"
+      style="--trait-bg: {{this.color}}; --trait-color: {{this.textColor}};"
+      title="{{this.name}}"
+      {{#if this.uuid}}data-uuid="{{this.uuid}}"{{else if this.id}}data-uuid="{{this.id}}"{{/if}}
+    >
+      <span class="trait-chip-name">{{this.name}}</span>
+      {{#if ../editable}}
+        {{#if this.uuid}}
+          <button type="button" class="trait-chip-remove" data-uuid="{{this.uuid}}" title="Remover trait">×</button>
+        {{else if this.id}}
+          <button type="button" class="trait-chip-remove" data-uuid="{{this.id}}" title="Remover trait">×</button>
+        {{/if}}
+      {{/if}}
+    </div>
+  {{/each}}
+</div>

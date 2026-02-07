@@ -25,6 +25,7 @@ export class WayfinderItem extends Item {
     this._prepareSpellData(itemData);
     this._prepareActiveEffectData(itemData);
     this._preparePassiveEffectData(itemData);
+    this._prepareModifierData(itemData);
   }
 
   /**
@@ -35,6 +36,20 @@ export class WayfinderItem extends Item {
 
     // Make modifications to data here
     const systemData = itemData.system;
+    // Ensure common fields exist
+    systemData.quantity = systemData.quantity ?? 1;
+    systemData.weight = systemData.weight ?? 0;
+    systemData.price = systemData.price ?? 0;
+    // Remove deprecated space or ensure it's optional
+    systemData.space = systemData.space ?? 0;
+    // Ensure modifiers array exists so the item sheet can render the list
+    systemData.modifiers = systemData.modifiers || [];
+    systemData.itemType = systemData.itemType || 'other'; // 'weapon'|'armor'|'other'
+    // Inventory display defaults (used by actor inventory UI)
+    systemData.inventory = systemData.inventory || {};
+    // Default inventory.hand for all items should be 'carregando'
+    systemData.inventory.hand = systemData.inventory.hand || 'carregando';
+    systemData.inventory.tuned = !!systemData.inventory.tuned;
   }
 
   /**
@@ -80,6 +95,20 @@ export class WayfinderItem extends Item {
     // Initialize defaults if needed
     systemData.isPermanent = systemData.isPermanent !== false;
     systemData.isActive = systemData.isActive !== false;
+  }
+
+  /**
+   * Prepare Modifier type specific data
+   */
+  _prepareModifierData(itemData) {
+    if (itemData.type !== 'modifier') return;
+
+    const systemData = itemData.system;
+    // Basic defaults for modifier items
+    systemData.isActive = systemData.isActive !== false;
+    systemData.pillar = systemData.pillar || 'status'; // 'status' | 'circumstance' | 'item'
+    systemData.value = systemData.value ?? 0;
+    systemData.description = systemData.description || '';
   }
 
   /**
