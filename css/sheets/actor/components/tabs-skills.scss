@@ -253,6 +253,124 @@
   font-weight: 800;
 }
 
+/* Highlight skill rows progressively by proficiency level
+   - Adds a left accent and subtle background that increases with proficiency.
+   - Uses `--color-accent` when available; falls back to warm gold.
+*/
+.wayfinder.sheet.actor .skills-table tbody tr[data-proficiency] {
+  transition:
+    background-color 0.12s ease,
+    box-shadow 0.12s ease,
+    transform 0.12s ease;
+}
+/* Ensure all untrained rows are visually uniform: no inset accent, neutral border */
+.wayfinder.sheet.actor .skills-table tbody tr[data-proficiency="untrained"] {
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.wayfinder.sheet.actor
+  .skills-table
+  tbody
+  tr[data-proficiency="untrained"]
+  td:first-child {
+  border-left: 4px solid rgba(255, 255, 255, 0.06) !important;
+  padding-left: 8px;
+}
+.wayfinder.sheet.actor .skills-table tbody tr[data-proficiency="trained"] {
+  background: color-mix(in srgb, var(--color-accent, #ffd479) 4%, transparent);
+  box-shadow: inset 6px 0 0
+    color-mix(in srgb, var(--color-accent, #ffd479) 8%, transparent);
+}
+.wayfinder.sheet.actor .skills-table tbody tr[data-proficiency="expert"] {
+  background: color-mix(in srgb, var(--color-accent, #ffd479) 6%, transparent);
+  box-shadow: inset 8px 0 0
+    color-mix(in srgb, var(--color-accent, #ffd479) 14%, transparent);
+  transform: translateY(-1px);
+}
+.wayfinder.sheet.actor .skills-table tbody tr[data-proficiency="master"] {
+  background: color-mix(in srgb, var(--color-accent, #ffd479) 9%, transparent);
+  box-shadow:
+    inset 10px 0 0
+      color-mix(in srgb, var(--color-accent, #ffd479) 20%, transparent),
+    0 6px 18px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+.wayfinder.sheet.actor .skills-table tbody tr[data-proficiency="legendary"] {
+  background: color-mix(in srgb, var(--color-accent, #ffd479) 12%, transparent);
+  box-shadow:
+    inset 12px 0 0
+      color-mix(in srgb, var(--color-accent, #ffd479) 28%, transparent),
+    0 10px 26px rgba(0, 0, 0, 0.16);
+  transform: translateY(-3px);
+}
+
+/* Emphasize the numeric total for stronger proficiencies */
+.wayfinder.sheet.actor
+  .skills-table
+  tbody
+  tr[data-proficiency="expert"]
+  .attribute-total {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+.wayfinder.sheet.actor
+  .skills-table
+  tbody
+  tr[data-proficiency="master"]
+  .attribute-total {
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.32);
+  font-weight: 900;
+}
+.wayfinder.sheet.actor
+  .skills-table
+  tbody
+  tr[data-proficiency="legendary"]
+  .attribute-total {
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.36);
+  font-weight: 900;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* Add visible left borders on the first cell so the accent is always present
+   while keeping the existing inset accents and shadows. Using the first cell
+   avoids changing table layout significantly. */
+.wayfinder.sheet.actor
+  .skills-table
+  tbody
+  tr[data-proficiency="trained"]
+  td:first-child {
+  border-left: 4px solid
+    color-mix(in srgb, var(--color-accent, #ffd479) 12%, transparent);
+  padding-left: 8px;
+}
+.wayfinder.sheet.actor
+  .skills-table
+  tbody
+  tr[data-proficiency="expert"]
+  td:first-child {
+  border-left: 6px solid
+    color-mix(in srgb, var(--color-accent, #ffd479) 18%, transparent);
+  padding-left: 8px;
+}
+.wayfinder.sheet.actor
+  .skills-table
+  tbody
+  tr[data-proficiency="master"]
+  td:first-child {
+  border-left: 8px solid
+    color-mix(in srgb, var(--color-accent, #ffd479) 24%, transparent);
+  padding-left: 8px;
+}
+.wayfinder.sheet.actor
+  .skills-table
+  tbody
+  tr[data-proficiency="legendary"]
+  td:first-child {
+  border-left: 10px solid
+    color-mix(in srgb, var(--color-accent, #ffd479) 32%, transparent);
+  padding-left: 8px;
+}
+
 /* Compact inputs/selects styling inside tables */
 .wayfinder.sheet.actor .skills-table .short-input {
   padding: 4px 6px;
@@ -306,6 +424,7 @@
 .wayfinder.sheet.actor .languages-body,
 .wayfinder.sheet.actor .weapons-body,
 .wayfinder.sheet.actor .armors-body {
+  max-width: 500px;
   padding: 10px;
 }
 
@@ -318,6 +437,7 @@
   flex-wrap: wrap;
   align-items: center;
   min-height: 36px;
+  justify-content: space-around;
 }
 
 .wayfinder.sheet.actor .languages-list .empty-message,
@@ -361,6 +481,25 @@
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.03);
   color: var(--color-text-primary, #eee);
+}
+
+/* Improve dropdown option appearance inside description-card-actions */
+.wayfinder.sheet.actor .description-card-actions select.short-input option {
+  background: var(--color-dark-4);
+  color: var(--color-light-1);
+}
+
+/* Highlight option on hover / when selected inside description cards */
+.wayfinder.sheet.actor
+  .description-card-actions
+  select.short-input
+  option:hover,
+.wayfinder.sheet.actor
+  .description-card-actions
+  select.short-input
+  option:checked {
+  background: var(--color-warm-2);
+  color: var(--color-light-1);
 }
 
 @media (max-width: 700px) {

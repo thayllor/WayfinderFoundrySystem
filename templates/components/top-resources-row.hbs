@@ -6,16 +6,16 @@
       <div class="stamina-row">
         <div class="resource-item">
           <label>Current</label>
-          <input type="number" name="system.stamina.current" value="{{system.stamina.current}}" data-dtype="Number"/>
+          <input id="input-system-stamina-current" type="number" name="system.stamina.current" value="{{default system.stamina.current 0}}" data-dtype="Number"/>
         </div>
         <div class="resource-item">
           <label>Maximum</label>
-          <input type="number" name="system.stamina.maximum" value="{{system.stamina.maximum}}" data-dtype="Number"/>
+          <input id="input-system-stamina-maximum" type="number" name="system.stamina.maximum" value="{{default system.stamina.maximum 0}}" data-dtype="Number"/>
         </div>
       </div>
       <div class="resource-item">
         <label class="centered-label">Temporary</label>
-        <input type="number" name="system.stamina.temporary" value="{{system.stamina.temporary}}" placeholder="0" data-dtype="Number"/>
+        <input id="input-system-stamina-temporary" type="number" name="system.stamina.temporary" value="{{default system.stamina.temporary 0}}" placeholder="0" data-dtype="Number"/>
       </div>
     </div>
   </div>
@@ -25,11 +25,11 @@
     <div class="resource-block-content">
       <div class="resource-item">
         <label class="centered-label">Current</label>
-        <input type="number" name="system.surges.current" value="{{#if (isObject system.surges.current)}}0{{else}}{{system.surges.current}}{{/if}}" data-dtype="Number"/>
+        <input id="input-system-surges-current" type="number" name="system.surges.current" value="{{default system.surges.current 0}}" data-dtype="Number"/>
       </div>
       <div class="resource-item">
         <label class="centered-label">Maximum</label>
-        <input type="number" name="system.surges.maximum" value="{{#if (isObject system.surges.maximum)}}0{{else}}{{system.surges.maximum}}{{/if}}" data-dtype="Number"/>
+        <input id="input-system-surges-maximum" type="number" name="system.surges.maximum" value="{{default system.surges.maximum 0}}" data-dtype="Number"/>
       </div>
     </div>
   </div>
@@ -38,11 +38,11 @@
     <div class="resource-block-content">
       <div class="resource-item">
         <h4>Focus</h4>
-        <input type="number" name="system.focus.current" value="{{#if (isObject system.focus.current)}}0{{else}}{{system.focus.current}}{{/if}}" data-dtype="Number"/>
+        <input id="input-system-focus-current" type="number" name="system.focus.current" value="{{default system.focus.current 0}}" data-dtype="Number"/>
       </div>
       <div class="resource-item">
         <h4>Hero Points</h4>
-        <input type="number" name="system.heroPoints.current" value="{{#if (isObject system.heroPoints.current)}}0{{else}}{{system.heroPoints.current}}{{/if}}" data-dtype="Number"/>
+        <input id="input-system-heroPoints-current" type="number" name="system.heroPoints.current" value="{{default system.heroPoints.current 0}}" data-dtype="Number"/>
       </div>
     </div>
   </div>
@@ -51,11 +51,11 @@
     <div class="resource-block-content">
       <div class="resource-item">
         <h4>Class DC</h4>
-        <input type="number" name="system.classDC" value="{{#if (isObject system.classDC)}}0{{else}}{{system.classDC}}{{/if}}" data-dtype="Number"/>
+        <input id="input-system-classDC" type="number" name="system.classDC" value="{{default system.classDC 10}}" data-dtype="Number"/>
       </div>
       <div class="resource-item">
         <h4>Speed</h4>
-        <input type="number" name="system.speed" value="{{#if (isObject system.speed)}}0{{else}}{{system.speed}}{{/if}}" placeholder="0" data-dtype="Number"/>
+        <input id="input-system-speed" type="number" name="system.speed" value="{{default system.speed 0}}" placeholder="0" data-dtype="Number"/>
       </div>
     </div>
   </div>
@@ -63,22 +63,22 @@
   <div class="resource-block">
     <h4>Size</h4>
     <div class="resource-block-content">
-      <select name="system.size">
-        <option value="Tiny" {{#if (eq system.size "Tiny")}}selected{{/if}}>Tiny</option>
-        <option value="Small" {{#if (eq system.size "Small")}}selected{{/if}}>Small</option>
-        <option value="Medium" {{#if (eq system.size "Medium")}}selected{{/if}}>Medium</option>
-        <option value="Large" {{#if (eq system.size "Large")}}selected{{/if}}>Large</option>
-        <option value="Huge" {{#if (eq system.size "Huge")}}selected{{/if}}>Huge</option>
-        <option value="Gargantuan" {{#if (eq system.size "Gargantuan")}}selected{{/if}}>Gargantuan</option>
+      <select id="input-system-size" name="system.size">
+        <option value="Tiny" {{#if (eq (default system.size 'Medium') "Tiny")}}selected{{/if}}>Tiny</option>
+        <option value="Small" {{#if (eq (default system.size 'Medium') "Small")}}selected{{/if}}>Small</option>
+        <option value="Medium" {{#if (eq (default system.size 'Medium') "Medium")}}selected{{/if}}>Medium</option>
+        <option value="Large" {{#if (eq (default system.size 'Medium') "Large")}}selected{{/if}}>Large</option>
+        <option value="Huge" {{#if (eq (default system.size 'Medium') "Huge")}}selected{{/if}}>Huge</option>
+        <option value="Gargantuan" {{#if (eq (default system.size 'Medium') "Gargantuan")}}selected{{/if}}>Gargantuan</option>
       </select>
       <div class="resource-item">
-        <h3>Percepção</h3>
-        <select name="system.generalProficiency" class="short-input">
-          <option value="untrained" {{#if (eq system.generalProficiency 'untrained')}}selected{{/if}}>Untrained</option>
-          <option value="trained" {{#if (eq system.generalProficiency 'trained')}}selected{{/if}}>Trained</option>
-          <option value="expert" {{#if (eq system.generalProficiency 'expert')}}selected{{/if}}>Expert</option>
-          <option value="master" {{#if (eq system.generalProficiency 'master')}}selected{{/if}}>Master</option>
-          <option value="legendary" {{#if (eq system.generalProficiency 'legendary')}}selected{{/if}}>Legendary</option>
+      <h4 class="skill-name" data-skill-key="perception">Percepção</h4>
+        <select id="input-system-generalProficiency" name="system.generalProficiency" class="short-input">
+          <option value="untrained" {{#if (eq (default system.generalProficiency 'untrained') 'untrained')}}selected{{/if}}>Untrained</option>
+          <option value="trained" {{#if (eq (default system.generalProficiency 'untrained') 'trained')}}selected{{/if}}>Trained</option>
+          <option value="expert" {{#if (eq (default system.generalProficiency 'untrained') 'expert')}}selected{{/if}}>Expert</option>
+          <option value="master" {{#if (eq (default system.generalProficiency 'untrained') 'master')}}selected{{/if}}>Master</option>
+          <option value="legendary" {{#if (eq (default system.generalProficiency 'untrained') 'legendary')}}selected{{/if}}>Legendary</option>
         </select>
       </div>
 

@@ -39,6 +39,14 @@
       <label>Item</label>
       <input type="number" name="item" value="{{item}}" style="width:100%" />
     </div>
+    <div style="grid-column:1/-1">
+      <label>Vantagem / Desvantagem</label>
+      <select name="adv" style="width:100%">
+        <option value="normal">Normal</option>
+        <option value="advantage">Vantagem (rolar 3, tirar o pior)</option>
+        <option value="disadvantage">Desvantagem (rolar 3, tirar o melhor)</option>
+      </select>
+    </div>
   </div>
   <p
     style="margin-top:8px;font-size:12px;color:var(--wayfinder-text-muted)"

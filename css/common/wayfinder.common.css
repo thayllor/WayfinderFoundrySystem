@@ -47,13 +47,22 @@
 .wf-row {
   display: flex;
   gap: 12px;
-  align-items: center;
-}
-
-.wf-col {
+  /* Slightly increased contrast from the window background */
+  background: linear-gradient(180deg, rgba(36, 36, 36, 0.98), rgba(28, 28, 28, 0.92));
+  border: 1px solid rgba(0, 0, 0, 0.45);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* Give column utility a subtle card appearance for nicer grouping */
+.wf-col {
+  padding: 12px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(25, 25, 25, 0.98), var(--color-light-6));
+  border: 1px solid var(--color-dark-4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
 }
 
 .wf-hidden {

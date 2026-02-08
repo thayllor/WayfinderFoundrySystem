@@ -14,36 +14,40 @@
     <div class="info-field">
       <label>Nome do Personagem</label>
       <input
+        id="input-name"
         type="text"
         name="name"
-        value="{{actor.name}}"
+        value="{{default actor.name 'Nome do Personagem'}}"
         placeholder="Nome"
       />
     </div>
     <div class="info-field">
       <label>Nome do Jogador</label>
       <input
+        id="input-system-playerName"
         type="text"
         name="system.playerName"
-        value="{{system.playerName}}"
+        value="{{default system.playerName 'Nome do Jogador'}}"
         placeholder="Jogador"
       />
     </div>
     <div class="info-field">
       <label>Pronome</label>
       <input
+        id="input-system-pronoun"
         type="text"
         name="system.pronoun"
-        value="{{system.pronoun}}"
+        value="{{default system.pronoun ''}}"
         placeholder="ex: ele/dele"
       />
     </div>
     <div class="info-field">
       <label>Idade</label>
       <input
+        id="input-system-age"
         type="number"
         name="system.age"
-        value="{{system.age}}"
+        value="{{default system.age 0}}"
         placeholder="Idade"
       />
     </div>
@@ -51,27 +55,30 @@
     <div class="info-field">
       <label>Ascendência</label>
       <input
+        id="input-system-ancestry"
         type="text"
         name="system.ancestry"
-        value="{{system.ancestry}}"
+        value="{{default system.ancestry ''}}"
         placeholder="Ascendência"
       />
     </div>
     <div class="info-field">
       <label>Classe</label>
       <input
+        id="input-system-class"
         type="text"
         name="system.class"
-        value="{{system.class}}"
+        value="{{default system.class ''}}"
         placeholder="Classe"
       />
     </div>
     <div class="info-field">
       <label>Nível</label>
       <input
+        id="input-system-level"
         type="number"
         name="system.level"
-        value="{{system.level}}"
+        value="{{default system.level.value 1}}"
         min="1"
         max="20"
         placeholder="Nível"
@@ -80,9 +87,10 @@
     <div class="info-field">
       <label>Experiência</label>
       <input
+        id="input-system-exp"
         type="number"
         name="system.exp"
-        value="{{system.exp}}"
+        value="{{default system.exp 0}}"
         placeholder="Experiência"
       />
     </div>

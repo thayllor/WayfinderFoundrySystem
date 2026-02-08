@@ -1533,6 +1533,8 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
     try {
       // Helper to construct a Dialog using V2 API when available
       const _makeDialog = (opts) => {
+        // Ensure a sensible default width for dialogs (600px) unless overridden
+        opts = Object.assign({ width: 600 }, opts || {});
         const DialogClass = (typeof ApplicationV2 !== 'undefined' && ApplicationV2?.Dialog) ? ApplicationV2.Dialog : Dialog;
         const dlg = new DialogClass(opts);
         dlg.render(true);
@@ -1593,7 +1595,15 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
                   const itemVal = Number(fd.get('item')) || 0;
 
                   const total = attrValue + prof + status + circun + itemVal;
-                  const formula = `2d10 + ${total}`;
+                  const advMode = (fd.get('adv') || 'normal').toString();
+                  let formula;
+                  if (advMode === 'advantage') {
+                    formula = `3d10kh2 + ${total}`;
+                  } else if (advMode === 'disadvantage') {
+                    formula = `3d10kl2 + ${total}`;
+                  } else {
+                    formula = `2d10 + ${total}`;
+                  }
 
                   const roll = new Roll(formula, this.document.getRollData());
                   // Evaluate the roll asynchronously so terms that require async evaluation are supported
@@ -1652,23 +1662,32 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
         if (!nameEl) return;
         ev.preventDefault();
         try {
-          // Skill key is the text content of the element (matches entry.key)
-          const skillKey = String(nameEl.textContent || '').trim();
-          if (!skillKey) return;
+            // Locate the nearest container for inputs. Skills live in table rows,
+            // but Percepção lives in a resource block, so accept either.
+            let row = nameEl.closest('tr') || nameEl.closest('.resource-item') || nameEl.closest('.resource-block');
 
-          // Locate the row and inputs
-          const row = nameEl.closest('tr');
-          if (!row) return;
+            // Skill key: prefer explicit data attribute on the clicked element, then
+            // the attribute-total in a row, then the visible text as a last resort.
+            const skillKey = String(nameEl.dataset?.skillKey || row?.querySelector?.('.attribute-total')?.dataset?.skillKey || nameEl.textContent || '').trim();
+            if (!skillKey) return;
 
-          const attrSelect = row.querySelector(`[name="system.skills.${skillKey}.attribute"]`);
-          const profSelect = row.querySelector(`[name="system.skills.${skillKey}.proficiency"]`);
-          const statusInput = row.querySelector(`[name="system.skills.${skillKey}.status"]`);
-          const circunInput = row.querySelector(`[name="system.skills.${skillKey}.circun"]`);
-          const itemInput = row.querySelector(`[name="system.skills.${skillKey}.item"]`);
+          const attrSelect = row?.querySelector(`[name="system.skills.${skillKey}.attribute"]`);
+          let profSelect = row?.querySelector(`[name="system.skills.${skillKey}.proficiency"]`);
+          const statusInput = row?.querySelector(`[name="system.skills.${skillKey}.status"]`);
+          const circunInput = row?.querySelector(`[name="system.skills.${skillKey}.circun"]`);
+          const itemInput = row?.querySelector(`[name="system.skills.${skillKey}.item"]`);
 
           const ATTR_MAP = { STR: 'strength', DEX: 'dexterity', INT: 'intelligence', WIS: 'wisdom', PRE: 'presence' };
 
-          const attrAbbrev = (attrSelect?.value || '').toString().toUpperCase();
+          // Special-case: treat perception (general perception) as a skill that always uses WIS
+          let attrAbbrev;
+          if (skillKey.toString().toLowerCase() === 'perception') {
+            attrAbbrev = 'WIS';
+            // preference: find the general proficiency select in the resource block
+            profSelect = profSelect || row?.querySelector('[name="system.generalProficiency"]') || document.querySelector('[name="system.generalProficiency"]');
+          } else {
+            attrAbbrev = (attrSelect?.value || '').toString().toUpperCase();
+          }
           const attrKey = ATTR_MAP[attrAbbrev] || attrAbbrev.toLowerCase();
           const attrValue = Number(this.document.system.attributes?.[attrKey]?.value) || 0;
 
@@ -1712,7 +1731,15 @@ export class WayfinderActorSheet extends HandlebarsApplicationMixin(DocumentShee
                   const itemVal2 = Number(fd.get('item')) || 0;
 
                   const total = attrValue + prof + statusVal + circunVal + itemVal2;
-                  const formula = `2d10 + ${total}`;
+                  const advMode = (fd.get('adv') || 'normal').toString();
+                  let formula;
+                  if (advMode === 'advantage') {
+                    formula = `3d10kh2 + ${total}`;
+                  } else if (advMode === 'disadvantage') {
+                    formula = `3d10kl2 + ${total}`;
+                  } else {
+                    formula = `2d10 + ${total}`;
+                  }
 
                   const roll = new Roll(formula, this.document.getRollData());
                   await roll.evaluate();

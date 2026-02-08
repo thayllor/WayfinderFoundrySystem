@@ -22,7 +22,61 @@
   padding: 8px 10px;
   min-width: 120px;
   min-height: 200px;
+  max-width: 200px;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+}
+
+/* Resource item layout */
+.wayfinder.sheet.actor .resource-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+}
+
+/* Make dropdowns in the resources row easier to read */
+.wayfinder.sheet.actor .top-resources-row select {
+  padding: 6px 8px;
+  border: 1px solid var(--color-dark-4);
+  border-radius: 6px;
+  background: var(--color-light-6);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  min-width: 90px;
+  text-align: center;
+}
+
+/* Style the option list (dropdown items) for better readability */
+.wayfinder.sheet.actor .top-resources-row select option {
+  background: var(--color-dark-4);
+  color: var(--color-light-1);
+}
+
+/* Highlight option on hover / when selected for better contrast */
+.wayfinder.sheet.actor .top-resources-row select option:hover,
+.wayfinder.sheet.actor .top-resources-row select option:checked {
+  background: var(--color-warm-2);
+  color: var(--color-light-1);
+}
+
+/* Make the inputs look like plain text (no visible input box) but still editable */
+.wayfinder.sheet.actor .top-resources-row input,
+.wayfinder.sheet.actor .top-resources-row select {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  min-width: 30px;
+  text-align: center;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 22px;
+}
+.wayfinder.sheet.actor .top-resources-row input:focus,
+.wayfinder.sheet.actor .top-resources-row select:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .wayfinder.sheet.actor .resource-block .label {

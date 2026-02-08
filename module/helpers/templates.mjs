@@ -142,6 +142,32 @@ export const preloadHandlebarsTemplates = async function() {
     return s.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
   });
 
+  // Map internal weapon keys/labels to PT-BR human-friendly names
+  Handlebars.registerHelper('weaponLabel', function(key) {
+    if (!key) return '';
+    const k = String(key).toLowerCase();
+    const map = {
+      crossbow: 'Besta',
+      dart: 'Dardo',
+      flail: 'Mangual',
+      fetish: 'Fetiche',
+      hammer: 'Martelo',
+      rod: 'Cajado',
+      knife: 'Faca',
+      pick: 'Picareta',
+      shield: 'Escudo',
+      polearm: 'Arma de Haste',
+      spear: 'Lança',
+      sling: 'Funda',
+      sword: 'Espada',
+      axe: 'Machado'
+    };
+    if (map[k]) return map[k];
+    // Fallback: Title case the original key
+    const s = String(key).replace(/[_\-]+/g, ' ').trim();
+    return s.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+  });
+
   // Return an inline style string for a trait name if a matching trait item exists
   Handlebars.registerHelper('traitStyle', function(name) {
     try {

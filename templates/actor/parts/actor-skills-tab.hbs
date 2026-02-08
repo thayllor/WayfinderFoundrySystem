@@ -44,7 +44,7 @@
           <div class="weapons-list">
             {{#if system.proficiencies.weapons.length}}
               {{#each system.proficiencies.weapons as |wp idx|}}
-                <span class="trait-chip trait-chip-small weapon-chip" data-weapon-index="{{idx}}" style="{{traitStyle wp}}">{{wp}} <button type="button" class="weapon-remove">×</button></span>
+                <span class="trait-chip trait-chip-small weapon-chip" data-weapon-index="{{idx}}" style="{{traitStyle wp}}">{{weaponLabel wp}} <button type="button" class="weapon-remove">×</button></span>
               {{/each}}
             {{else}}
               <div class="empty-message">Nenhuma proficiência de arma.</div>
@@ -95,7 +95,7 @@
         </thead>
         <tbody>
           {{#each skillsLeft as |entry|}}
-          <tr>
+          <tr data-proficiency="{{entry.skill.proficiency}}">
             <td><strong class="skill-name">{{titleCase entry.key}}</strong></td>
             <td>
               <select name="system.skills.{{entry.key}}.attribute" class="short-input">
@@ -138,7 +138,7 @@
         </thead>
         <tbody>
           {{#each skillsRight as |entry|}}
-          <tr>
+          <tr data-proficiency="{{entry.skill.proficiency}}">
             <td><strong class="skill-name">{{titleCase entry.key}}</strong></td>
             <td>
               <select name="system.skills.{{entry.key}}.attribute" class="short-input">
